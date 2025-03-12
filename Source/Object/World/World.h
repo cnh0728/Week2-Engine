@@ -55,12 +55,12 @@ public:
 	FString SceneName;
 	uint32 Version = 1;
 	
+	TSet<UPrimitiveComponent*> RenderComponents; // test용 원래 protected
 protected:
 	TArray<AActor*> Actors;
 	TArray<UPrimitiveComponent*> ZIgnoreRenderComponents;
 	TArray<AActor*> ActorsToSpawn;
 	TArray<AActor*> PendingDestroyActors; // TODO: 추후에 TQueue로 변경
-	TSet<UPrimitiveComponent*> RenderComponents;
 };
 
 template <typename T>

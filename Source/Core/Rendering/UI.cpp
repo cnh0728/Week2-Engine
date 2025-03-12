@@ -76,6 +76,7 @@ void UI::Update()
     
     RenderControlPanel();
     RenderPropertyWindow();
+    RenderScenecomponentInfoWindow();
 
     Debug::ShowConsole(bWasWindowSizeUpdated, PreRatio, CurRatio);
 
@@ -363,6 +364,41 @@ void UI::RenderPropertyWindow()
 				ImGui::Text("GizmoType: Scale");
 			}
 		}
+    }
+    ImGui::End();
+}
+
+void UI::RenderScenecomponentInfoWindow()
+{
+    ImGui::Begin("Scenecomponents");
+    UWorld* World = UEngine::Get().GetWorld();
+    for (auto comp : World->RenderComponents)
+    {
+        static int i= 0;
+        ImGui::PushID(i++);
+        auto loc = comp->GetRelativeLocation();
+        float locf[3] = { loc.X, loc.Y, loc.Z };
+        auto rot = comp->GetRelativeRotation();
+        float rotf[3] = { rot.X, rot.Y, rot.Z };
+        auto sca = comp->GetRelativeScale3D();
+        float scaf[3] = { sca.X, sca.Y, sca.Z };
+        std::string name = std::string(comp->GetOwner()->GetTypeName()) + std::to_string(comp->GetOwner()->GetUUID());
+        ImGui::Text("%s", name.c_str());
+        ImGui::Text("Location : %f %f %f", loc.X, loc.Y, loc.Z);
+        ImGui::Text("Rotation : %f %f %f", rot.X, rot.Y, rot.Z, rot.W);
+        ImGui::Text("Scale3D : %f %f %f", sca.X, sca.Y, sca.Z);
+        //const char* locC = (name + std::string("loc")).c_str();
+        //const char* rotC = (name + std::string("rot")).c_str();
+        //const char* scaC = (name + std::string("sca")).c_str();
+        ImGui::DragFloat3("location", locf);
+        ImGui::DragFloat3("Rotation", rotf);
+        ImGui::DragFloat3("Scale3D", scaf);
+        auto T = comp->GetComponentTransform().GetMatrix().M;
+        ImGui::Text("%f %f %f %f\n%f %f %f %f\n%f %f %f %f\n%f %f %f %f", T[0][0], T[0][1], T[0][2], T[0][3], T[1][0], T[1][1], T[1][2], T[1][3], T[2][0], T[2][1], T[2][2], T[2][3], T[3][0], T[3][1], T[3][2], T[3][3]);
+        //comp->SetRelativeLocation(loc);
+        //comp->SetRelativeRotation(rot);
+        //comp->SetRelativeScale3D(sca);
+        ImGui::PopID();
     }
     ImGui::End();
 }

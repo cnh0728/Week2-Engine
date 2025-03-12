@@ -106,13 +106,15 @@ TArray<FVertexSimple> FBufferCache::CreateConeVertices()
 	return vertices;
 }
 
+// xy평면에 radius = 1인 밑면
+// z축방향 height = 1
 TArray<FVertexSimple> FBufferCache::CreateCylinderVertices()
 {
 	TArray<FVertexSimple> vertices;
 	
 	int segments = 36;
-	float radius = .03f;
-	float height = .5f;
+	float radius = 1.f;
+	float height = 1.f;
 
 
 	// 원기둥의 바닥과 윗면
@@ -127,9 +129,9 @@ TArray<FVertexSimple> FBufferCache::CreateCylinderVertices()
 		float y2 = radius * sin(nextAngle);
 
 		// 바닥 삼각형
-		vertices.Add({ 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f });
-		vertices.Add({ x2, y2, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f });
-		vertices.Add({ x1, y1, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f });
+		vertices.Add({ 0.0f, 0.0f, 0.0f, -height, 0.0f, 0.0f, 1.0f });
+		vertices.Add({ x2, y2, 0.0f, -height, 0.0f, 0.0f, 1.0f });
+		vertices.Add({ x1, y1, 0.0f, -height, 0.0f, 0.0f, 1.0f });
 
 		// 윗면 삼각형
 		vertices.Add({ 0.0f, 0.0f, height, 0.0f, 1.0f, 0.0f, 1.0f });
@@ -137,11 +139,11 @@ TArray<FVertexSimple> FBufferCache::CreateCylinderVertices()
 		vertices.Add({ x2, y2, height, 0.0f, 1.0f, 0.0f, 1.0f });
 
 		// 옆면 삼각형 두 개
-		vertices.Add({ x1, y1, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f });
-		vertices.Add({ x2, y2, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f });
+		vertices.Add({ x1, y1, -height, 0.0f, 0.0f, 1.0f, 1.0f });
+		vertices.Add({ x2, y2, -height, 0.0f, 0.0f, 1.0f, 1.0f });
 		vertices.Add({ x1, y1, height, 0.0f, 0.0f, 1.0f, 1.0f });
 
-		vertices.Add({ x2, y2, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f });
+		vertices.Add({ x2, y2, -height, 0.0f, 0.0f, 1.0f, 1.0f });
 		vertices.Add({ x2, y2, height, 0.0f, 0.0f, 1.0f, 1.0f });
 		vertices.Add({ x1, y1, height, 0.0f, 0.0f, 1.0f, 1.0f });
 	}

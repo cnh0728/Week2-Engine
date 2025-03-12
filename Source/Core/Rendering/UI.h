@@ -26,6 +26,7 @@ public:// UIWindows
     void RenderPrimitiveSelection();
     void RenderCameraSettings();
     void RenderPropertyWindow();
+	void RenderScenecomponentInfoWindow();
 
 private:
 	// Mouse 전용
