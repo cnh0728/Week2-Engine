@@ -47,91 +47,48 @@ void APicker::LateTick(float DeltaTime)
         GetCursorPos(&pt);
         ScreenToClient(UEngine::Get().GetWindowHandle(), &pt);
         
-        //AABB로 픽
- 			    
-        RECT Rect;
-        GetClientRect(UEngine::Get().GetWindowHandle(), &Rect);
-        int ScreenWidth = Rect.right - Rect.left;
-        int ScreenHeight = Rect.bottom - Rect.top;
-			     
-        // 커서 위치를 NDC로 변경
-        float PosX = 2.0f * pt.x / ScreenWidth - 1.0f;
-        float PosY = -2.0f * pt.y / ScreenHeight + 1.0f;
-			     
-        // Projection 공간으로 변환
-        FVector4 RayOrigin {PosX, PosY, 0.0f, 1.0f};
-        FVector4 RayEnd {PosX, PosY, 1.0f, 1.0f};
-			     
-        // View 공간으로 변환
-        FMatrix InvProjMat = UEngine::Get().GetRenderer()->GetProjectionMatrix().Inverse();
-        RayOrigin = InvProjMat.TransformVector4(RayOrigin);
-        RayOrigin.W = 1;
-        RayEnd = InvProjMat.TransformVector4(RayEnd);
-        RayEnd *= 1000.0f;  // 프러스텀의 Far 값이 적용이 안돼서 수동으로 곱함
-        RayEnd.W = 1;
-			     
-        // 마우스 포인터의 월드 위치와 방향
-        FMatrix InvViewMat = FEditorManager::Get().GetCamera()->GetViewMatrix().Inverse();
-        RayOrigin = InvViewMat.TransformVector4(RayOrigin);
-        RayOrigin /= RayOrigin.W = 1;
-        RayEnd = InvViewMat.TransformVector4(RayEnd);
-        RayEnd /= RayEnd.W = 1;
-        TSet<UPrimitiveComponent*> PrimitiveComponents = GetWorld()->GetRenderComponents();
-        TSet<AActor*> PickedActors; //PriorityQueue 구현
-
-        FVector RayDir = (RayEnd - RayOrigin).GetSafeNormal();
-        FVector InvDir = {1.0f/RayDir.X, 1.0f/RayDir.Y, 1.0f/RayDir.Z};
-        
-        for (UPrimitiveComponent* Component : PrimitiveComponents)
+        TSet<std::pair<float,AActor*>> PickedActors = PickActorByRay(FVector(pt.x, pt.y, 0.0f)); //PriorityQueue 구현
+        AActor* PickedActor = nullptr;
+        float MinDistance = FLT_MAX;
+        for (auto& [Key, Value] : PickedActors)
         {
-            FVector MinBound(FLT_MAX), MaxBound(FLT_MIN);
-
-            //정점데이터에 월드매트릭스 곱해서 x,y,z minX minY minZ maxX maxY maxZ 구하기
-            FMatrix CompWorldMatrix = Component->GetComponentTransformMatrix(); //GetWorldMatrix 부모들 다 적용시키는 걸로 바꿔줘야함
-            //이제 정점 돌면서 월드매트릭스 곱하기
-            BufferInfo Info = UEngine::Get().GetRenderer()->GetBufferInfo(Component->GetType());
-            FVertexSimple* Vertices = Info.GetVertices();
-            int Size = Info.GetSize();
-            
-            for (int i=0; i<Size; i++)
+            if (MinDistance > Key)
             {
-                FVector4 CompVertex = FVector4(Vertices[i].X, Vertices[i].Y, Vertices[i].Z, 1.0f);
-                FVector4 WorldVertexLocation = CompVertex * CompWorldMatrix;
-                
-                //최소값과 최대값 구하기
-                MinBound.X = min(MinBound.X, WorldVertexLocation.X);
-                MinBound.Y = min(MinBound.Y, WorldVertexLocation.Y);
-                MinBound.Z = min(MinBound.Z, WorldVertexLocation.Z);
-                MaxBound.X = max(MaxBound.X, WorldVertexLocation.X);
-                MaxBound.Y = max(MaxBound.Y, WorldVertexLocation.Y);
-                MaxBound.Z = max(MaxBound.Z, WorldVertexLocation.Z);
+                MinDistance = Key;
+                PickedActor = Value;
             }
-
-            //Priority Queue 구현해서 Add하기
-            float Distance = FVector::Distance(RayOrigin, Component->GetComponentTransform().GetPosition());
-            if (IntersectsRay(RayOrigin, RayEnd, Distance, MinBound, MaxBound))
-            {
-                PickedActors.Add(Component->GetOwner()); //Priority Queue 구현
-            }
-            
         }
         
         if (PickedActors.Num() > 0)
         {
-            UE_LOG("Pick Count: %d", PickedActors.Num());
-            for (auto PA : PickedActors)
-            {
-                UE_LOG("%u", PA->GetUUID());
-            }
+            UE_LOG("Pick %u", PickedActor->GetUUID());
         }else
         {
             UE_LOG("UnPick");
         }
         
-        AActor* PickedActor = PickActorByPixel(FVector(pt.x, pt.y, 0.0f));
-        // AActor* PickedActor = PickActorByRay();
-        FEditorManager::Get().SelectActor(PickedActor);   
+        // PickedActor = PickActorByPixel(FVector(pt.x, pt.y, 0.0f));
 
+        if (PickedActor == nullptr)
+        {
+            FEditorManager::Get().SelectActor(nullptr);   
+            return;
+        }
+        
+        //pickedActor가 클릭돼있을때 클릭하면 nullptr, 픽한애 없어도 nullptr
+        
+        if (PickedActor->IsGizmoActor() == false)
+        {
+            if (PickedActor == FEditorManager::Get().GetSelectedActor())
+            {
+                PickedActor = nullptr;
+                FEditorManager::Get().SelectActor(nullptr);
+                return;
+            }
+        }
+
+        FEditorManager::Get().SelectActor(PickedActor);   
+        
         if (PickedActor != nullptr)
         {
             UE_LOG("Picked Actor: %u", PickedActor->GetUUID());
@@ -227,9 +184,74 @@ bool APicker::IntersectsRay(const FVector& rayOrigin, const FVector& rayDir, flo
     return false;
 }
 
-AActor* APicker::PickActorByRay(FVector MousePos)
+TSet<std::pair<float, AActor*>> APicker::PickActorByRay(FVector MousePos)
 {
-    return nullptr;
+    RECT Rect;
+    GetClientRect(UEngine::Get().GetWindowHandle(), &Rect);
+    int ScreenWidth = Rect.right - Rect.left;
+    int ScreenHeight = Rect.bottom - Rect.top;
+			 
+    // 커서 위치를 NDC로 변경
+    float PosX = 2.0f * MousePos.X / ScreenWidth - 1.0f;
+    float PosY = -2.0f * MousePos.Y / ScreenHeight + 1.0f;
+			 
+    // Projection 공간으로 변환
+    FVector4 RayOrigin {PosX, PosY, 0.0f, 1.0f};
+    FVector4 RayEnd {PosX, PosY, 1.0f, 1.0f};
+			 
+    // View 공간으로 변환
+    FMatrix InvProjMat = UEngine::Get().GetRenderer()->GetProjectionMatrix().Inverse();
+    RayOrigin = InvProjMat.TransformVector4(RayOrigin);
+    RayOrigin.W = 1;
+    RayEnd = InvProjMat.TransformVector4(RayEnd);
+    RayEnd *= 1000.0f;  // 프러스텀의 Far 값이 적용이 안돼서 수동으로 곱함
+    RayEnd.W = 1;
+			 
+    // 마우스 포인터의 월드 위치와 방향
+    FMatrix InvViewMat = FEditorManager::Get().GetCamera()->GetViewMatrix().Inverse();
+    RayOrigin = InvViewMat.TransformVector4(RayOrigin);
+    RayOrigin /= RayOrigin.W = 1;
+    RayEnd = InvViewMat.TransformVector4(RayEnd);
+    RayEnd /= RayEnd.W = 1;
+    TSet<UPrimitiveComponent*> PrimitiveComponents = GetWorld()->GetRenderComponents();
+    TSet<std::pair<float,AActor*>> PickedActors; //PriorityQueue 구현
+
+    FVector RayDir = (RayEnd - RayOrigin).GetSafeNormal();
+    
+    for (UPrimitiveComponent* Component : PrimitiveComponents)
+    {
+        FVector MinBound(FLT_MAX), MaxBound(FLT_MIN);
+
+        //정점데이터에 월드매트릭스 곱해서 x,y,z minX minY minZ maxX maxY maxZ 구하기
+        FMatrix CompWorldMatrix = Component->GetComponentTransformMatrix(); //GetWorldMatrix 부모들 다 적용시키는 걸로 바꿔줘야함
+        //이제 정점 돌면서 월드매트릭스 곱하기
+        BufferInfo Info = UEngine::Get().GetRenderer()->GetBufferInfo(Component->GetType());
+        FVertexSimple* Vertices = Info.GetVertices();
+        int Size = Info.GetSize();
+        
+        for (int i=0; i<Size; i++)
+        {
+            FVector4 CompVertex = FVector4(Vertices[i].X, Vertices[i].Y, Vertices[i].Z, 1.0f);
+            FVector4 WorldVertexLocation = CompVertex * CompWorldMatrix;
+            
+            //최소값과 최대값 구하기
+            MinBound.X = min(MinBound.X, WorldVertexLocation.X);
+            MinBound.Y = min(MinBound.Y, WorldVertexLocation.Y);
+            MinBound.Z = min(MinBound.Z, WorldVertexLocation.Z);
+            MaxBound.X = max(MaxBound.X, WorldVertexLocation.X);
+            MaxBound.Y = max(MaxBound.Y, WorldVertexLocation.Y);
+            MaxBound.Z = max(MaxBound.Z, WorldVertexLocation.Z);
+        }
+
+        //Priority Queue 구현해서 Add하기
+        float Distance = FVector::Distance(RayOrigin, Component->GetComponentTransform().GetPosition());
+        if (IntersectsRay(RayOrigin, RayDir, Distance, MinBound, MaxBound))
+        {
+            PickedActors.Add({Distance,Component->GetOwner()}); //Priority Queue 구현
+        }
+        
+    }
+    return PickedActors;
 }
 
 AActor* APicker::PickActorByPixel(FVector MousePos)
@@ -244,20 +266,10 @@ AActor* APicker::PickActorByPixel(FVector MousePos)
     UActorComponent* PickedComponent = UEngine::Get().GetObjectByUUID<UActorComponent>(UUID);
 
     AActor* PickedActor = nullptr;
-    
+
     if (PickedComponent != nullptr)
     {
         PickedActor = PickedComponent->GetOwner();
-        
-        if (PickedActor == nullptr) return nullptr;
-        if (PickedComponent->GetOwner()->IsGizmoActor() == false)
-        {
-            if (PickedActor == FEditorManager::Get().GetSelectedActor())
-            {
-                PickedActor = nullptr;
-                // FEditorManager::Get().SelectActor(nullptr);   
-            }
-        }
     }
 
     // UE_LOG("Pick - UUID: %d", UUID);
