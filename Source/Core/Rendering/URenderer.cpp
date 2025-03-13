@@ -16,7 +16,8 @@ void URenderer::Create(HWND hWindow)
     CreateDepthStencilState();
 
     CreatePickingTexture(hWindow);
-    
+	CreateAlphaBlendingState();
+
     InitMatrix();
 }
 
@@ -30,6 +31,7 @@ void URenderer::Release()
     ReleaseFrameBuffer();
     ReleaseDepthStencilBuffer();
     ReleaseDeviceAndSwapChain();
+    ReleaseAlphaBlendingState();
 }
 
 void URenderer::CreateShader()
@@ -753,4 +755,49 @@ void URenderer::RenderPickingTexture()
     SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer));
     DeviceContext->CopyResource(backBuffer, PickingFrameBuffer);
     backBuffer->Release();
+}
+
+void URenderer::CreateAlphaBlendingState() {
+    D3D11_BLEND_DESC blendStateDescription;
+    ZeroMemory(&blendStateDescription, sizeof(D3D11_BLEND_DESC));
+    // 알파 블렌딩을 위한 설정
+    blendStateDescription.RenderTarget[0].BlendEnable = TRUE;
+    blendStateDescription.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+    blendStateDescription.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+    blendStateDescription.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+    blendStateDescription.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+    blendStateDescription.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+    blendStateDescription.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+    blendStateDescription.RenderTarget[0].RenderTargetWriteMask = 0x0f;
+
+    Device->CreateBlendState(&blendStateDescription, &AlphaEnableBlendingState);
+
+    blendStateDescription.RenderTarget[0].BlendEnable = FALSE;
+    Device->CreateBlendState(&blendStateDescription, &AlphaDisableBlendingState);
+}
+
+void URenderer::ReleaseAlphaBlendingState()
+{
+    if (AlphaEnableBlendingState)
+    {
+        AlphaEnableBlendingState->Release();
+        AlphaEnableBlendingState = nullptr;
+    }
+    if (AlphaDisableBlendingState)
+    {
+        AlphaDisableBlendingState->Release();
+        AlphaDisableBlendingState = nullptr;
+    }
+}
+
+void URenderer::TurnOnAlphaBlending()
+{
+    float blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+    DeviceContext->OMSetBlendState(AlphaEnableBlendingState, blendFactor, 0xffffffff);
+}
+
+void URenderer::TurnOffAlphaBlending()
+{
+    float blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+    DeviceContext->OMSetBlendState(AlphaDisableBlendingState, blendFactor, 0xffffffff);
 }

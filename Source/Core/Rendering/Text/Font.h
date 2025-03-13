@@ -1,7 +1,9 @@
 ﻿#pragma once
 
+#include "Core/HAL/PlatformType.h"
 #include <d3d11.h>
 #include "Core/Math/Vector.h"
+#include "Core/Rendering/Texture.h"
 
 
 class UFont {
@@ -19,18 +21,18 @@ private:
 public:
 	UFont();
 	~UFont();
-	bool Create(ID3D11Device* Device, const char* FontFileName, const char* TextureFileName);
+	bool Create(ID3D11Device* Device, const wchar_t* FontFileName, const wchar_t* TextureFileName);
 	void Release();
 	void BuildVertexArray(void* Vertices, const char* Sentence, float DrawX, float DrawY);
-	ID3D11ShaderResourceView* GetTexture() const { return Texture; }
+	ID3D11ShaderResourceView* GetTexture() const { return Texture->GetTexture(); }
 
 private:
-	bool LoadFontData(const char* FontFileName);
-	bool LoadTexture(ID3D11Device* Device, const char* TextureFileName);
+	bool LoadFontData(const wchar_t* FontFileName);
+	bool LoadTexture(ID3D11Device* Device, const wchar_t* TextureFileName);
 	void ReleaseFontData();
 	void ReleaseTexture();
 
 private:
 	FontType* Font;
-	ID3D11ShaderResourceView* Texture;
+	UTexture* Texture;
 };

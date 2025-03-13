@@ -1,6 +1,5 @@
 ﻿#include "FontShader.h"
 #include <d3dcompiler.h>
-#include <dwmapi.h>
 
 UFontShader::UFontShader()
 {
@@ -14,9 +13,14 @@ UFontShader::~UFontShader()
 {
 }
 
-void UFontShader::Create(ID3D11Device* Device, HWND HWindow)
+bool UFontShader::Create(ID3D11Device* Device, HWND HWindow)
 {
-	CreateShader(Device, HWindow, L"Shaders/FontShader.hlsl");
+	bool Result = CreateShader(Device, HWindow, L"Shaders/FontShader.hlsl");
+	if (!Result) {
+		return false;
+	}
+
+	return true;
 }
 
 void UFontShader::Release()
@@ -24,11 +28,11 @@ void UFontShader::Release()
 	ReleaseShader();
 }
 
-bool UFontShader::Render(ID3D11DeviceContext* DeviceContext, uint32 IndexCount, FMatrix MVP, ID3D11ShaderResourceView* Texture, FVector4 Color)
+bool UFontShader::Render(ID3D11DeviceContext* DeviceContext, uint32 IndexCount, FMatrix WorldMatrix, FMatrix ViewMatrix, FMatrix ProjectionMatrix, ID3D11ShaderResourceView* Texture, FVector4 Color)
 {
 	bool result;
 
-	result = SetShaderParameters(DeviceContext, MVP, Texture, Color);
+	result = SetShaderParameters(DeviceContext, WorldMatrix, ViewMatrix, ProjectionMatrix, Texture, Color);
 	if (!result)
 	{
 		return false;
@@ -41,7 +45,7 @@ bool UFontShader::Render(ID3D11DeviceContext* DeviceContext, uint32 IndexCount, 
 
 
 
-bool UFontShader::CreateShader(ID3D11Device* Device, HWND HWindow, LPCWSTR ShaderFileName)
+bool UFontShader::CreateShader(ID3D11Device* Device, HWND HWindow, const wchar_t* ShaderFileName)
 {
 	HRESULT Result;
 	ID3D10Blob* ErrorMessage = nullptr;
@@ -144,7 +148,7 @@ bool UFontShader::CreateShader(ID3D11Device* Device, HWND HWindow, LPCWSTR Shade
 	return true;
 }
 
-void UFontShader::OutputShaderErrorMessage(ID3D10Blob* ErrorMessage, HWND Hwnd, LPCWSTR ShaderFileName)
+void UFontShader::OutputShaderErrorMessage(ID3D10Blob* ErrorMessage, HWND Hwnd, const wchar_t* ShaderFileName)
 {
 	char* CompileErrors;
 	uint32 BufferSize, i;
@@ -190,7 +194,7 @@ void UFontShader::ReleaseShader()
 	}
 }
 
-bool UFontShader::SetShaderParameters(ID3D11DeviceContext* DeviceContext, FMatrix MVP, ID3D11ShaderResourceView* Texture, FVector4 Color)
+bool UFontShader::SetShaderParameters(ID3D11DeviceContext* DeviceContext, FMatrix WorldMatrix, FMatrix ViewMatrix, FMatrix ProjectionMatrix, ID3D11ShaderResourceView* Texture, FVector4 Color)
 {
 	HRESULT Result;
 	D3D11_MAPPED_SUBRESOURCE MappedResource;
@@ -205,7 +209,10 @@ bool UFontShader::SetShaderParameters(ID3D11DeviceContext* DeviceContext, FMatri
 	}
 
 	DataPtr = (Constants*)MappedResource.pData;
-	DataPtr->MVP = MVP;
+
+	DataPtr->MVP = FMatrix::Transpose(ProjectionMatrix) *
+		FMatrix::Transpose(ViewMatrix) *
+		FMatrix::Transpose(WorldMatrix);
 	DeviceContext->Unmap(ConstantBuffer, 0);
 	BufferNumber = 0;
 	DeviceContext->VSSetConstantBuffers(BufferNumber, 1, &ConstantBuffer);

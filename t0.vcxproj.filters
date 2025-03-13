@@ -73,6 +73,18 @@
     <Filter Include="Source Files\Core\AbstarctClass">
       <UniqueIdentifier>{12ad6cff-15fd-42d3-b7b6-b5fef848b1af}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Core\Rendering\Text">
+      <UniqueIdentifier>{88574507-a79e-4e6b-84b3-ae231f709ec1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ThirdParty\DirectXTex">
+      <UniqueIdentifier>{f1d2d85d-6a1b-4371-8558-85d324827ce7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ThirdParty\DirectXTex\Lib">
+      <UniqueIdentifier>{5d3f89e6-ea14-44ee-ac4f-07d3381aa49e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ThirdParty\DirectXTex\Include">
+      <UniqueIdentifier>{5b515290-25ee-4dc9-8207-23d142ffebc3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -195,12 +207,24 @@
     <ClCompile Include="Source\Core\Math\Plane.cpp">
       <Filter>Source Files\Core\Math</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Object\ActorComponent\ArrowComponent.cpp">
-      <Filter>Source Files\Object\ActorComponent</Filter>
+    <ClCompile Include="Source\Core\Rendering\Text\Text.cpp">
+      <Filter>Source Files\Core\Rendering\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Core\Rendering\Text\FontShader.cpp">
+      <Filter>Source Files\Core\Rendering\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Core\Rendering\Text\Font.cpp">
+      <Filter>Source Files\Core\Rendering\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Core\Rendering\Texture.cpp">
+      <Filter>Source Files\Core\Rendering</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\ShaderW0.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\ShaderFont.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>
@@ -358,15 +382,40 @@
     <ClInclude Include="Source\Core\Container\Map.h">
       <Filter>Source Files\Core\Container</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Object\ActorComponent\ArrowComponent.h">
-      <Filter>Source Files\Object\ActorComponent</Filter>
+    <ClInclude Include="Source\Core\Rendering\Text\Text.h">
+      <Filter>Source Files\Core\Rendering\Text</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Object\Gizmo\Axis.h">
-      <Filter>Source Files\Object\Gizmo</Filter>
+    <ClInclude Include="Source\Core\Rendering\Text\FontShader.h">
+      <Filter>Source Files\Core\Rendering\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Core\Rendering\Text\Font.h">
+      <Filter>Source Files\Core\Rendering\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Core\Rendering\Texture.h">
+      <Filter>Source Files\Core\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\ThirdParty\DirectXTex\Include\DirectXTex.h">
+      <Filter>Source Files\ThirdParty\DirectXTex\Include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ClassDiagram.cd" />
-    <None Include="ClassDiagram1.cd" />
+    <Image Include="..\..\..\..\Downloads\dx11win10tut14_src\dx11win10tut14_src\data\font\font01.tga">
+      <Filter>Source Files\Core\Rendering\Text</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\..\..\..\Downloads\dx11win10tut14_src\dx11win10tut14_src\data\font\font01.txt">
+      <Filter>Source Files\Core\Rendering\Text</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Source\ThirdParty\DirectXTex\Include\DirectXTex.inl">
+      <Filter>Source Files\ThirdParty\DirectXTex\Include</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="Source\ThirdParty\DirectXTex\Lib\DirectXTex.lib">
+      <Filter>Source Files\ThirdParty\DirectXTex\Lib</Filter>
+    </Library>
   </ItemGroup>
 </Project>

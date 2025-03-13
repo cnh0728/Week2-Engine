@@ -11,7 +11,7 @@ UFont::~UFont()
 {
 }	
 
-bool UFont::Create(ID3D11Device* Device, const char* FontFileName, const char* TextureFileName)
+bool UFont::Create(ID3D11Device* Device, const wchar_t* FontFileName, const wchar_t* TextureFileName)
 {
 	bool result;
 	result = LoadFontData(FontFileName);
@@ -33,7 +33,7 @@ void UFont::Release()
 	ReleaseTexture();
 }
 
-bool UFont::LoadFontData(const char* FontFileName) {
+bool UFont::LoadFontData(const wchar_t* FontFileName) {
 	std::ifstream fin;
 	int i;
 	char temp;
@@ -71,7 +71,7 @@ bool UFont::LoadFontData(const char* FontFileName) {
 	return true;
 }
 
-bool UFont::LoadTexture(ID3D11Device* Device, const char* TextureFileName)
+bool UFont::LoadTexture(ID3D11Device* Device, const wchar_t* TextureFileName)
 {
 	bool Result;
 	Result = Texture->Create(Device, TextureFileName);

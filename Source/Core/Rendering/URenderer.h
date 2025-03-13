@@ -112,6 +112,13 @@ public:
 
 	void OnUpdateWindowSize(int Width, int Height);
 
+    /** Alpha Blending을 켜고 끄는 함수 **/
+	void TurnOnAlphaBlending();
+	void TurnOffAlphaBlending();
+
+    void CreateAlphaBlendingState();
+	void ReleaseAlphaBlendingState();
+
 protected:
     /** Direct3D Device 및 SwapChain을 생성합니다. */
     void CreateDeviceAndSwapChain(HWND hWindow);
@@ -182,6 +189,11 @@ protected:
 
 	D3D_PRIMITIVE_TOPOLOGY CurrentTopology = D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED;
 
+	// Alpha Blending
+	ID3D11BlendState* AlphaEnableBlendingState = nullptr;
+	ID3D11BlendState* AlphaDisableBlendingState = nullptr;
+    
+
 	
 #pragma region picking
 protected:
@@ -211,6 +223,7 @@ public:
 	FVector4 GetPixel(FVector MPos);
 
 	void RenderPickingTexture();
+
 	FMatrix GetProjectionMatrix() const { return ProjectionMatrix; }
 #pragma endregion picking
 };
