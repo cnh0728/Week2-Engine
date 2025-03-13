@@ -26,6 +26,7 @@ public:// UIWindows
     void RenderPrimitiveSelection();
     void RenderCameraSettings();
 	void RenderViewMode();
+	void RenderShowFlag();
     void RenderPropertyWindow();
 
 private:

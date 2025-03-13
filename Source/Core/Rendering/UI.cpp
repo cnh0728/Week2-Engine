@@ -124,6 +124,7 @@ void UI::RenderControlPanel()
     RenderPrimitiveSelection();
     RenderCameraSettings();
     RenderViewMode();
+    RenderShowFlag();
     
     ImGui::End();
 }
@@ -314,6 +315,16 @@ void UI::RenderViewMode() {
 
     if (ImGui::Combo("View Mode", &currViewMode, viewModeItems, IM_ARRAYSIZE(viewModeItems))) {
         Renderer->SetViewMode(static_cast<EViewModeIndex>(currViewMode));
+    }
+    ImGui::Separator();
+}
+
+void UI::RenderShowFlag() {
+    bool bShowPrimitives = FEditorManager::Get().IsShowFlagSet(EEngineShowFlags::SF_Primitives);
+    if (ImGui::Checkbox("Show Primtives", &bShowPrimitives))
+    {
+        FEditorManager::Get().SetShowFlag(EEngineShowFlags::SF_Primitives, bShowPrimitives);
+        // stop render primitive
     }
 }
 
