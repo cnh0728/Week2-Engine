@@ -9,51 +9,135 @@
 AGizmoHandle::AGizmoHandle()
 {
 	bIsGizmo = true;
-	// !NOTE : Z방향으로 서있음
-	// z
-	UCylinderComp* ZArrow = AddComponent<UCylinderComp>();
-	ZArrow->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, 0.0f, 0.0f), FVector(1, 1, 1)));
-	ZArrow->SetCustomColor(FVector4(0.0f, 0.0f, 1.0f, 1.0f));
-	CylinderComponents.Add(ZArrow);
+	const float GizmoSize = 0.05;
+	const float GizmoSizeMultiplier = 1 / GizmoSize;
 
-	// x
-	UCylinderComp* XArrow = AddComponent<UCylinderComp>();
-	XArrow->SetupAttachment(ZArrow);
-	XArrow->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, 90.0f, 0.0f), FVector(1, 1, 1)));
-	XArrow->SetCustomColor(FVector4(1.0f, 0.0f, 0.0f, 1.0f));
-	CylinderComponents.Add(XArrow);
+	UCubeComp* GizmoCenter = AddComponent<UCubeComp>();
+	SetRootComponent(GizmoCenter);
+	GizmoCenter->SetCustomColor(FVector4(0.2f, 0.2f, 0.2f, 1.f));
+	GizmoCenter->SetRelativeTransform(FTransform(FVector(0, 0, 0), FVector(0, 0, 0), FVector(GizmoSize, GizmoSize, GizmoSize)));
+
+	UCylinderComp* XArrowBody = AddComponent<UCylinderComp>();
+	UConeComp* XArrowHead = AddComponent<UConeComp>();
+	XArrowBody->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0, -90, 0), FVector(0.02f, 0.02f, 0.833333f) * GizmoSizeMultiplier));
+	XArrowHead->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 1.0f), FQuat(0, 0, 0, 1), FVector(3.f, 3.f, 0.2f)));
+	XArrowBody->SetCustomColor(FVector4(1.0f, 0.0f, 0.0f, 1.0f));
+	XArrowHead->SetCustomColor(FVector4(1.0f, 0.0f, 0.0f, 1.0f));
+	XArrowHead->AttachToComponent(XArrowBody);
+
+	UCylinderComp* YArrowBody = AddComponent<UCylinderComp>();
+	UConeComp* YArrowHead = AddComponent<UConeComp>();
+	YArrowBody->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(90, 0,0), FVector(0.02f, 0.02f, 0.833333f) * GizmoSizeMultiplier));
+	YArrowHead->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 1.0f), FQuat(0, 0, 0, 1), FVector(3.f, 3.f, 0.2f)));
+	YArrowBody->SetCustomColor(FVector4(0.0f, 1.0f, 0.0f, 1.0f));
+	YArrowHead->SetCustomColor(FVector4(0.0f, 1.0f, 0.0f, 1.0f));
+	YArrowHead->AttachToComponent(YArrowBody);
+
+	UCylinderComp* ZArrowBody = AddComponent<UCylinderComp>();
+	UConeComp* ZArrowHead = AddComponent<UConeComp>();
+	ZArrowBody->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0, 0, 0), FVector(0.02f, 0.02f, 0.833333f) * GizmoSizeMultiplier));
+	ZArrowHead->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 1.0f), FQuat(0, 0, 0, 1), FVector(3.f, 3.f, 0.2f)));
+	ZArrowBody->SetCustomColor(FVector4(0.0f, 0.0f, 1.0f, 1.0f));
+	ZArrowHead->SetCustomColor(FVector4(0.0f, 0.0f, 1.0f, 1.0f));
+	ZArrowHead->AttachToComponent(ZArrowBody);
 
 
-	// y
-	UCylinderComp* YArrow = AddComponent<UCylinderComp>();
-	YArrow->SetupAttachment(ZArrow);
-	YArrow->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(90.0f, 0.0f, 0.0f), FVector(1, 1, 1)));
-	YArrow->SetCustomColor(FVector4(0.0f, 1.0f, 0.0f, 1.0f));
-	CylinderComponents.Add(YArrow);
-	RootComponent = ZArrow;
+	XArrowBody->AttachToComponent(GizmoCenter);
+	YArrowBody->AttachToComponent(GizmoCenter);
+	ZArrowBody->AttachToComponent(GizmoCenter);
+
+	UEngine::Get().GetWorld()->AddZIgnoreComponent(XArrowBody);
+	UEngine::Get().GetWorld()->AddZIgnoreComponent(XArrowHead);
+	UEngine::Get().GetWorld()->AddZIgnoreComponent(YArrowBody);
+	UEngine::Get().GetWorld()->AddZIgnoreComponent(YArrowHead);
+	UEngine::Get().GetWorld()->AddZIgnoreComponent(ZArrowBody);
+	UEngine::Get().GetWorld()->AddZIgnoreComponent(ZArrowHead);
+	UEngine::Get().GetWorld()->AddZIgnoreComponent(GizmoCenter);
+
+
+
+	SetActive(false);
+
+	//// !NOTE : Z방향으로 서있음
+	//// z
+	//UCylinderComp* ZArrow = AddComponent<UCylinderComp>();
+	//ZArrow->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, 0.0f, 0.0f), FVector(1, 1, 1)));
+	//ZArrow->SetCustomColor(FVector4(0.0f, 0.0f, 1.0f, 1.0f));
+	//CylinderComponents.Add(ZArrow);
+
+	//// x
+	//UCylinderComp* XArrow = AddComponent<UCylinderComp>();
+	//XArrow->AttachToComponent(ZArrow);
+	//XArrow->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, 90.0f, 0.0f), FVector(1, 1, 1)));
+	//XArrow->SetCustomColor(FVector4(1.0f, 0.0f, 0.0f, 1.0f));
+	//CylinderComponents.Add(XArrow);
+
+
+	//// y
+	//UCylinderComp* YArrow = AddComponent<UCylinderComp>();
+	//YArrow->AttachToComponent(ZArrow);
+	//YArrow->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(90.0f, 0.0f, 0.0f), FVector(1, 1, 1)));
+	//YArrow->SetCustomColor(FVector4(0.0f, 1.0f, 0.0f, 1.0f));
+	//CylinderComponents.Add(YArrow);
+	//RootComponent = ZArrow;
 	
-	UEngine::Get().GetWorld()->AddZIgnoreComponent(ZArrow);
-	UEngine::Get().GetWorld()->AddZIgnoreComponent(XArrow);
-	UEngine::Get().GetWorld()->AddZIgnoreComponent(YArrow);
+	//UEngine::Get().GetWorld()->AddZIgnoreComponent(ZArrow);
+	//UEngine::Get().GetWorld()->AddZIgnoreComponent(XArrow);
+	//UEngine::Get().GetWorld()->AddZIgnoreComponent(YArrow);
 
 	SetActive(false);
 }
 
 void AGizmoHandle::Tick(float DeltaTime)
 {
+	
 	AActor* SelectedActor  = FEditorManager::Get().GetSelectedActor();
+	if (!SelectedActor || !bIsActive)
+	{
+		AActor::Tick(DeltaTime); // Gizmo update
+		return;
+	}
+
+	// 기즈모가 붙어있는 상태
+	FTransform ActorTransform = SelectedActor->GetActorTransform();
+	FTransform GizmoTransform;
+	GizmoTransform.SetPosition(ActorTransform.GetPosition());
+	if (bIsWorldFixed)
+	{
+		GizmoTransform.SetRotation(ActorTransform.GetRotation());
+	}
+	this->SetActorTransform(GizmoTransform);
+	return;
+
+
+
+
+
+	
 	if (SelectedActor != nullptr && bIsActive)
 	{
+		// Actor의 정보 받아오기
+		FTransform ActorTr = SelectedActor->GetActorTransform();
+		FTransform GizmoTr;
+		GizmoTr.SetPosition(ActorTr.GetPosition());
+		GizmoTr.SetRotation(ActorTr.GetRotation());
+
 		// Gizmo의 위치정보를 받아옵니다.
-		FTransform GizmoTr = RootComponent->GetRelativeTransform();
-		GizmoTr.SetPosition(SelectedActor->GetActorTransform().GetPosition());
+		//FTransform GizmoTr = SelectedActor->GetRootComponent()->GetRelativeTransform();
+		// Gizmo 크기는 1로 고정
+		//GizmoTr.SetScale(FVector(1, 1, 1));
+		//GizmoTr.SetPosition(SelectedActor->GetActorTransform().GetPosition());
+		// World에 고정되지 않았으면 Rotation도 가져옵니다.
+		if (bIsWorldFixed || true)
+		{
+			//GizmoTr.SetRotation(RootComponent->GetRelativeTransform().GetRotation());
+		}
 		// Actor의 Root component == 위치정보를 수정합니다.
 		SetActorTransform(GizmoTr);
 	}
 
 	SetScaleByDistance();
 	
-	AActor::Tick(DeltaTime);
 
 	if (SelectedAxis != ESelectedAxis::None)
 	{

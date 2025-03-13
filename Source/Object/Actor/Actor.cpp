@@ -115,7 +115,8 @@ bool AActor::Destroy()
 	return GetWorld()->DestroyActor(this);
 }
 
-void AActor::SetColor(FVector4 InColor)
+void AActor::
+SetColor(FVector4 InColor)
 {
 	if (RootComponent == nullptr)
 	{

@@ -8,18 +8,18 @@ AArrow::AArrow()
 	// test
 	UCylinderComp* CylinderComp = AddComponent<UCylinderComp>();
 
-	CylinderComp->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.5f), FQuat(0, 0, 0, 1), FVector(1.f, 1.f, 1.f)));
+	CylinderComp->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FQuat(0, 0, 0, 1), FVector(0.05f, 0.05f, 1.f)));
 
 	UConeComp* ConeComp = AddComponent<UConeComp>();
-	ConeComp->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 1.0f), FQuat(0, 0, 0, 1), FVector(1.f, 1.f, 1.f)));
+	ConeComp->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 1.0f), FQuat(0, 0, 0, 1), FVector(3.f, 3.f, 0.5f)));
 
 
-	UConeComp* ConeComp1 = AddComponent<UConeComp>();
-	ConeComp1->SetRelativeTransform(FTransform(FVector(0.0f,2.0f, 1.0f), FQuat(0, 0.3, 0.7, 1), FVector(1.f, 1.f, 1.f)));
+	//UConeComp* ConeComp1 = AddComponent<UConeComp>();
+	//ConeComp1->SetRelativeTransform(FTransform(FVector(0.0f,2.0f, 1.0f), FQuat(0, 0.3, 0.7, 1), FVector(1.f, 1.f, 1.f)));
 	
 	RootComponent = CylinderComp;
-	ConeComp->SetupAttachment(CylinderComp);
-	ConeComp1->SetupAttachment(ConeComp);
+	ConeComp->AttachToComponent(CylinderComp);
+	//ConeComp1->AttachToComponent(ConeComp);
 }
 
 void AArrow::BeginPlay()

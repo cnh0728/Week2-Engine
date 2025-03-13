@@ -32,6 +32,7 @@ public:
 
 private:
 	bool bIsActive = false;
+	bool bIsWorldFixed = true;
 	TArray<class UCylinderComp*> CylinderComponents;
 
 	ESelectedAxis SelectedAxis = ESelectedAxis::None;
