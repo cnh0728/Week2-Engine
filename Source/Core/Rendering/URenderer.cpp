@@ -6,6 +6,11 @@
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Static/FEditorManager.h"
 
+URenderer::~URenderer()
+{
+    Release();
+}
+
 void URenderer::Create(HWND hWindow)
 {
     CreateDeviceAndSwapChain(hWindow);
@@ -483,13 +488,33 @@ void URenderer::ReleaseDepthStencilBuffer()
 
 void URenderer::CreateRasterizerState()
 {
-    D3D11_RASTERIZER_DESC RasterizerDesc = {};
-    RasterizerDesc.FillMode = D3D11_FILL_SOLID; // 채우기 모드
-    RasterizerDesc.FillMode = D3D11_FILL_WIREFRAME; // 채우기 모드
-    RasterizerDesc.CullMode = D3D11_CULL_BACK;  // 백 페이스 컬링
-    RasterizerDesc.FrontCounterClockwise = FALSE;
+    if (RasterizerState)
+    {
+        RasterizerState->Release();
+        RasterizerState = nullptr;
+    }
 
-    Device->CreateRasterizerState(&RasterizerDesc, &RasterizerState);
+    auto prevState = StoredRasterizerState.find(CurrentViewMode);
+    if (prevState != StoredRasterizerState.end() && prevState->second != nullptr)
+    {
+        DeviceContext->RSSetState(prevState->second);
+    }
+    else
+    {
+        D3D11_RASTERIZER_DESC RasterizerDesc = {};
+        RasterizerDesc.FillMode = CurrentFillMode;
+        RasterizerDesc.CullMode = D3D11_CULL_BACK;
+        RasterizerDesc.FrontCounterClockwise = FALSE;
+
+        HRESULT hr = Device->CreateRasterizerState(&RasterizerDesc, &RasterizerState);
+        if (FAILED(hr))
+            UE_LOG("failed for create rasterizer state");
+        else
+        {
+            StoredRasterizerState[CurrentViewMode] = RasterizerState;
+            DeviceContext->RSSetState(RasterizerState);
+        }
+    }
 }
 
 void URenderer::ReleaseRasterizerState()
@@ -499,6 +524,16 @@ void URenderer::ReleaseRasterizerState()
         RasterizerState->Release();
         RasterizerState = nullptr;
     }
+
+    for (auto& state : StoredRasterizerState)
+    {
+        if (state.second)
+        {
+            state.second->Release();
+            state.second = nullptr;
+        }
+    }
+    StoredRasterizerState.clear();
 }
 
 void URenderer::CreateBufferCache()
@@ -753,4 +788,24 @@ void URenderer::RenderPickingTexture()
     SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer));
     DeviceContext->CopyResource(backBuffer, PickingFrameBuffer);
     backBuffer->Release();
+}
+
+void URenderer::SetViewMode(EViewModeIndex viewMode) {
+    CurrentViewMode = viewMode;
+
+    switch (CurrentViewMode)
+    {
+    case EViewModeIndex::VMI_Lit:
+    case EViewModeIndex::VMI_Unlit:
+        CurrentFillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
+        break;
+    case EViewModeIndex::VMI_Wireframe:
+        CurrentFillMode = D3D11_FILL_MODE::D3D11_FILL_WIREFRAME;
+        break;
+    }
+    CreateRasterizerState();
+}
+
+EViewModeIndex URenderer::GetCurrentViewMode() const {
+    return CurrentViewMode;
 }
