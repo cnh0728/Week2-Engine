@@ -19,6 +19,13 @@ struct FVector4;
 
 class ACamera;
 
+enum class EViewModeIndex : uint32
+{
+    VMI_Lit,
+    VMI_Unlit,
+    VMI_Wireframe,
+};
+
 class URenderer
 {
 private:
@@ -109,6 +116,10 @@ public:
 
 	void OnUpdateWindowSize(int Width, int Height);
 
+    void SetViewMode(EViewModeIndex viewMode);
+
+    EViewModeIndex GetCurrentViewMode() const;
+
 protected:
     /** Direct3D Device 및 SwapChain을 생성합니다. */
     void CreateDeviceAndSwapChain(HWND hWindow);
@@ -178,7 +189,7 @@ protected:
 	FMatrix ProjectionMatrix;
 
 	D3D_PRIMITIVE_TOPOLOGY CurrentTopology = D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED;
-
+    EViewModeIndex CurrentViewMode = EViewModeIndex::VMI_Lit;
 	
 #pragma region picking
 protected:

@@ -753,3 +753,13 @@ void URenderer::RenderPickingTexture()
     DeviceContext->CopyResource(backBuffer, PickingFrameBuffer);
     backBuffer->Release();
 }
+
+void URenderer::SetViewMode(EViewModeIndex viewMode) {
+    CurrentViewMode = viewMode;
+
+    // todo : view mode에 따른 렌더링 처리
+}
+
+EViewModeIndex URenderer::GetCurrentViewMode() const {
+    return CurrentViewMode;
+}
