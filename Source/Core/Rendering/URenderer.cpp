@@ -381,17 +381,17 @@ void URenderer::CreateFrameBuffer()
 void URenderer::CreateDepthStencilBuffer()
 {
     D3D11_TEXTURE2D_DESC DepthBufferDesc = {};
-    DepthBufferDesc.Width = static_cast<UINT>(ViewportInfo.Width);
-    DepthBufferDesc.Height = static_cast<UINT>(ViewportInfo.Height);
-    DepthBufferDesc.MipLevels = 1;
-    DepthBufferDesc.ArraySize = 1;
-	DepthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;            // 32비트 중 24비트는 깊이, 8비트는 스텐실
-    DepthBufferDesc.SampleDesc.Count = 1;
-    DepthBufferDesc.SampleDesc.Quality = 0;
-    DepthBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	DepthBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;              // 텍스쳐 바인딩 플래그를 DepthStencil로 설정
-    DepthBufferDesc.CPUAccessFlags = 0;
-    DepthBufferDesc.MiscFlags = 0;
+    DepthBufferDesc.Width = static_cast<UINT>(ViewportInfo.Width); 
+    DepthBufferDesc.Height = static_cast<UINT>(ViewportInfo.Height); 
+	DepthBufferDesc.MipLevels = 1; 								     // 미리 계산된 텍스쳐 레벨의 수
+	DepthBufferDesc.ArraySize = 1; 								     // 텍스쳐 배열의 크기
+	DepthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;          // 32비트 중 24비트는 깊이, 8비트는 스텐실
+	DepthBufferDesc.SampleDesc.Count = 1; 						     // 멀티 샘플링을 사용하지 않음
+	DepthBufferDesc.SampleDesc.Quality = 0; 				         // 멀티 샘플링을 사용하지 않음
+	DepthBufferDesc.Usage = D3D11_USAGE_DEFAULT; 					 // GPU에서 읽기/쓰기 가능
+	DepthBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;            // 텍스쳐 바인딩 플래그를 DepthStencil로 설정
+	DepthBufferDesc.CPUAccessFlags = 0; 							 // CPU에서 접근하지 않음
+	DepthBufferDesc.MiscFlags = 0; 								     // 기타 플래그
 
     HRESULT result = Device->CreateTexture2D(&DepthBufferDesc, nullptr, &DepthStencilBuffer);
 
@@ -616,8 +616,8 @@ void URenderer::UpdateConstantDepth(int Depth) const
 void URenderer::PrepareMain()
 {
 	DeviceContext->OMSetDepthStencilState(DepthStencilState, 0);                // DepthStencil 상태 설정. StencilRef: 스텐실 테스트 결과의 레퍼런스
-    DeviceContext->OMSetRenderTargets(1, &FrameBufferRTV, DepthStencilView);
-    DeviceContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
+	DeviceContext->OMSetRenderTargets(1, &FrameBufferRTV, DepthStencilView);	// 렌더 타겟 뷰와 깊이-스텐실 뷰를 출력 렌더링 파이프라인에 바인딩
+	DeviceContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);               // 블렌딩 상태 설정
 }
 
 void URenderer::PrepareMainShader()
