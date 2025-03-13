@@ -44,7 +44,7 @@ private:
 	
     struct ConstantUpdateInfo
     {
-        const FTransform& Transform;
+        const FMatrix& TransformMatrix;
 		const FVector4& Color;
         bool bUseVertexColor;
     };

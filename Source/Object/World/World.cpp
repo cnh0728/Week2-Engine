@@ -151,6 +151,8 @@ void UWorld::ClearWorld()
 	}
 
 	UE_LOG("Clear World");
+
+	SpawnActor<AArrow>();
 }
 
 

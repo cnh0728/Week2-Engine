@@ -5,7 +5,7 @@
 #include "Core/Math/Transform.h"
 #include "Core/Container/Set.h"
 #include "Object/ObjectFactory.h"
-#include "Object/USceneComponent.h"
+#include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 
 class UWorld;
 
