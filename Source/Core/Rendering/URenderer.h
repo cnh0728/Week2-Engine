@@ -112,6 +112,8 @@ public:
 
 	void OnUpdateWindowSize(int Width, int Height);
 
+	BufferInfo GetBufferInfo(EPrimitiveType InPrimitiveType) const {return BufferCache->GetBufferInfo(InPrimitiveType);}
+	
 protected:
     /** Direct3D Device 및 SwapChain을 생성합니다. */
     void CreateDeviceAndSwapChain(HWND hWindow);

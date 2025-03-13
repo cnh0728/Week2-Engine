@@ -6,6 +6,7 @@ struct FVector
 {
     float X, Y, Z;
     FVector() : X(0), Y(0), Z(0) {}
+    FVector(float Val) : X(Val), Y(Val), Z(Val) {}
     FVector(float X, float Y, float Z) : X(X), Y(Y), Z(Z) {}
 
     static const FVector ZeroVector;
@@ -205,8 +206,15 @@ struct alignas(16) FVector4 : public FVector
         : FVector(0, 0, 0), W(0)
     {
     }
+
+    FVector4(FVector Vec, float W): FVector(Vec), W(W)
+    {
+    }
     FVector4(float InX, float InY, float InZ, float InW)
         : FVector(InX, InY, InZ), W(InW)
     {
     }
+
+    FVector4 operator*(struct FMatrix Mat);
+    FVector4 operator/(float Scalar);
 };
