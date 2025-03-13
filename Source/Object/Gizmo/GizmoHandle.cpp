@@ -45,8 +45,11 @@ void AGizmoHandle::Tick(float DeltaTime)
 	if (SelectedActor != nullptr && bIsActive)
 	{
 		// Gizmo의 위치정보를 받아옵니다.
-		FTransform GizmoTr = RootComponent->GetRelativeTransform();
-		GizmoTr.SetPosition(SelectedActor->GetActorTransform().GetPosition());
+		FTransform GizmoTr = SelectedActor->GetRootComponent()->GetRelativeTransform();
+		//FTransform GizmoTr;
+		//GizmoTr.SetPosition(SelectedActor->GetActorTransform().GetPosition());
+		//GizmoTr.SetRotation(SelectedActor->GetActorTransform().GetRotation());
+		GizmoTr.SetScale(FVector(1,1,1));
 		// Actor의 Root component == 위치정보를 수정합니다.
 		SetActorTransform(GizmoTr);
 	}
