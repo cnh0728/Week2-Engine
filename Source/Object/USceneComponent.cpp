@@ -18,6 +18,11 @@ FMatrix USceneComponent::GetRelativeTransformMatrix() const
 }
 
 // 내 월드 트랜스폼 반환
+// !!!!  사용금지 !!!!
+// world transform이 필요하면 GetComponentTransformMatrix 를 이용하세요
+// @TODO: iteration으로 중간에 FMatrix -> FTransform 없이 한번에 가져와야함
+// Matrix계산으로 recursive하게 계산하고, 마지막에만 FTransform으로 해야함
+// 따라서 Internal (helper) 함수 필요.
 const FTransform USceneComponent::GetComponentTransform()
 {
 	if (Parent)
@@ -69,7 +74,6 @@ void USceneComponent::SetupAttachment(USceneComponent* InParent, bool bUpdateChi
 	{
 		Parent = InParent;
 		InParent->Children.Add(this);
-		//ApplyParentWorldTransform(InParent->GetComponentTransform());
 	}
 	else
 	{
