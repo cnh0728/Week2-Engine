@@ -19,9 +19,11 @@ public:
 
 
 	/* 로컬 트랜스폼을 반환*/
-	FTransform GetComponentTransform() const { return RelativeTransform; }
+	FTransform GetRelativeTransform() const { return RelativeTransform; }
+	FMatrix GetRelativeTransformMatrix() const;
 	/* 월드 트랜스폼을 반환, 이걸로 렌더링한다*/
-	const FTransform GetWorldTransform();
+	const FTransform GetComponentTransform(); // !!! 사용금지 !!!
+	const FMatrix GetComponentTransformMatrix();
 
 	void SetRelativeTransform(const FTransform& InTransform);
 
@@ -31,10 +33,9 @@ public:
 
 public:
 	void SetupAttachment(USceneComponent* InParent, bool bUpdateChildTransform = false);
-	// 부모의 월드 트랜스폼을 받아서 자신의 로컬 트랜스폼을 갱신
-	void ApplyParentWorldTransform(const FTransform& InTransform);
 
-protected:
+//protected:
+// 추후 Getter Setter 추가 예정
 	USceneComponent* Parent = nullptr;
 	TSet<USceneComponent*> Children;
 	// 이건 내 로컬 트랜스폼

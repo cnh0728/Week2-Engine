@@ -44,7 +44,10 @@ private:
 	
     struct ConstantUpdateInfo
     {
-        const FTransform& Transform;
+        // transformation에 관련된 정보는 FTransform이 아니라 FMatrix으로 넘깁니다
+        // FTransform은 RelativeLocation, RelativeRotation, RelativeScale3D의 컨테이너로 취급해야합니다.
+        // FMatrix -> FTransform의 변경은 유효한지 확인되지 않았습니다.
+        const FMatrix& TransformMatrix; 
 		const FVector4& Color;
         bool bUseVertexColor;
     };

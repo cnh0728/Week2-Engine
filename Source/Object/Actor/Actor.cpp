@@ -84,11 +84,14 @@ void AActor::UnPick()
 	}	
 }
 
+// actor의 root component는 actor의 (아직은) 월드상 좌표입니다.
+// @TODO : actor가 parent를 갖게되면 actor의 parent의 transform을 따라가야합니다.
 FTransform AActor::GetActorTransform() const
 {
-	return RootComponent != nullptr ? RootComponent->GetComponentTransform() : FTransform();
+	return RootComponent != nullptr ? RootComponent->GetRelativeTransform() : FTransform();
 }
 
+// actor의 root component는 actor의 (아직은) 월드상 좌표입니다.
 void AActor::SetActorTransform(const FTransform& InTransform)
 {
 	// InTransform은 월드 기준임

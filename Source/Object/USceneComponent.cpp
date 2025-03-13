@@ -12,13 +12,23 @@ void USceneComponent::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+FMatrix USceneComponent::GetRelativeTransformMatrix() const
+{
+	return this->RelativeTransform.GetMatrix();
+}
+
 // 내 월드 트랜스폼 반환
-const FTransform USceneComponent::GetWorldTransform()
+// !!!!  사용금지 !!!!
+// world transform이 필요하면 GetComponentTransformMatrix 를 이용하세요
+// @TODO: iteration으로 중간에 FMatrix -> FTransform 없이 한번에 가져와야함
+// Matrix계산으로 recursive하게 계산하고, 마지막에만 FTransform으로 해야함
+// 따라서 Internal (helper) 함수 필요.
+const FTransform USceneComponent::GetComponentTransform()
 {
 	if (Parent)
 	{
 		// 부모가 있을 경우 부모 월드 * 내 로컬
-		FMatrix ParentWorld = Parent->GetWorldTransform().GetMatrix();
+		FMatrix ParentWorld = Parent->GetComponentTransform().GetMatrix();
 		FMatrix MyLocal = RelativeTransform.GetMatrix();
 
 		FMatrix NewMatrix = MyLocal * ParentWorld;
@@ -28,12 +38,25 @@ const FTransform USceneComponent::GetWorldTransform()
 	return RelativeTransform;
 }
 
+const FMatrix USceneComponent::GetComponentTransformMatrix()
+{
+	if (Parent)
+	{
+		// 부모가 있을 경우 부모 월드 * 내 로컬
+		FMatrix ParentWorld = Parent->GetComponentTransformMatrix();
+		FMatrix MyLocal = RelativeTransform.GetMatrix();
+
+		FMatrix NewMatrix = MyLocal * ParentWorld;
+		return NewMatrix;
+	}
+
+	return GetRelativeTransformMatrix();
+}
+
 void USceneComponent::SetRelativeTransform(const FTransform& InTransform)
 {
 	// 내 로컬 트랜스폼 갱신
 	RelativeTransform = InTransform;
-	FVector Rot = RelativeTransform.GetRotation().GetEuler();
-
 }
 
 void USceneComponent::Pick(bool bPicked)
@@ -51,21 +74,9 @@ void USceneComponent::SetupAttachment(USceneComponent* InParent, bool bUpdateChi
 	{
 		Parent = InParent;
 		InParent->Children.Add(this);
-		ApplyParentWorldTransform(InParent->GetWorldTransform());
 	}
 	else
 	{
 		UE_LOG("Parent is nullptr");
 	}
-}
-
-void USceneComponent::ApplyParentWorldTransform(const FTransform& ParentWorldTransform)
-{
-	FMatrix ParentWorld = ParentWorldTransform.GetMatrix();
-	FMatrix MyLocal = RelativeTransform.GetMatrix();
-
-	FMatrix NewMatrix = MyLocal * ParentWorld.Inverse();
-
-	// 내 로컬 트랜스폼 갱신
-	SetRelativeTransform(NewMatrix.GetTransform());
 }
