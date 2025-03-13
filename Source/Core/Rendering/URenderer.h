@@ -57,6 +57,8 @@ private:
     };
 
 public:
+    ~URenderer();
+
     /** Renderer를 초기화 합니다. */
     void Create(HWND hWindow);
 
@@ -162,6 +164,7 @@ protected:
     ID3D11Texture2D* FrameBuffer = nullptr;                 // 화면 출력용 텍스처
     ID3D11RenderTargetView* FrameBufferRTV = nullptr;       // 텍스처를 렌더 타겟으로 사용하는 뷰
     ID3D11RasterizerState* RasterizerState = nullptr;       // 래스터라이저 상태(컬링, 채우기 모드 등 정의)
+    std::unordered_map<EViewModeIndex, ID3D11RasterizerState*> StoredRasterizerState;
     ID3D11Buffer* ConstantBuffer = nullptr;                 // 쉐이더에 데이터를 전달하기 위한 상수 버퍼
 
     FLOAT ClearColor[4] = { 0.025f, 0.025f, 0.025f, 1.0f }; // 화면을 초기화(clear)할 때 사용할 색상 (RGBA)
@@ -190,6 +193,7 @@ protected:
 
 	D3D_PRIMITIVE_TOPOLOGY CurrentTopology = D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED;
     EViewModeIndex CurrentViewMode = EViewModeIndex::VMI_Lit;
+    D3D11_FILL_MODE CurrentFillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
 	
 #pragma region picking
 protected:
