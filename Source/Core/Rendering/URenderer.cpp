@@ -484,7 +484,7 @@ void URenderer::ReleaseDepthStencilBuffer()
 void URenderer::CreateRasterizerState()
 {
     D3D11_RASTERIZER_DESC RasterizerDesc = {};
-    RasterizerDesc.FillMode = D3D11_FILL_SOLID; // 채우기 모드
+    // RasterizerDesc.FillMode = D3D11_FILL_SOLID; // 채우기 모드
     RasterizerDesc.FillMode = D3D11_FILL_WIREFRAME; // 채우기 모드
     RasterizerDesc.CullMode = D3D11_CULL_BACK;  // 백 페이스 컬링
     RasterizerDesc.FrontCounterClockwise = FALSE;
@@ -562,7 +562,7 @@ void URenderer::PrepareZIgnore()
 void URenderer::PreparePicking()
 {
     // 렌더 타겟 바인딩
-    DeviceContext->OMSetRenderTargets(1, &PickingFrameBufferRTV, DepthStencilView);
+    DeviceContext->OMSetRenderTargets(1, &PickingFrameBufferRTV, nullptr);
     DeviceContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
     DeviceContext->OMSetDepthStencilState(DepthStencilState, 0);                // DepthStencil 상태 설정. StencilRef: 스텐실 테스트 결과의 레퍼런스
 
