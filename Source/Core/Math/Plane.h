@@ -3,16 +3,14 @@
 
 #define PIDIV2 3.141592654/2
 
-struct alignas(16) FQuat : public FVector4{
-    using FVector::X;
-    using FVector::Y;
-    using FVector::Z;
-    using FVector4::W;
+struct alignas(16) FQuat{
+    float X, Y, Z, W;
 
-    FQuat() : FVector4(0.0f, 0.0f, 0.0f, 1.0f) {}
-	explicit FQuat(float InX, float InY, float InZ, float InW) : FVector4(InX, InY, InZ, InW) {}
-    explicit FQuat(FVector Rotation) : FVector4(EulerToQuaternion(Rotation)) {}
-    FQuat(const FVector& Axis, float AngleInDegrees) : FVector4(AxisAngleToQuaternion(Axis, AngleInDegrees)) {}
+    FQuat() : X(0), Y(0), Z(0), W(0) {}
+    FQuat(const FQuat& other) : X(other.X), Y(other.Y), Z(other.Z), W(other.W) {}
+    explicit FQuat(float InX, float InY, float InZ, float InW) : X(InX), Y(InY), Z(InZ), W(InW) {}
+    explicit FQuat(FVector Rotation) : FQuat(EulerToQuaternion(Rotation)) {}
+    FQuat(const FVector& Axis, float AngleInDegrees) : FQuat(AxisAngleToQuaternion(Axis, AngleInDegrees)) {}
 
 
     static FQuat EulerToQuaternion(FVector Euler);

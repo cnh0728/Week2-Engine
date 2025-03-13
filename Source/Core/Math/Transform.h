@@ -41,22 +41,26 @@ public:
 		return FMatrix::LookAtLH(Position, Position + GetForward(), GetUp());
 	}
 	
-	inline virtual void SetPosition(const FVector& InPosition)
+	inline void SetPosition(const FVector& InPosition)
 	{
 		Position = InPosition;
 	}
-	inline virtual void SetPosition(float x, float y, float z)
+	inline void SetPosition(float x, float y, float z)
 	{
 		Position = {x, y, z};
 	}
-	inline virtual void SetRotation(const FVector& InRotation)
+	inline void SetRotation(const FQuat& InQuat)
 	{
-		Rotation = FQuat::EulerToQuaternion(InRotation);
+		Rotation = InQuat;
 	}
-	inline virtual void SetRotation(float x, float y, float z)
-	{
-		SetRotation(FVector(x, y, z));
-	}
+	//inline virtual void SetRotation(const FVector& InRotation)
+	//{
+	//	Rotation = FQuat::EulerToQuaternion(InRotation);
+	//}
+	//inline virtual void SetRotation(float x, float y, float z)
+	//{
+	//	SetRotation(FVector(x, y, z));
+	//}
 	inline void SetScale(FVector InScale)
 	{
 		Scale = InScale;

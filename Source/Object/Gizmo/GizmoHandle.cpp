@@ -106,8 +106,8 @@ void AGizmoHandle::Tick(float DeltaTime)
 	{
 		GizmoTransform.SetRotation(ActorTransform.GetRotation());
 	}
-	this->SetActorTransform(GizmoTransform);
-	return;
+	//this->SetActorTransform(GizmoTransform);
+	//return;
 
 
 
@@ -121,19 +121,20 @@ void AGizmoHandle::Tick(float DeltaTime)
 		FTransform GizmoTr;
 		GizmoTr.SetPosition(ActorTr.GetPosition());
 		GizmoTr.SetRotation(ActorTr.GetRotation());
-
+		GizmoTr.SetScale(this->GetRootComponent()->GetRelativeTransform().GetScale());
+		SetActorTransform(GizmoTr);
 		// Gizmo의 위치정보를 받아옵니다.
 		//FTransform GizmoTr = SelectedActor->GetRootComponent()->GetRelativeTransform();
 		// Gizmo 크기는 1로 고정
 		//GizmoTr.SetScale(FVector(1, 1, 1));
 		//GizmoTr.SetPosition(SelectedActor->GetActorTransform().GetPosition());
 		// World에 고정되지 않았으면 Rotation도 가져옵니다.
-		if (bIsWorldFixed || true)
-		{
+		//if (bIsWorldFixed || true)
+		//{
 			//GizmoTr.SetRotation(RootComponent->GetRelativeTransform().GetRotation());
-		}
+		//}
 		// Actor의 Root component == 위치정보를 수정합니다.
-		SetActorTransform(GizmoTr);
+		//SetActorTransform(GizmoTr);
 	}
 
 	SetScaleByDistance();
@@ -164,24 +165,28 @@ void AGizmoHandle::Tick(float DeltaTime)
 			// View 공간으로 변환
 			FMatrix InvProjMat = UEngine::Get().GetRenderer()->GetProjectionMatrix().Inverse();
 			RayOrigin = InvProjMat.TransformVector4(RayOrigin);
-			RayOrigin.W = 1;
 			RayEnd = InvProjMat.TransformVector4(RayEnd);
-			RayEnd *= 1000.0f;  // 프러스텀의 Far 값이 적용이 안돼서 수동으로 곱함
-			RayEnd.W = 1;
+			//RayOrigin.W = 1;
+			//RayEnd *= 1000.0f;  // 프러스텀의 Far 값이 적용이 안돼서 수동으로 곱함
+			//RayEnd.W = 1;
 			
 			// 마우스 포인터의 월드 위치와 방향
 			FMatrix InvViewMat = FEditorManager::Get().GetCamera()->GetViewMatrix().Inverse();
 			RayOrigin = InvViewMat.TransformVector4(RayOrigin);
-			RayOrigin /= RayOrigin.W = 1;
 			RayEnd = InvViewMat.TransformVector4(RayEnd);
-			RayEnd /= RayEnd.W = 1;
-			FVector RayDir = (RayEnd - RayOrigin).GetSafeNormal();
+			//RayOrigin /= RayOrigin.W = 1;
+			//RayEnd /= RayEnd.W = 1;
+			
+			FVector RayOriginWorld = FVector(RayOrigin.X / RayOrigin.W, RayOrigin.Y / RayOrigin.W, RayOrigin.Z / RayOrigin.W);
+			FVector RayEndWorld = FVector(RayEnd.X / RayEnd.W, RayEnd.Y / RayEnd.W, RayEnd.Z / RayEnd.W);
+
+			FVector RayDir = (RayEndWorld - RayOriginWorld).GetSafeNormal();
 	
 			// 액터와의 거리
-			float Distance = FVector::Distance(RayOrigin, Actor->GetActorTransform().GetPosition());
+			float Distance = FVector::Distance(RayOriginWorld, Actor->GetActorTransform().GetPosition());
 			
 			// Ray 방향으로 Distance만큼 재계산
-			FVector Result = RayOrigin + RayDir * Distance;
+			FVector Result = RayOriginWorld + RayDir * Distance;
 	
 			FTransform AT = Actor->GetActorTransform();
 

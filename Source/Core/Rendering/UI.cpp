@@ -292,7 +292,9 @@ void UI::RenderCameraSettings()
         //Transform.Rotate(DeltaEulerAngle);
         
         UIEulerAngle.Y = FMath::Clamp(UIEulerAngle.Y, -Camera->MaxYDegree, Camera->MaxYDegree);
-        Transform.SetRotation(UIEulerAngle);
+        FQuat TargetQuat = FQuat::EulerToQuaternion(UIEulerAngle);
+
+        Transform.SetRotation(TargetQuat);
         Camera->SetActorTransform(Transform);
     }
     ImGui::DragFloat("Camera Speed", &Camera->CameraSpeed, 0.1f);

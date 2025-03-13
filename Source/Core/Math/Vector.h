@@ -194,19 +194,16 @@ inline bool FVector::operator!=(const FVector& Other) const
     return X != Other.X || Y != Other.Y || Z != Other.Z;
 }
 
-struct alignas(16) FVector4 : public FVector
+struct alignas(16) FVector4
 {
-    using FVector::X;
-    using FVector::Y;
-    using FVector::Z;
+    float X, Y, Z, W;
 
-    float W;
     FVector4()
-        : FVector(0, 0, 0), W(0)
+        : X(0), Y(0), Z(0), W(0)
     {
     }
     FVector4(float InX, float InY, float InZ, float InW)
-        : FVector(InX, InY, InZ), W(InW)
+        : X(InX), Y(InY), Z(InZ), W(InW)
     {
     }
 };

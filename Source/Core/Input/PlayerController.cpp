@@ -37,7 +37,8 @@ void APlayerController::HandleCameraMovement(float DeltaTime) {
     TargetRotation.Z += Camera->CameraSpeed * DeltaPos.X * DeltaTime;
     
     TargetRotation.Y = FMath::Clamp(TargetRotation.Y, -Camera->MaxYDegree, Camera->MaxYDegree);
-    CameraTransform.SetRotation(TargetRotation);
+    FQuat TargetQuat = FQuat::EulerToQuaternion(TargetRotation);
+    CameraTransform.SetRotation(TargetQuat);
 
     
     //CameraTransform.Rotate({0, Camera->CameraSpeed * DeltaPos.Y * DeltaTime, Camera->CameraSpeed * DeltaPos.X * DeltaTime});
