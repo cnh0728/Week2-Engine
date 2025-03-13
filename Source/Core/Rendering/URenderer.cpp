@@ -494,27 +494,17 @@ void URenderer::CreateRasterizerState()
         RasterizerState = nullptr;
     }
 
-    auto prevState = StoredRasterizerState.find(CurrentViewMode);
-    if (prevState != StoredRasterizerState.end() && prevState->second != nullptr)
-    {
-        DeviceContext->RSSetState(prevState->second);
-    }
-    else
-    {
-        D3D11_RASTERIZER_DESC RasterizerDesc = {};
-        RasterizerDesc.FillMode = CurrentFillMode;
-        RasterizerDesc.CullMode = D3D11_CULL_BACK;
-        RasterizerDesc.FrontCounterClockwise = FALSE;
+    D3D11_RASTERIZER_DESC RasterizerDesc = {};
+    RasterizerDesc.FillMode = CurrentFillMode;
+    RasterizerDesc.CullMode = D3D11_CULL_BACK;
+    RasterizerDesc.FrontCounterClockwise = FALSE;
 
-        HRESULT hr = Device->CreateRasterizerState(&RasterizerDesc, &RasterizerState);
-        if (FAILED(hr))
-            UE_LOG("failed for create rasterizer state");
-        else
-        {
-            StoredRasterizerState[CurrentViewMode] = RasterizerState;
-            DeviceContext->RSSetState(RasterizerState);
-        }
-    }
+    HRESULT hr = Device->CreateRasterizerState(&RasterizerDesc, &RasterizerState);
+    if (FAILED(hr))
+        UE_LOG("failed for create rasterizer state");
+    else
+        DeviceContext->RSSetState(RasterizerState);
+        
 }
 
 void URenderer::ReleaseRasterizerState()
@@ -524,16 +514,6 @@ void URenderer::ReleaseRasterizerState()
         RasterizerState->Release();
         RasterizerState = nullptr;
     }
-
-    for (auto& state : StoredRasterizerState)
-    {
-        if (state.second)
-        {
-            state.second->Release();
-            state.second = nullptr;
-        }
-    }
-    StoredRasterizerState.clear();
 }
 
 void URenderer::CreateBufferCache()
