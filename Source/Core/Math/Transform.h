@@ -125,6 +125,10 @@ public:
 	{
 		Position += InTranslation;
 	}
+	void Rotate(const FQuat& InQuat)
+	{
+		Rotation = InQuat;
+	}
 
 	// InRotate는 Degree 단위
 	void Rotate(const FVector& InRotation)

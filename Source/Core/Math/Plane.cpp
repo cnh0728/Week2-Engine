@@ -1,5 +1,6 @@
 ﻿#include "Plane.h"
 #include "Core/Math/Matrix.h"
+#include "Vector.h"
 
 FQuat FQuat::AxisAngleToQuaternion(const FVector& Axis, float AngleInDegrees) {
     float AngleInRadians = FMath::DegreesToRadians(AngleInDegrees);
@@ -86,48 +87,48 @@ FQuat FQuat::SubtractQuaternions(const FQuat& q1, const FQuat& q2) {
         q1.W - q2.W
     );
 }
-
-FQuat FQuat::MakeFromRotationMatrix(const FMatrix& M)
-{
-    FQuat Q;
-
-    float trace = M.M[0][0] + M.M[1][1] + M.M[2][2]; // 행렬의 Trace 값 (대각합)
-
-    if (trace > 0.0f)
-    {
-        float S = sqrtf(trace + 1.0f) * 2.0f; // S는 4배의 W
-        Q.W = 0.25f * S;
-        Q.X = (M.M[2][1] - M.M[1][2]) / S;
-        Q.Y = (M.M[0][2] - M.M[2][0]) / S;
-        Q.Z = (M.M[1][0] - M.M[0][1]) / S;
-    }
-    else
-    {
-        if (M.M[0][0] > M.M[1][1] && M.M[0][0] > M.M[2][2])
-        {
-            float S = sqrtf(1.0f + M.M[0][0] - M.M[1][1] - M.M[2][2]) * 2.0f;
-            Q.W = (M.M[2][1] - M.M[1][2]) / S;
-            Q.X = 0.25f * S;
-            Q.Y = (M.M[0][1] + M.M[1][0]) / S;
-            Q.Z = (M.M[0][2] + M.M[2][0]) / S;
-        }
-        else if (M.M[1][1] > M.M[2][2])
-        {
-            float S = sqrtf(1.0f + M.M[1][1] - M.M[0][0] - M.M[2][2]) * 2.0f;
-            Q.W = (M.M[0][2] - M.M[2][0]) / S;
-            Q.X = (M.M[0][1] + M.M[1][0]) / S;
-            Q.Y = 0.25f * S;
-            Q.Z = (M.M[1][2] + M.M[2][1]) / S;
-        }
-        else
-        {
-            float S = sqrtf(1.0f + M.M[2][2] - M.M[0][0] - M.M[1][1]) * 2.0f;
-            Q.W = (M.M[1][0] - M.M[0][1]) / S;
-            Q.X = (M.M[0][2] + M.M[2][0]) / S;
-            Q.Y = (M.M[1][2] + M.M[2][1]) / S;
-            Q.Z = 0.25f * S;
-        }
-    }
-
-    return Q;
-}
+//
+//FQuat FQuat::MakeFromRotationMatrix(const FMatrix& M)
+//{
+//    FQuat Q;
+//
+//    float trace = M.M[0][0] + M.M[1][1] + M.M[2][2]; // 행렬의 Trace 값 (대각합)
+//
+//    if (trace > 0.0f)
+//    {
+//        float S = sqrtf(trace + 1.0f) * 2.0f; // S는 4배의 W
+//        Q.W = 0.25f * S;
+//        Q.X = (M.M[2][1] - M.M[1][2]) / S;
+//        Q.Y = (M.M[0][2] - M.M[2][0]) / S;
+//        Q.Z = (M.M[1][0] - M.M[0][1]) / S;
+//    }
+//    else
+//    {
+//        if (M.M[0][0] > M.M[1][1] && M.M[0][0] > M.M[2][2])
+//        {
+//            float S = sqrtf(1.0f + M.M[0][0] - M.M[1][1] - M.M[2][2]) * 2.0f;
+//            Q.W = (M.M[2][1] - M.M[1][2]) / S;
+//            Q.X = 0.25f * S;
+//            Q.Y = (M.M[0][1] + M.M[1][0]) / S;
+//            Q.Z = (M.M[0][2] + M.M[2][0]) / S;
+//        }
+//        else if (M.M[1][1] > M.M[2][2])
+//        {
+//            float S = sqrtf(1.0f + M.M[1][1] - M.M[0][0] - M.M[2][2]) * 2.0f;
+//            Q.W = (M.M[0][2] - M.M[2][0]) / S;
+//            Q.X = (M.M[0][1] + M.M[1][0]) / S;
+//            Q.Y = 0.25f * S;
+//            Q.Z = (M.M[1][2] + M.M[2][1]) / S;
+//        }
+//        else
+//        {
+//            float S = sqrtf(1.0f + M.M[2][2] - M.M[0][0] - M.M[1][1]) * 2.0f;
+//            Q.W = (M.M[1][0] - M.M[0][1]) / S;
+//            Q.X = (M.M[0][2] + M.M[2][0]) / S;
+//            Q.Y = (M.M[1][2] + M.M[2][1]) / S;
+//            Q.Z = 0.25f * S;
+//        }
+//    }
+//
+//    return Q;
+//}

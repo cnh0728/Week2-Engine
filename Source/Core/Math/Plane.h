@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "Vector.h"
 
+struct FMatrix;
+
 #define PIDIV2 3.141592654/2
 
 struct alignas(16) FQuat{
@@ -21,6 +23,6 @@ struct alignas(16) FQuat{
     static FQuat MultiplyQuaternions(const FQuat& q1, const FQuat& q2);
     static FQuat SubtractQuaternions(const FQuat& q1, const FQuat& q2);
 
-    static FQuat MakeFromRotationMatrix(const struct FMatrix& M);
+    //static FQuat MakeFromRotationMatrix(const FMatrix& M);
     FVector GetEuler() const { return QuaternionToEuler(*this); }
 };

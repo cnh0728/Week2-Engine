@@ -98,51 +98,27 @@ void AGizmoHandle::Tick(float DeltaTime)
 		return;
 	}
 
-	// 기즈모가 붙어있는 상태
-	FTransform ActorTransform = SelectedActor->GetActorTransform();
-	FTransform GizmoTransform;
-	GizmoTransform.SetPosition(ActorTransform.GetPosition());
-	if (bIsWorldFixed)
-	{
-		GizmoTransform.SetRotation(ActorTransform.GetRotation());
-	}
-	//this->SetActorTransform(GizmoTransform);
-	//return;
-
-
-
-
-
-	
 	if (SelectedActor != nullptr && bIsActive)
 	{
 		// Actor의 정보 받아오기
 		FTransform ActorTr = SelectedActor->GetActorTransform();
 		FTransform GizmoTr;
 		GizmoTr.SetPosition(ActorTr.GetPosition());
-		GizmoTr.SetRotation(ActorTr.GetRotation());
+		if (!bIsWorldFixed)
+		{
+			GizmoTr.SetRotation(ActorTr.GetRotation());
+
+		}
 		GizmoTr.SetScale(this->GetRootComponent()->GetRelativeTransform().GetScale());
 		SetActorTransform(GizmoTr);
-		// Gizmo의 위치정보를 받아옵니다.
-		//FTransform GizmoTr = SelectedActor->GetRootComponent()->GetRelativeTransform();
-		// Gizmo 크기는 1로 고정
-		//GizmoTr.SetScale(FVector(1, 1, 1));
-		//GizmoTr.SetPosition(SelectedActor->GetActorTransform().GetPosition());
-		// World에 고정되지 않았으면 Rotation도 가져옵니다.
-		//if (bIsWorldFixed || true)
-		//{
-			//GizmoTr.SetRotation(RootComponent->GetRelativeTransform().GetRotation());
-		//}
-		// Actor의 Root component == 위치정보를 수정합니다.
-		//SetActorTransform(GizmoTr);
 	}
 
-	SetScaleByDistance();
+	//SetScaleByDistance();
 	
 
 	if (SelectedAxis != ESelectedAxis::None)
 	{
-		if (AActor* Actor = FEditorManager::Get().GetSelectedActor())
+		if (AActor* SelectedActor = FEditorManager::Get().GetSelectedActor())
 		{
 			// 마우스의 커서 위치를 가져오기
 			POINT pt;
@@ -164,33 +140,36 @@ void AGizmoHandle::Tick(float DeltaTime)
 			
 			// View 공간으로 변환
 			FMatrix InvProjMat = UEngine::Get().GetRenderer()->GetProjectionMatrix().Inverse();
-			RayOrigin = InvProjMat.TransformVector4(RayOrigin);
-			RayEnd = InvProjMat.TransformVector4(RayEnd);
+			RayOrigin = RayOrigin * InvProjMat;
+			RayEnd = RayEnd * InvProjMat;
+			//RayOrigin = InvProjMat.TransformVector4(RayOrigin);
+			//RayEnd = InvProjMat.TransformVector4(RayEnd);
 			//RayOrigin.W = 1;
 			//RayEnd *= 1000.0f;  // 프러스텀의 Far 값이 적용이 안돼서 수동으로 곱함
 			//RayEnd.W = 1;
 			
 			// 마우스 포인터의 월드 위치와 방향
 			FMatrix InvViewMat = FEditorManager::Get().GetCamera()->GetViewMatrix().Inverse();
-			RayOrigin = InvViewMat.TransformVector4(RayOrigin);
-			RayEnd = InvViewMat.TransformVector4(RayEnd);
+			RayOrigin = RayOrigin * InvViewMat;
+			RayEnd = RayEnd * InvViewMat;
+			//RayOrigin = InvViewMat.TransformVector4(RayOrigin);
+			//RayEnd = InvViewMat.TransformVector4(RayEnd);
 			//RayOrigin /= RayOrigin.W = 1;
 			//RayEnd /= RayEnd.W = 1;
 			
-			FVector RayOriginWorld = FVector(RayOrigin.X / RayOrigin.W, RayOrigin.Y / RayOrigin.W, RayOrigin.Z / RayOrigin.W);
-			FVector RayEndWorld = FVector(RayEnd.X / RayEnd.W, RayEnd.Y / RayEnd.W, RayEnd.Z / RayEnd.W);
+			FVector RayOriginWorld = RayOrigin.GetCoord();
+			FVector RayEndWorld = RayEnd.GetCoord();
 
 			FVector RayDir = (RayEndWorld - RayOriginWorld).GetSafeNormal();
 	
 			// 액터와의 거리
-			float Distance = FVector::Distance(RayOriginWorld, Actor->GetActorTransform().GetPosition());
+			float Distance = FVector::Distance(RayOriginWorld, SelectedActor->GetActorTransform().GetPosition());
 			
 			// Ray 방향으로 Distance만큼 재계산
 			FVector Result = RayOriginWorld + RayDir * Distance;
-	
-			FTransform AT = Actor->GetActorTransform();
+			FTransform AT = SelectedActor->GetActorTransform();
+			DoTransform(AT, Result, SelectedActor);
 
-			DoTransform(AT, Result, Actor);
 			
 		}
 	}
@@ -201,6 +180,17 @@ void AGizmoHandle::Tick(float DeltaTime)
 		type = (type + 1) % static_cast<int>(EGizmoType::Max);
 		GizmoType = static_cast<EGizmoType>(type);
 	}
+
+
+	// 기즈모가 붙어있는 상태
+	FTransform ActorTransform = SelectedActor->GetActorTransform();
+	FTransform GizmoTransform;
+	GizmoTransform.SetPosition(ActorTransform.GetPosition());
+	if (bIsWorldFixed)
+	{
+		GizmoTransform.SetRotation(ActorTransform.GetRotation());
+	}
+
 
 }
 

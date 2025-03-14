@@ -308,12 +308,49 @@ FVector FMatrix::GetScale() const
 	//return FVector(M[0][0], M[1][1], M[2][2]);
 }
 
-FVector FMatrix::GetRotation() const
+FQuat FMatrix::GetRotation() const
 {
-	FQuat Q = FQuat::MakeFromRotationMatrix(*this);
+	FQuat Q;
 
-	FVector Euler = Q.GetEuler();
-	return Euler;
+	float trace = M[0][0] + M[1][1] + M[2][2]; // 행렬의 Trace 값 (대각합)
+
+	if (trace > 0.0f)
+	{
+		float S = sqrtf(trace + 1.0f) * 2.0f; // S는 4배의 W
+		Q.W = 0.25f * S;
+		Q.X = (M[2][1] - M[1][2]) / S;
+		Q.Y = (M[0][2] - M[2][0]) / S;
+		Q.Z = (M[1][0] - M[0][1]) / S;
+	}
+	else
+	{
+		if (M[0][0] > M[1][1] && M[0][0] > M[2][2])
+		{
+			float S = sqrtf(1.0f + M[0][0] - M[1][1] - M[2][2]) * 2.0f;
+			Q.W = (M[2][1] - M[1][2]) / S;
+			Q.X = 0.25f * S;
+			Q.Y = (M[0][1] + M[1][0]) / S;
+			Q.Z = (M[0][2] + M[2][0]) / S;
+		}
+		else if (M[1][1] > M[2][2])
+		{
+			float S = sqrtf(1.0f + M[1][1] - M[0][0] - M[2][2]) * 2.0f;
+			Q.W = (M[0][2] - M[2][0]) / S;
+			Q.X = (M[0][1] + M[1][0]) / S;
+			Q.Y = 0.25f * S;
+			Q.Z = (M[1][2] + M[2][1]) / S;
+		}
+		else
+		{
+			float S = sqrtf(1.0f + M[2][2] - M[0][0] - M[1][1]) * 2.0f;
+			Q.W = (M[1][0] - M[0][1]) / S;
+			Q.X = (M[0][2] + M[2][0]) / S;
+			Q.Y = (M[1][2] + M[2][1]) / S;
+			Q.Z = 0.25f * S;
+		}
+	}
+
+	return Q;
 }
 
 FVector4 FMatrix::TransformVector4(const FVector4& Vector) const
@@ -328,6 +365,6 @@ FVector4 FMatrix::TransformVector4(const FVector4& Vector) const
 
 FTransform FMatrix::GetTransform() const
 {
-	FQuat RotationQuat = FQuat::MakeFromRotationMatrix(*this);
+	FQuat RotationQuat = this->GetRotation();
 	return FTransform(GetTranslation(), RotationQuat, GetScale());
 }

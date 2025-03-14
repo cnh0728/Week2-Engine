@@ -258,7 +258,7 @@ UWorldInfo UWorld::GetWorldInfo() const
 		WorldInfo.ObjctInfos[i] = new UObjectInfo();
 		const FTransform& Transform = actor->GetActorTransform();
 		WorldInfo.ObjctInfos[i]->Location = Transform.GetPosition();
-		WorldInfo.ObjctInfos[i]->Rotation = Transform.GetRotation().GetEuler();
+		WorldInfo.ObjctInfos[i]->Rotation = Transform.GetRotation();
 		WorldInfo.ObjctInfos[i]->Scale = Transform.GetScale();
 		WorldInfo.ObjctInfos[i]->ObjectType = actor->GetTypeName();
 

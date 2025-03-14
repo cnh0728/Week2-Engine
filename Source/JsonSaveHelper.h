@@ -4,11 +4,12 @@
 
 #include "Core/HAL/PlatformType.h"
 #include "Core/Math/Vector.h"
+#include "Core/Math/Plane.h"
 
 struct UObjectInfo
 {
     FVector Location; 
-    FVector Rotation;
+    FQuat Rotation;
     FVector Scale;
     std::string ObjectType;
 
