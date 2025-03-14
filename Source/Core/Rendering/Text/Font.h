@@ -24,7 +24,7 @@ public:
 	bool Create(ID3D11Device* Device, const wchar_t* FontFileName, const wchar_t* TextureFileName);
 	void Release();
 	void BuildVertexArray(void* Vertices, const char* Sentence, float DrawX, float DrawY);
-	ID3D11ShaderResourceView* GetTexture() const { return Texture->GetTexture(); }
+	ID3D11ShaderResourceView* GetTexture() const { return Texture ? Texture->GetTexture() : nullptr; }
 
 private:
 	bool LoadFontData(const wchar_t* FontFileName);

@@ -12,5 +12,5 @@ public:
 	ID3D11ShaderResourceView* GetTexture() const { return Texture; }
 
 private:
-	ID3D11ShaderResourceView* Texture;
+	ID3D11ShaderResourceView* Texture = nullptr;
 };

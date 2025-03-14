@@ -488,7 +488,7 @@ void URenderer::CreateRasterizerState()
 {
     D3D11_RASTERIZER_DESC RasterizerDesc = {};
     RasterizerDesc.FillMode = D3D11_FILL_SOLID; // 채우기 모드
-    RasterizerDesc.FillMode = D3D11_FILL_WIREFRAME; // 채우기 모드
+    //RasterizerDesc.FillMode = D3D11_FILL_WIREFRAME; // 채우기 모드
     RasterizerDesc.CullMode = D3D11_CULL_BACK;  // 백 페이스 컬링
     RasterizerDesc.FrontCounterClockwise = FALSE;
 
@@ -625,7 +625,9 @@ void URenderer::PrepareMain()
 
 void URenderer::PrepareMainShader()
 {
+    DeviceContext->VSSetShader(SimpleVertexShader, nullptr, 0);
     DeviceContext->PSSetShader(SimplePixelShader, nullptr, 0);
+    DeviceContext->IASetInputLayout(SimpleInputLayout);
 }
 
 FVector4 URenderer::GetPixel(FVector MPos)
@@ -805,9 +807,10 @@ void URenderer::TurnOffAlphaBlending()
 
 void URenderer::CreateText(HWND hWindow) {
 	Text = new UText();
-    Text->Create(Device, DeviceContext, hWindow, UEngine::Get().GetScreenWidth(), UEngine::Get().GetScreenHeight(), ViewMatrix);
+    Text->Create(Device, DeviceContext, hWindow, UEngine::Get().GetScreenWidth(), UEngine::Get().GetScreenHeight());
 }
 
 void URenderer::RenderText() {
-	Text->Render(DeviceContext, WorldMatrix, ProjectionMatrix);
+
+	Text->Render(DeviceContext, WorldMatrix, ViewMatrix, ProjectionMatrix);
 }

@@ -273,13 +273,6 @@
     <ClInclude Include="Source\Object\Actor\Sphere.h" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="..\..\..\..\Downloads\dx11win10tut14_src\dx11win10tut14_src\data\font\font01.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="..\..\..\..\Downloads\dx11win10tut14_src\dx11win10tut14_src\data\font\font01.tga" />
-    <Image Include="Source\Core\Rendering\Text\font01.dds" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Source\ThirdParty\DirectXTex\Include\DirectXTex.inl" />
   </ItemGroup>
   <ItemGroup>
@@ -295,6 +288,13 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Source\Core\Rendering\Text\font01.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Source\Core\Rendering\Text\cork2.png" />
+    <Image Include="Source\Core\Rendering\Text\font01.tga" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

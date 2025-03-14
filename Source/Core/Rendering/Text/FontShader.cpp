@@ -52,13 +52,27 @@ bool UFontShader::CreateShader(ID3D11Device* Device, HWND HWindow, const wchar_t
 	ID3D10Blob* VertexShaderCSO = nullptr;
 	ID3D10Blob* PixelShaderCSO = nullptr;
 	uint32 NumElements;
-	D3D11_BUFFER_DESC DonstantBufferDesc;
+	D3D11_BUFFER_DESC ConstantBufferDesc;
 	D3D11_SAMPLER_DESC SamplerDesc;
 	D3D11_BUFFER_DESC PixelBufferDesc;
 
 	Result = D3DCompileFromFile(ShaderFileName, nullptr, nullptr, "FontVS", "vs_5_0", 0, 0, &VertexShaderCSO, &ErrorMessage);
+	if (FAILED(Result))
+	{
+		// If the shader failed to compile it should have writen something to the error message.
+		if (ErrorMessage)
+		{
+			OutputShaderErrorMessage(ErrorMessage, HWindow, ShaderFileName);
+		}
+		// If there was  nothing in the error message then it simply could not find the file itself.
+		else
+		{
+			MessageBox(HWindow, ShaderFileName, L"Missing Shader File", MB_OK);
+		}
+		return false;
+	}
+	Result = Device->CreateVertexShader(VertexShaderCSO->GetBufferPointer(), VertexShaderCSO->GetBufferSize(), nullptr, &VertexShader);
 	Result = D3DCompileFromFile(ShaderFileName, nullptr, nullptr, "FontPS", "ps_5_0", 0, 0, &PixelShaderCSO, &ErrorMessage);
-
 	if (FAILED(Result))
 	{
 		// If the shader failed to compile it should have writen something to the error message.
@@ -74,8 +88,9 @@ bool UFontShader::CreateShader(ID3D11Device* Device, HWND HWindow, const wchar_t
 		return false;
 	}
 
-	Result = Device->CreateVertexShader(VertexShaderCSO->GetBufferPointer(), VertexShaderCSO->GetBufferSize(), nullptr, &VertexShader);
 	Result = Device->CreatePixelShader(PixelShaderCSO->GetBufferPointer(), PixelShaderCSO->GetBufferSize(), nullptr, &PixelShader);
+
+
 	if (FAILED(Result))
 	{
 		return false;
@@ -98,14 +113,14 @@ bool UFontShader::CreateShader(ID3D11Device* Device, HWND HWindow, const wchar_t
 	PixelShaderCSO->Release();
 
 	// 상수 버퍼 생성
-	DonstantBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	DonstantBufferDesc.ByteWidth = sizeof(Constants);
-	DonstantBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	DonstantBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	DonstantBufferDesc.MiscFlags = 0;
-	DonstantBufferDesc.StructureByteStride = 0;
+	ConstantBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	ConstantBufferDesc.ByteWidth = sizeof(Constants);
+	ConstantBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	ConstantBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	ConstantBufferDesc.MiscFlags = 0;
+	ConstantBufferDesc.StructureByteStride = 0;
 
-	Result = Device->CreateBuffer(&DonstantBufferDesc, nullptr, &ConstantBuffer);
+	Result = Device->CreateBuffer(&ConstantBufferDesc, nullptr, &ConstantBuffer);
 	if (FAILED(Result))
 	{
 		return false;
@@ -202,6 +217,11 @@ bool UFontShader::SetShaderParameters(ID3D11DeviceContext* DeviceContext, FMatri
 	PixelBufferType* DataPtr2;
 	uint32 BufferNumber;
 
+	DeviceContext->IASetInputLayout(InputLayout);
+	DeviceContext->VSSetShader(VertexShader, nullptr, 0);
+	DeviceContext->PSSetShader(PixelShader, nullptr, 0);
+	DeviceContext->PSSetSamplers(0, 1, &SamplerState);
+
 	Result = DeviceContext->Map(ConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
 	if (FAILED(Result))
 	{
@@ -214,8 +234,7 @@ bool UFontShader::SetShaderParameters(ID3D11DeviceContext* DeviceContext, FMatri
 		FMatrix::Transpose(ViewMatrix) *
 		FMatrix::Transpose(WorldMatrix);
 	DeviceContext->Unmap(ConstantBuffer, 0);
-	BufferNumber = 0;
-	DeviceContext->VSSetConstantBuffers(BufferNumber, 1, &ConstantBuffer);
+	DeviceContext->VSSetConstantBuffers(3, 1, &ConstantBuffer);
 	DeviceContext->PSSetShaderResources(0, 1, &Texture);
 
 	Result = DeviceContext->Map(ConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
@@ -225,10 +244,9 @@ bool UFontShader::SetShaderParameters(ID3D11DeviceContext* DeviceContext, FMatri
 	}
 
 	DataPtr2 = (PixelBufferType*)MappedResource.pData;
-	DataPtr2->Color = Color;
+	DataPtr2->pixelColor = Color;
 	DeviceContext->Unmap(ConstantBuffer, 0);
-	BufferNumber = 0;
-	DeviceContext->PSSetConstantBuffers(BufferNumber, 1, &ConstantBuffer);
+	DeviceContext->PSSetConstantBuffers(4, 1, &ConstantBuffer);
 	
 	return true;
 }
@@ -237,13 +255,6 @@ bool UFontShader::SetShaderParameters(ID3D11DeviceContext* DeviceContext, FMatri
 
 void UFontShader::RenderShader(ID3D11DeviceContext* DeviceContext, uint32 IndexCount)
 {
-	DeviceContext->IASetInputLayout(InputLayout);
-
-	DeviceContext->VSSetShader(VertexShader, nullptr, 0);
-	DeviceContext->PSSetShader(PixelShader, nullptr, 0);
-
-	DeviceContext->PSSetSamplers(0, 1, &SamplerState);
-
 	DeviceContext->DrawIndexed(IndexCount, 0, 0);
 
 	return;

@@ -391,17 +391,12 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\..\..\Downloads\dx11win10tut14_src\dx11win10tut14_src\data\font\font01.tga">
+    <Image Include="Source\Core\Rendering\Text\cork2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Source\Core\Rendering\Text\font01.tga">
       <Filter>Source Files\Core\Rendering\Text</Filter>
     </Image>
-    <Image Include="Source\Core\Rendering\Text\font01.dds">
-      <Filter>Source Files\Core\Rendering\Text</Filter>
-    </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="..\..\..\..\Downloads\dx11win10tut14_src\dx11win10tut14_src\data\font\font01.txt">
-      <Filter>Source Files\Core\Rendering\Text</Filter>
-    </Text>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\ThirdParty\DirectXTex\Include\DirectXTex.inl">
@@ -415,5 +410,10 @@
     <FxCompile Include="Shaders\ShaderFont.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Source\Core\Rendering\Text\font01.txt">
+      <Filter>Source Files\Core\Rendering\Text</Filter>
+    </Text>
   </ItemGroup>
 </Project>

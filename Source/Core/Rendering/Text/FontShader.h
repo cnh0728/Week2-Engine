@@ -14,7 +14,7 @@ private:
 	};
 
 	struct PixelBufferType {
-		FVector4 Color;
+		FVector4 pixelColor;
 	};
 
 public:

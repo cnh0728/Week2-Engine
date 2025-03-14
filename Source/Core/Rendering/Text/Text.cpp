@@ -6,7 +6,6 @@ UText::UText()
 	FontShader = nullptr;
 	ScreenWidth = 0;
 	ScreenHeight = 0;
-	BaseViewMatrix = FMatrix();
 	Sentence1 = nullptr;
 	Sentence2 = nullptr;
 }
@@ -15,12 +14,11 @@ UText::~UText()
 {
 }
 
-bool UText::Create(ID3D11Device* Device, ID3D11DeviceContext* DeviceContext, HWND Hwnd, uint32 ScreenWidth, uint32 ScreenHeight, FMatrix BaseViewMatrix)
+bool UText::Create(ID3D11Device* Device, ID3D11DeviceContext* DeviceContext, HWND Hwnd, uint32 ScreenWidth, uint32 ScreenHeight)
 {
 	bool Result;
 	this->ScreenWidth = ScreenWidth;
 	this->ScreenHeight = ScreenHeight;
-	this->BaseViewMatrix = BaseViewMatrix;
 	Font = new UFont();
 	if (!Font)
 	{
@@ -89,15 +87,15 @@ void UText::Release()
 	}
 }
 
-bool UText::Render(ID3D11DeviceContext* DeviceContext, FMatrix WorldMatrix, FMatrix OrthoMatrix)
+bool UText::Render(ID3D11DeviceContext* DeviceContext, FMatrix WorldMatrix, FMatrix ViewMatrix, FMatrix OrthoMatrix)
 {
 	bool Result;
-	Result = RenderSentence(DeviceContext, Sentence1, WorldMatrix, OrthoMatrix);
+	Result = RenderSentence(DeviceContext, Sentence1, WorldMatrix, ViewMatrix, OrthoMatrix);
 	if (!Result)
 	{
 		return false;
 	}
-	Result = RenderSentence(DeviceContext, Sentence2, WorldMatrix, OrthoMatrix);
+	Result = RenderSentence(DeviceContext, Sentence2, WorldMatrix, ViewMatrix, OrthoMatrix);
 	if (!Result)
 	{
 		return false;
@@ -204,10 +202,10 @@ bool UText::UpdateSentence(SentenceType* Sentence, const char* Text, float DrawX
 	}
 
 	memset(Vertices, 0, (sizeof(VertexType) * Sentence->VertexCount));
-	X = (float)(((ScreenWidth / 2) * -1) + DrawX);
-	Y = (float)((ScreenHeight / 2) - DrawY);
+	X = (float)(-1280 / 2.0f + DrawX);
+	Y = (float)((ScreenHeight / 2.0f) - DrawY);
 
-	Font->BuildVertexArray((void*)Vertices, Text, X, Y);
+	Font->BuildVertexArray((void*)Vertices, Text, 0.1f, 0.1f);
 
 	Result = DeviceContext->Map(Sentence->VertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
 	if (FAILED(Result))
@@ -246,7 +244,7 @@ void UText::ReleaseSentence(SentenceType** Sentence)
 	}
 }
 
-bool UText::RenderSentence(ID3D11DeviceContext* DeviceContext, SentenceType* Sentence, FMatrix WorldMatrix, FMatrix OrthoMatrix)
+bool UText::RenderSentence(ID3D11DeviceContext* DeviceContext, SentenceType* Sentence, FMatrix WorldMatrix, FMatrix ViewMatrix, FMatrix OrthoMatrix)
 {
 	uint32 Stride;
 	uint32 Offset;
@@ -260,7 +258,7 @@ bool UText::RenderSentence(ID3D11DeviceContext* DeviceContext, SentenceType* Sen
 	DeviceContext->IASetIndexBuffer(Sentence->IndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 	DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	PixelColor = FVector4(Sentence->Red, Sentence->Green, Sentence->Blue, 1.0f);
-	Result = FontShader->Render(DeviceContext, Sentence->IndexCount, WorldMatrix, BaseViewMatrix, OrthoMatrix, Font->GetTexture(), PixelColor);
+	Result = FontShader->Render(DeviceContext, Sentence->IndexCount, WorldMatrix, ViewMatrix, OrthoMatrix, Font->GetTexture(), PixelColor);
 
 	if (!Result)
 	{

@@ -13,6 +13,7 @@ UFont::~UFont()
 
 bool UFont::Create(ID3D11Device* Device, const wchar_t* FontFileName, const wchar_t* TextureFileName)
 {
+	Texture = new UTexture();
 	bool result;
 	result = LoadFontData(FontFileName);
 	if (!result)
@@ -117,9 +118,9 @@ void UFont::BuildVertexArray(void* Vertices, const char* Sentence, float DrawX, 
 	for (i = 0; i < numLetters; i++) {
 		letter = ((int)Sentence[i]) - 32;
 
-		// 글자 간격은 최소 3.0f로 설정합니다.
+		// 글자 간격은 최소 0.1f로 설정합니다.
 		if (letter == 0) {
-			DrawX = DrawX + 3.0f;
+			DrawX = DrawX + 0.1f;
 		}
 		else {
 			VertexPtr[index].position = FVector(DrawX, DrawY, 0.0f);  // Top left.

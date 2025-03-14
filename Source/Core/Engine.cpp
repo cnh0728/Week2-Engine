@@ -232,7 +232,6 @@ void UEngine::InitWorld()
     //// Test
     AArrow* Arrow = World->SpawnActor<AArrow>();
     //World->SpawnActor<ASphere>();
-    Renderer->RenderText();
 
     World->SpawnActor<AAxis>();
     World->SpawnActor<APicker>();

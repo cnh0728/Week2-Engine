@@ -1,10 +1,10 @@
 // ShaderFont.hlsl
-cbuffer constants : register(b0)
+cbuffer constants : register(b3)
 {
     matrix MVP;
 }
 
-cbuffer PixelBuffer : register(b1)
+cbuffer PixelBuffer : register(b4)
 {
     float4 pixelColor;
 };
@@ -21,13 +21,8 @@ struct PS_INPUT
     float2 texCoord : TEXCOORD0;
 };
 
-struct PS_OUTPUT
-{
-    float4 color : SV_TARGET;
-};
-
-Texture2D shaderTexture;
-SamplerState SampleType;
+Texture2D shaderTexture : register(t0);
+SamplerState SampleType : register(s0);
 
 PS_INPUT FontVS(VS_INPUT input)
 {
@@ -40,24 +35,24 @@ PS_INPUT FontVS(VS_INPUT input)
 }
 
 
-PS_OUTPUT FontPS(PS_INPUT input) : SV_TARGET
+float4 FontPS(PS_INPUT input) : SV_TARGET
 {
-    PS_OUTPUT output;
+    float4 color;
     
-    output.color = shaderTexture.Sample(SampleType, input.texCoord);
+    color = shaderTexture.Sample(SampleType, input.texCoord);
     
     // 텍스처에서 색상이 검정색인 경우 이 픽셀을 투명하게 처리합니다.
     
-    if (output.color.r == 0.0f)
+    if (color.r == 0.0f)
     {
-        output.color.a = 0.0f;
+        color.a = 0.0f;
     }
     // 텍스처에서 색상이 검정색이 아닌 경우, 이는 폰트의 픽셀이므로 폰트 픽셀 색상을 사용하여 그립니다.
     else
     {
-        output.color.a = 1.0f;
-        output.color = output.color * pixelColor;
+        color.a = 1.0f;
+        color = color * pixelColor;
     }
 
-    return output;
+    return color;
 }
