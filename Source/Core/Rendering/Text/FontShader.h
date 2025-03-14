@@ -28,10 +28,11 @@ public:
 	void Release();
 
 	bool Render(ID3D11DeviceContext* DeviceContext, uint32 IndexCount, FMatrix WorldMatrix, FMatrix ViewMatrix, FMatrix ProjectionMatrix, ID3D11ShaderResourceView* Texture, FVector4 Color);
+	static void OutputShaderErrorMessage(ID3D10Blob* ErrorMessage, HWND Hwnd, const wchar_t* ShaderFileName);
 
 private:
 	bool CreateShader(ID3D11Device* Device, HWND hWindow, const wchar_t* ShaderFileName);
-	void OutputShaderErrorMessage(ID3D10Blob* ErrorMessage, HWND Hwnd, const wchar_t* ShaderFileName);
+
 	void ReleaseShader();
 	bool SetShaderParameters(ID3D11DeviceContext* DeviceContext, FMatrix WorldMatrix, FMatrix ViewMatrix, FMatrix ProjectionMatrix, ID3D11ShaderResourceView* Texture, FVector4 Color);
 	void RenderShader(ID3D11DeviceContext* DeviceContext, uint32 IndexCount);

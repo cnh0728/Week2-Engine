@@ -221,14 +221,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Shaders\ShaderW0.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="Shaders\ShaderFont.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="Source\ThirdParty\ImGui\imstb_truetype.h">
       <Filter>Source Files\ThirdParty\ImGui</Filter>
     </ClInclude>
@@ -402,6 +394,9 @@
     <Image Include="..\..\..\..\Downloads\dx11win10tut14_src\dx11win10tut14_src\data\font\font01.tga">
       <Filter>Source Files\Core\Rendering\Text</Filter>
     </Image>
+    <Image Include="Source\Core\Rendering\Text\font01.dds">
+      <Filter>Source Files\Core\Rendering\Text</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Text Include="..\..\..\..\Downloads\dx11win10tut14_src\dx11win10tut14_src\data\font\font01.txt">
@@ -414,8 +409,11 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Library Include="Source\ThirdParty\DirectXTex\Lib\DirectXTex.lib">
-      <Filter>Source Files\ThirdParty\DirectXTex\Lib</Filter>
-    </Library>
+    <FxCompile Include="Shaders\ShaderW0.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\ShaderFont.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

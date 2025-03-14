@@ -16,6 +16,7 @@ void URenderer::Create(HWND hWindow)
     CreateDepthStencilState();
 
     CreatePickingTexture(hWindow);
+    CreateText(hWindow);
 	CreateAlphaBlendingState();
 
     InitMatrix();
@@ -800,4 +801,13 @@ void URenderer::TurnOffAlphaBlending()
 {
     float blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
     DeviceContext->OMSetBlendState(AlphaDisableBlendingState, blendFactor, 0xffffffff);
+}
+
+void URenderer::CreateText(HWND hWindow) {
+	Text = new UText();
+    Text->Create(Device, DeviceContext, hWindow, UEngine::Get().GetScreenWidth(), UEngine::Get().GetScreenHeight(), ViewMatrix);
+}
+
+void URenderer::RenderText() {
+	Text->Render(DeviceContext, WorldMatrix, ProjectionMatrix);
 }

@@ -1,4 +1,4 @@
-﻿// ShaderFont.hlsl
+// ShaderFont.hlsl
 cbuffer constants : register(b0)
 {
     matrix MVP;
@@ -44,22 +44,20 @@ PS_OUTPUT FontPS(PS_INPUT input) : SV_TARGET
 {
     PS_OUTPUT output;
     
-    float4 color;
-    
-    color = shaderTexture.Sample(SampleType, input.texCoord);
+    output.color = shaderTexture.Sample(SampleType, input.texCoord);
     
     // 텍스처에서 색상이 검정색인 경우 이 픽셀을 투명하게 처리합니다.
     
-    if (color.r == 0.0f)
+    if (output.color.r == 0.0f)
     {
-        color.a = 0.0f;
+        output.color.a = 0.0f;
     }
     // 텍스처에서 색상이 검정색이 아닌 경우, 이는 폰트의 픽셀이므로 폰트 픽셀 색상을 사용하여 그립니다.
     else
     {
-        color.a = 1.0f;
-        color = color * pixelColor;
+        output.color.a = 1.0f;
+        output.color = output.color * pixelColor;
     }
 
-    return color;
+    return output;
 }

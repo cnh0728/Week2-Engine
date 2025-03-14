@@ -15,7 +15,7 @@ UFontShader::~UFontShader()
 
 bool UFontShader::Create(ID3D11Device* Device, HWND HWindow)
 {
-	bool Result = CreateShader(Device, HWindow, L"Shaders/FontShader.hlsl");
+	bool Result = CreateShader(Device, HWindow, L"Shaders/ShaderFont.hlsl");
 	if (!Result) {
 		return false;
 	}

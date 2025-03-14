@@ -34,9 +34,9 @@ void UFont::Release()
 }
 
 bool UFont::LoadFontData(const wchar_t* FontFileName) {
-	std::ifstream fin;
+	std::wifstream fin;
 	int i;
-	char temp;
+	wchar_t temp;
 	// 폰트 데이터를 저장할 배열을 생성합니다.
 	Font = new FontType[95];
 	if (!Font)

@@ -26,7 +26,7 @@ bool UText::Create(ID3D11Device* Device, ID3D11DeviceContext* DeviceContext, HWN
 	{
 		return false;
 	}
-	Result = Font->Create(Device, L"Fonts/font01.txt", L"Fonts/font01.tga");
+	Result = Font->Create(Device, L"Source/Core/Rendering/Text/font01.txt", L"Source/Core/Rendering/Text/font01.tga");
 	if (!Result)
 	{
 		return false;
@@ -112,34 +112,34 @@ bool UText::InitializeSentence(SentenceType** Sentence, int MaxLength, ID3D11Dev
 	D3D11_BUFFER_DESC VertexBufferDesc, IndexBufferDesc;
 	D3D11_SUBRESOURCE_DATA VertexData, IndexData;
 	HRESULT Result;
-	SentenceType* NewSentence = new SentenceType();
-	if (!NewSentence)
+	*Sentence = new SentenceType();
+	if (!*Sentence)
 	{
 		return false;
 	}
-	NewSentence->VertexCount = 6 * MaxLength;
-	NewSentence->IndexCount = NewSentence->VertexCount;
-	NewSentence->MaxLength = MaxLength;
-	NewSentence->Red = 1.0f;
-	NewSentence->Green = 1.0f;
-	NewSentence->Blue = 1.0f;
-	Vertices = new VertexType[NewSentence->VertexCount];
+	(*Sentence)->VertexCount = 6 * MaxLength;
+	(*Sentence)->IndexCount = (*Sentence)->VertexCount;
+	(*Sentence)->MaxLength = MaxLength;
+	(*Sentence)->Red = 1.0f;
+	(*Sentence)->Green = 1.0f;
+	(*Sentence)->Blue = 1.0f;
+	Vertices = new VertexType[(*Sentence)->VertexCount];
 	if (!Vertices)
 	{
 		return false;
 	}
-	Indices = new uint32[NewSentence->IndexCount];
+	Indices = new uint32[(*Sentence)->IndexCount];
 	if (!Indices)
 	{
 		return false;
 	}
-	memset(Vertices, 0, (sizeof(VertexType) * NewSentence->VertexCount));
-	for (int i = 0; i < NewSentence->IndexCount; i++)
+	memset(Vertices, 0, (sizeof(VertexType) * (*Sentence)->VertexCount));
+	for (int i = 0; i < (*Sentence)->IndexCount; i++)
 	{
 		Indices[i] = i;
 	}
 	VertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	VertexBufferDesc.ByteWidth = sizeof(VertexType) * NewSentence->VertexCount;
+	VertexBufferDesc.ByteWidth = sizeof(VertexType) * (*Sentence)->VertexCount;
 	VertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	VertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	VertexBufferDesc.MiscFlags = 0;
@@ -147,14 +147,14 @@ bool UText::InitializeSentence(SentenceType** Sentence, int MaxLength, ID3D11Dev
 	VertexData.pSysMem = Vertices;
 	VertexData.SysMemPitch = 0;
 	VertexData.SysMemSlicePitch = 0;
-	Result = Device->CreateBuffer(&VertexBufferDesc, &VertexData, &NewSentence->VertexBuffer);
+	Result = Device->CreateBuffer(&VertexBufferDesc, &VertexData, &(*Sentence)->VertexBuffer);
 	if (FAILED(Result))
 	{
 		return false;
 	}
 
 	IndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	IndexBufferDesc.ByteWidth = sizeof(uint32) * NewSentence->IndexCount;
+	IndexBufferDesc.ByteWidth = sizeof(uint32) * (*Sentence)->IndexCount;
 	IndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	IndexBufferDesc.CPUAccessFlags = 0;
 	IndexBufferDesc.MiscFlags = 0;
@@ -163,7 +163,7 @@ bool UText::InitializeSentence(SentenceType** Sentence, int MaxLength, ID3D11Dev
 	IndexData.SysMemPitch = 0;
 	IndexData.SysMemSlicePitch = 0;
 
-	Result = Device->CreateBuffer(&IndexBufferDesc, &IndexData, &NewSentence->IndexBuffer);
+	Result = Device->CreateBuffer(&IndexBufferDesc, &IndexData, &(*Sentence)->IndexBuffer);
 	if (FAILED(Result))
 	{
 		return false;

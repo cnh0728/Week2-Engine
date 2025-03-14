@@ -12,6 +12,7 @@
 #include "Core/Engine.h"
 #include "Primitive/PrimitiveVertices.h"
 #include "Core/Math/Plane.h"
+#include "Text/Text.h"
 
 
 struct FVertexSimple;
@@ -116,6 +117,9 @@ public:
 	void TurnOnAlphaBlending();
 	void TurnOffAlphaBlending();
 
+    void CreateText(HWND hWindow);
+    void RenderText();
+
     void CreateAlphaBlendingState();
 	void ReleaseAlphaBlendingState();
 
@@ -192,7 +196,10 @@ protected:
 	// Alpha Blending
 	ID3D11BlendState* AlphaEnableBlendingState = nullptr;
 	ID3D11BlendState* AlphaDisableBlendingState = nullptr;
-    
+
+    // 텍스트클래스
+    UText* Text = nullptr;
+
 
 	
 #pragma region picking
