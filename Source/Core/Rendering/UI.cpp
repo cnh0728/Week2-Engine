@@ -21,7 +21,6 @@
 #include "Object/Gizmo/GizmoHandle.h"
 
 
-
 void UI::Initialize(HWND hWnd, const URenderer& Renderer, UINT ScreenWidth, UINT ScreenHeight)
 {
     // ImGui 초기화
@@ -76,6 +75,7 @@ void UI::Update()
     
     RenderControlPanel();
     RenderPropertyWindow();
+    RenderFNameDebug();
 
     Debug::ShowConsole(bWasWindowSizeUpdated, PreRatio, CurRatio);
 
@@ -366,6 +366,45 @@ void UI::RenderPropertyWindow()
 			}
 		}
     }
+    ImGui::End();
+}
+
+void UI::RenderFNameDebug()
+{
+    ImGui::Begin("FName Test");
+
+    static char buffer[256] = { 0 };
+    buffer[255] = NULL;
+    ImGui::InputText("FName text", buffer, 256);
+    buffer;
+    if (ImGui::Button("FName button"))
+    {
+        //FString fstr(buffer);
+        static FName name0 = FName(FString(buffer));
+    }
+    ImGui::Text(buffer);
+    static char buffer1[256] = { 0 };
+    ImGui::InputText("FName other", buffer1, 256);
+    if (ImGui::Button("FName button"))
+    {
+        //FString fstr(buffer);
+        static FName name1 = FName(FString(buffer));
+    }
+    //ImGui::Text(name0)
+    //
+    FNamePool* pool = &FNamePool::Get();
+    ImGui::Text("%d , %d", pool->CurrentComparisonPoolSize, pool->CurrentDisplayPoolSize);
+    for (int i = 0; i < pool->CurrentComparisonPoolSize; i++)
+    {
+        ImGui::Text("%d, %s", i, *pool->ComparisonNameEntryPool[i].Data);
+    }
+    ImGui::Text("-----------------");
+    for (int i = 0; i < pool->CurrentDisplayPoolSize; i++)
+    {
+        ImGui::Text("%d, %s", i, *pool->DisplayNameEntryPool[i].Data);
+    }
+
+
     ImGui::End();
 }
 

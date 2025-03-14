@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <memory>
 #include "Core/HAL/PlatformType.h"
+#include "Core/Container/Name.h"
 
 
 // TODO: RTTI 구현하면 enable_shared_from_this 제거

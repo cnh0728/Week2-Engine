@@ -1,6 +1,8 @@
 ﻿#pragma once
 
 #include <string>
+#include <algorithm>  // std::transform
+#include <cctype>     // std::tolower
 #include "CString.h"
 #include "ContainerAllocator.h"
 #include "Core/HAL/PlatformType.h"
@@ -135,6 +137,11 @@ public:
 
     FORCEINLINE bool operator==(const FString& Rhs) const;
     FORCEINLINE bool operator==(const TCHAR* Rhs) const;
+
+    FORCEINLINE const TCHAR& operator[](size_t Pos) const; 
+    FString SubStr(size_t Pos, size_t Count) const;
+    FString ToLower() const;
+    size_t GetHash() const;
 };
 
 
@@ -166,12 +173,35 @@ FString operator+(const FString& Lhs, const FString& Rhs)
 
 FORCEINLINE bool FString::operator==(const FString& Rhs) const
 {
-    return Equals(Rhs, ESearchCase::IgnoreCase);
+    return Equals(Rhs, ESearchCase::CaseSensitive); // FName 구현위해선 casesensitive여야함
 }
 
 FORCEINLINE bool FString::operator==(const TCHAR* Rhs) const
 {
     return Equals(Rhs);
+}
+
+inline const TCHAR& FString::operator[](size_t Pos) const
+{
+    return this->PrivateString[Pos];
+}
+
+inline FString FString::SubStr(size_t Pos, size_t Count = static_cast<size_t>(-1)) const
+{
+    //FString CopyStr{ *this };
+    return this->PrivateString.substr(Pos, Count);
+}
+
+inline FString FString::ToLower() const
+{
+    BaseStringType CopyStr = PrivateString;
+    std::transform(CopyStr.begin(), CopyStr.end(), CopyStr.begin(), std::tolower);
+    return FString(CopyStr);
+}
+
+FORCEINLINE inline size_t FString::GetHash() const
+{
+    return std::hash<BaseStringType>()(PrivateString);
 }
 
 FORCEINLINE FString& FString::operator+=(const FString& SubStr)
