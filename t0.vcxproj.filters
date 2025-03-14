@@ -108,9 +108,6 @@
     <ClCompile Include="Source\Core\Engine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\JsonSaveHelper.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Primitive\PrimitiveVertices.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -178,6 +175,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\Static\FEditorManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Data\ConfigManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Data\JsonSaveHelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Data\UDeveloperSettings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Data\UCameraSettings.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -249,9 +258,6 @@
     </ClInclude>
     <ClInclude Include="Source\Core\Rendering\URenderer.h">
       <Filter>Header Files\Core\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\JsonSaveHelper.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Source\Core\Engine.h">
       <Filter>Header Files</Filter>
@@ -341,6 +347,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FEngineShowFlags.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Data\ConfigManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Data\JsonSaveHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Data\UDeveloperSettings.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Data\UCameraSettings.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

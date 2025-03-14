@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "Object/Actor/Actor.h"
-#include "FEngineShowFlags.h"
+#include "Data/FEngineShowFlags.h"
 
 class AGizmoHandle;
 
