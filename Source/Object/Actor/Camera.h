@@ -28,6 +28,7 @@ private:
     float Far;
     // 화면각
     float FieldOfView;
+    float CameraSensitivity = 1.0f;
 
 public:
     const float MaxYDegree = 89.8f;
@@ -38,13 +39,15 @@ public:
     ECameraProjectionMode::Type ProjectionMode;
     // float AspectRatio;	// 카메라 비율 (이번 프로젝트에서는 사용 안할듯) 
 
-    void SetFieldOfVew(float Fov);
+    void SetFieldOfView(float Fov);
     void SetFar(float Far);
     void SetNear(float Near);
+    void SetCameraSensitivity(float sensitivity);
     
     float GetFieldOfView() const;
     float GetNear() const;
     float GetFar() const;
+    float GetCameraSensitivity() const;
 
         
     FVector GetForward() const

@@ -1,6 +1,6 @@
 ﻿#include "World.h"
 #include <cassert>
-#include "JsonSavehelper.h"
+#include "Data/JsonSavehelper.h"
 
 #include "Core/Container/Map.h"
 #include "Core/Input/PlayerInput.h"
@@ -80,7 +80,6 @@ void UWorld::Render()
 	
 	RenderMainTexture(*Renderer);
 
-	
 	// DisplayPickingTexture(*Renderer);
 
 }
@@ -117,6 +116,8 @@ void UWorld::RenderMainTexture(URenderer& Renderer)
 	Renderer.PrepareMainShader();
 	for (auto& RenderComponent : RenderComponents)
 	{
+		if (!FEditorManager::Get().IsShowFlagSet(EEngineShowFlags::SF_Primitives) && !dynamic_cast<ULineComp*>(RenderComponent))
+			continue;
 		if (RenderComponent->GetOwner()->GetDepth() > 0)
 		{
 			continue;
