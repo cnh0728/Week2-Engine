@@ -380,28 +380,27 @@ void UI::RenderFNameDebug()
     if (ImGui::Button("FName button"))
     {
         //FString fstr(buffer);
-        static FName name0 = FName(FString(buffer));
+        FName name0 = FName(FString(buffer));
     }
-    ImGui::Text(buffer);
-    static char buffer1[256] = { 0 };
-    ImGui::InputText("FName other", buffer1, 256);
-    if (ImGui::Button("FName button"))
-    {
-        //FString fstr(buffer);
-        static FName name1 = FName(FString(buffer));
-    }
+    //ImGui::Text(buffer);
+    //static char buffer1[256] = { 0 };
+    //ImGui::InputText("FName other", buffer1, 256);
+    //if (ImGui::Button("FName button"))
+    //{
+    //    //FString fstr(buffer);
+    //    static FName name1 = FName(FString(buffer));
+    //}
     //ImGui::Text(name0)
     //
     FNamePool* pool = &FNamePool::Get();
-    ImGui::Text("%d , %d", pool->CurrentComparisonPoolSize, pool->CurrentDisplayPoolSize);
-    for (int i = 0; i < pool->CurrentComparisonPoolSize; i++)
+    for (auto& name : pool->GetComparisonNames())
     {
-        ImGui::Text("%d, %s", i, *pool->ComparisonNameEntryPool[i].Data);
+        ImGui::Text("%s", *name);
     }
     ImGui::Text("-----------------");
-    for (int i = 0; i < pool->CurrentDisplayPoolSize; i++)
+    for (auto& name : pool->GetDisplayNames())
     {
-        ImGui::Text("%d, %s", i, *pool->DisplayNameEntryPool[i].Data);
+        ImGui::Text("%s", *name);
     }
 
 

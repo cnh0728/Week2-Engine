@@ -13,11 +13,13 @@
 
 class AActor;
 
-
 class UWorld :public UObject
 {
+	DECLARE_OBJECT(UWorld, UObject)
 public:
-	UWorld() = default;
+	UWorld() { 
+		DECLARE_OBJECT_CONSTRUCTOR (UWorld, UObject)
+	}
 	virtual ~UWorld() = default;
 
 public:

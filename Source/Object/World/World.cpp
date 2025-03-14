@@ -14,6 +14,7 @@
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Static/FEditorManager.h"
 
+DECLARE_OBJECT_COUNTER(UWorld, UObject)
 
 void UWorld::BeginPlay()
 {
