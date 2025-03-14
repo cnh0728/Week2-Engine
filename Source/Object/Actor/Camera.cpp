@@ -37,7 +37,8 @@ void ACamera::SetNear(float Near)
 
 void ACamera::SetCameraSensitivity(float sensitivity)
 {
-    this->CameraSensitivity = sensitivity;
+    float clampedSensitivity = FMath::Clamp(sensitivity, 0.1f, 10.0f);
+    this->CameraSensitivity = clampedSensitivity;
 }
 
 float ACamera::GetFieldOfView() const

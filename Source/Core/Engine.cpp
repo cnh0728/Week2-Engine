@@ -173,6 +173,7 @@ void UEngine::Run()
 
 void UEngine::Shutdown()
 {
+    ConfigManager::Get().SaveAllConfigs();
     ShutdownWindow();
 }
 
@@ -243,8 +244,6 @@ void UEngine::InitWorld()
 
 void UEngine::ShutdownWindow()
 {
-    ConfigManager::Get().SaveAllConfigs();
-
     DestroyWindow(WindowHandle);
     WindowHandle = nullptr;
 

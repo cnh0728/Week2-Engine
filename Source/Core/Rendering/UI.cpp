@@ -297,7 +297,10 @@ void UI::RenderCameraSettings()
         Transform.SetRotation(UIEulerAngle);
         Camera->SetActorTransform(Transform);
     }
-    ImGui::DragFloat("Camera Speed", &Camera->CameraSpeed, 0.1f);
+    if (ImGui::DragFloat("Camera Speed", &Camera->CameraSpeed, 0.1f))
+    {
+        Camera->CameraSpeed = FMath::Clamp(Camera->CameraSpeed, .0f, 20.0f);
+    }
 
     float CameraSensitivity = Camera->GetCameraSensitivity();
     if (ImGui::DragFloat("Camera Sensitivity", &CameraSensitivity, 0.1f))
