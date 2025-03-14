@@ -124,7 +124,6 @@ public:
     void SetViewMode(EViewModeIndex viewMode);
 
     EViewModeIndex GetCurrentViewMode() const;
-
 protected:
     /** Direct3D Device 및 SwapChain을 생성합니다. */
     void CreateDeviceAndSwapChain(HWND hWindow);

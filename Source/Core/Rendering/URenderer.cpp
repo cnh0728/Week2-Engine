@@ -577,7 +577,7 @@ void URenderer::PrepareZIgnore()
 void URenderer::PreparePicking()
 {
     // 렌더 타겟 바인딩
-    DeviceContext->OMSetRenderTargets(1, &PickingFrameBufferRTV, DepthStencilView);
+    DeviceContext->OMSetRenderTargets(1, &PickingFrameBufferRTV, nullptr);
     DeviceContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
     DeviceContext->OMSetDepthStencilState(DepthStencilState, 0);                // DepthStencil 상태 설정. StencilRef: 스텐실 테스트 결과의 레퍼런스
 

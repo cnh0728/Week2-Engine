@@ -49,6 +49,8 @@ public:
 	void AddRenderComponent(class UPrimitiveComponent* Component) { RenderComponents.Add(Component); }
 	void RemoveRenderComponent(class UPrimitiveComponent* Component) { RenderComponents.Remove(Component); }
 
+	TSet<UPrimitiveComponent*> GetRenderComponents(){ return RenderComponents; }
+	
 private:
 	UWorldInfo GetWorldInfo() const;
 
