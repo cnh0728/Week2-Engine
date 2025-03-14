@@ -249,7 +249,7 @@ void UI::RenderCameraSettings()
     if (ImGui::DragFloat("FOV", &FOV, 0.1f))
     {
         FOV = std::clamp(FOV, 0.01f, 179.99f);
-        Camera->SetFieldOfVew(FOV);
+        Camera->SetFieldOfView(FOV);
     }
 
     float NearFar[2] = { Camera->GetNear(), Camera->GetFar() };
@@ -299,6 +299,12 @@ void UI::RenderCameraSettings()
     }
     ImGui::DragFloat("Camera Speed", &Camera->CameraSpeed, 0.1f);
 
+    float CameraSensitivity = Camera->GetCameraSensitivity();
+    if (ImGui::DragFloat("Camera Sensitivity", &CameraSensitivity, 0.1f))
+    {
+        Camera->SetCameraSensitivity(CameraSensitivity);
+    }
+
     FVector Forward = Camera->GetActorTransform().GetForward();
     FVector Up = Camera->GetActorTransform().GetUp();
     FVector Right = Camera->GetActorTransform().GetRight();
@@ -324,7 +330,6 @@ void UI::RenderShowFlag() {
     if (ImGui::Checkbox("Show Primtives", &bShowPrimitives))
     {
         FEditorManager::Get().SetShowFlag(EEngineShowFlags::SF_Primitives, bShowPrimitives);
-        // stop render primitive
     }
 }
 
