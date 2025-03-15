@@ -1,6 +1,6 @@
 ﻿#include "World.h"
 #include <cassert>
-#include "JsonSavehelper.h"
+#include "Data/JsonSavehelper.h"
 
 #include "Core/Container/Map.h"
 #include "Core/Input/PlayerInput.h"
@@ -72,15 +72,17 @@ void UWorld::Render()
 	ACamera* cam = FEditorManager::Get().GetCamera();
 	Renderer->UpdateViewMatrix(cam->GetActorTransform());
 	Renderer->UpdateProjectionMatrix(cam);
-	
+
 	if (APlayerInput::Get().GetMouseDown(false))
 	{
 		RenderPickingTexture(*Renderer);
 	}
-	
+		
 	RenderMainTexture(*Renderer);
 
-	
+	// 텍스트 렌더링 테스트
+	Renderer->RenderText();
+
 	// DisplayPickingTexture(*Renderer);
 
 }
@@ -117,6 +119,8 @@ void UWorld::RenderMainTexture(URenderer& Renderer)
 	Renderer.PrepareMainShader();
 	for (auto& RenderComponent : RenderComponents)
 	{
+		if (!FEditorManager::Get().IsShowFlagSet(EEngineShowFlags::SF_Primitives) && !dynamic_cast<ULineComp*>(RenderComponent))
+			continue;
 		if (RenderComponent->GetOwner()->GetDepth() > 0)
 		{
 			continue;

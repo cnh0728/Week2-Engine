@@ -6,6 +6,7 @@
 #include "CString.h"
 #include "ContainerAllocator.h"
 #include "Core/HAL/PlatformType.h"
+#include <functional>
 
 /*
 # TCHAR가 ANSICHAR인 경우
@@ -94,6 +95,13 @@ public:
     /** 배열의 모든 요소를 지웁니다. */
     void Empty();
 
+    /** 왼쪽, 오른쪽에서 Count개의 문자를 잘라낸 새 FString 반환 */
+    FORCEINLINE FString Left(int32 Count) const;
+    FORCEINLINE FString Right(int32 Count) const;
+
+    /** 좌우 공백을 제거한 새 FString 반환 **/
+    FORCEINLINE FString Trim() const;
+
     /**
      * 문자열이 서로 같은지 비교합니다.
      * @param Other 비교할 String
@@ -131,7 +139,7 @@ public:
     /** TCHAR* 로 반환하는 연산자 */
     FORCEINLINE const TCHAR* operator*() const;
 
-    FORCEINLINE FString operator+(const FString& SubStr) const;
+    //FORCEINLINE FString operator+(const FString& SubStr) const;
     FORCEINLINE FString& operator+=(const FString& SubStr);
     FORCEINLINE friend FString operator+(const FString& Lhs, const FString& Rhs);
 
@@ -155,14 +163,56 @@ FORCEINLINE bool FString::IsEmpty() const
     return PrivateString.empty();
 }
 
+FORCEINLINE FString FString::Left(int32 Count) const
+{
+    if (Count < 0)
+    {
+        return FString();
+    }
+    if (Count > Len())
+    {
+        Count = Len();
+    }
+    return FString(BaseStringType(PrivateString.begin(), PrivateString.begin() + Count));
+}
+
+FORCEINLINE FString FString::Right(int32 Count) const
+{
+    if (Count < 0)
+    {
+        return FString();
+    }
+    if (Count > Len())
+    {
+        Count = Len();
+    }
+    return FString(BaseStringType(PrivateString.end() - Count, PrivateString.end()));
+}
+
+FORCEINLINE FString FString::Trim() const
+{
+    auto IsWhiteSpace = [](TCHAR c) -> bool {
+        return c == ' ' || c == '\t' || c == '\n' || c == '\r';
+        };
+
+    auto start = std::find_if(PrivateString.begin(), PrivateString.end(), [&](TCHAR c) {
+        return !IsWhiteSpace(c);
+        });
+
+    auto end = std::find_if(PrivateString.rbegin(), PrivateString.rend(), [&](TCHAR c) {
+        return !IsWhiteSpace(c);
+        }).base();
+
+    if (start >= end)
+    {
+        return FString();
+    }
+    return FString(BaseStringType(start, end));
+}
+
 FORCEINLINE const TCHAR* FString::operator*() const
 {
     return PrivateString.c_str();
-}
-
-FORCEINLINE FString FString::operator+(const FString& SubStr) const
-{
-    return this->PrivateString + SubStr.PrivateString;
 }
 
 FString operator+(const FString& Lhs, const FString& Rhs)
@@ -208,4 +258,15 @@ FORCEINLINE FString& FString::operator+=(const FString& SubStr)
 {
     this->PrivateString += SubStr.PrivateString;
     return *this;
+}
+
+namespace std {
+    template <>
+    struct hash<FString>
+    {
+        size_t operator()(const FString& s) const
+        {
+            return std::hash<std::string>()(std::string(*s));
+        }
+    };
 }

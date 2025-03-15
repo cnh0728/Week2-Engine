@@ -21,6 +21,8 @@ struct alignas(16) FMatrix
 	static FMatrix LookAtLH(const FVector& EyePosition, const FVector& FocusPoint, const FVector& WorldUp);
 	static FMatrix PerspectiveFovLH(float FieldOfView, float AspectRatio, float NearPlane, float FarPlane);
 
+	static FMatrix OrthoLH(float ViewWidth, float ViewHeight, float NearPlane, float FarPlane);
+
 	FMatrix operator+(const FMatrix& Other) const;
 	FMatrix operator+=(const FMatrix& Other);
 	FMatrix operator-(const FMatrix& Other) const;
@@ -42,5 +44,13 @@ struct alignas(16) FMatrix
 
 	FVector4 TransformVector4(const FVector4& Vector) const;
 
+	float GetElement(int Row, int Column) const;
+	
 	class FTransform GetTransform() const;
+	
 };
+
+inline float FMatrix::GetElement(int column, int row) const
+{
+	return M[column][row];
+}

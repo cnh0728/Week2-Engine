@@ -1,4 +1,4 @@
-﻿#include "Vector.h"
+#include "Vector.h"
 #include "Matrix.h"
 
 const FVector FVector::ZeroVector = {};
