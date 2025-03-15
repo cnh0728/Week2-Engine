@@ -823,7 +823,6 @@ void URenderer::CreateText(HWND hWindow) {
 
 void URenderer::RenderText() {
 
-    //DeviceContext->ClearRenderTargetView(FrameBufferRTV, ClearColor);
     DeviceContext->ClearDepthStencilView(DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
     TurnZBufferOff();
     TurnOnAlphaBlending();

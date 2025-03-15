@@ -126,22 +126,22 @@ void UFont::BuildVertexArray(void* Vertices, const char* Sentence, float DrawX, 
 			float NDC_Size = Font[letter].size;
 			float NDC_Height = 32.0f;
 
-			VertexPtr[index].position = FVector(DrawX, DrawY, 0.0f);  // Top left.
+			VertexPtr[index].position = FVector(0, DrawX, DrawY);  // Top left.
 			VertexPtr[index].texture = FVector(Font[letter].left, 0.0f, 0.0f);
 			index++;
-			VertexPtr[index].position = FVector(DrawX + NDC_Size, DrawY - NDC_Height, 0.0f);  // Bottom right.
+			VertexPtr[index].position = FVector(0.0f, DrawX + NDC_Size, DrawY - NDC_Height);  // Bottom right.
 			VertexPtr[index].texture = FVector(Font[letter].right, 1.0f, 0.0f);
 			index++;
-			VertexPtr[index].position = FVector(DrawX, DrawY - NDC_Height, 0.0f);  // Bottom left.
+			VertexPtr[index].position = FVector(0.0f, DrawX, DrawY - NDC_Height);  // Bottom left.
 			VertexPtr[index].texture = FVector(Font[letter].left, 1.0f, 0.0f);
 			index++;
-			VertexPtr[index].position = FVector(DrawX, DrawY, 0.0f);  // Top left.
+			VertexPtr[index].position = FVector(0.0f, DrawX, DrawY);  // Top left.
 			VertexPtr[index].texture = FVector(Font[letter].left, 0.0f, 0.0f);
 			index++;
-			VertexPtr[index].position = FVector(DrawX + NDC_Size, DrawY, 0.0f);  // Top right.
+			VertexPtr[index].position = FVector(0.0f, DrawX + NDC_Size, DrawY);  // Top right.
 			VertexPtr[index].texture = FVector(Font[letter].right, 0.0f, 0.0f);
 			index++;
-			VertexPtr[index].position = FVector(DrawX + NDC_Size, DrawY - NDC_Height, 0.0f);  // Bottom right.
+			VertexPtr[index].position = FVector(0.0f, DrawX + NDC_Size, DrawY - NDC_Height);  // Bottom right.
 			VertexPtr[index].texture = FVector(Font[letter].right, 1.0f, 0.0f);
 			index++;
 			DrawX = DrawX + NDC_Size + 1.0f;
