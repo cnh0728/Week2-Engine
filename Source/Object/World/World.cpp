@@ -72,13 +72,16 @@ void UWorld::Render()
 	ACamera* cam = FEditorManager::Get().GetCamera();
 	Renderer->UpdateViewMatrix(cam->GetActorTransform());
 	Renderer->UpdateProjectionMatrix(cam);
-	
+
 	if (APlayerInput::Get().GetMouseDown(false))
 	{
 		RenderPickingTexture(*Renderer);
 	}
-	
+		
 	RenderMainTexture(*Renderer);
+
+	// 텍스트 렌더링 테스트
+	Renderer->RenderText();
 
 	// DisplayPickingTexture(*Renderer);
 

@@ -21,7 +21,9 @@ void URenderer::Create(HWND hWindow)
     CreateDepthStencilState();
 
     CreatePickingTexture(hWindow);
-    
+    CreateText(hWindow);
+	CreateAlphaBlendingState();
+
     InitMatrix();
 }
 
@@ -35,6 +37,7 @@ void URenderer::Release()
     ReleaseFrameBuffer();
     ReleaseDepthStencilBuffer();
     ReleaseDeviceAndSwapChain();
+    ReleaseAlphaBlendingState();
 }
 
 void URenderer::CreateShader()
@@ -342,6 +345,15 @@ void URenderer::CreateDeviceAndSwapChain(HWND hWindow)
         static_cast<float>(SwapChainDesc.BufferDesc.Width), static_cast<float>(SwapChainDesc.BufferDesc.Height),
         0.0f, 1.0f
     };
+
+#ifdef _DEBUG
+
+    HMODULE hPixGpuCapturer = LoadLibraryA("WinPixGpuCapturer.dll");
+    if (!hPixGpuCapturer)
+    {
+        OutputDebugStringA("Failed to load WinPixGpuCapturer.dll\n");
+    }
+#endif
 }
 
 void URenderer::ReleaseDeviceAndSwapChain()
@@ -386,17 +398,17 @@ void URenderer::CreateFrameBuffer()
 void URenderer::CreateDepthStencilBuffer()
 {
     D3D11_TEXTURE2D_DESC DepthBufferDesc = {};
-    DepthBufferDesc.Width = static_cast<UINT>(ViewportInfo.Width);
-    DepthBufferDesc.Height = static_cast<UINT>(ViewportInfo.Height);
-    DepthBufferDesc.MipLevels = 1;
-    DepthBufferDesc.ArraySize = 1;
-	DepthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;            // 32비트 중 24비트는 깊이, 8비트는 스텐실
-    DepthBufferDesc.SampleDesc.Count = 1;
-    DepthBufferDesc.SampleDesc.Quality = 0;
-    DepthBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	DepthBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;              // 텍스쳐 바인딩 플래그를 DepthStencil로 설정
-    DepthBufferDesc.CPUAccessFlags = 0;
-    DepthBufferDesc.MiscFlags = 0;
+    DepthBufferDesc.Width = static_cast<UINT>(ViewportInfo.Width); 
+    DepthBufferDesc.Height = static_cast<UINT>(ViewportInfo.Height); 
+	DepthBufferDesc.MipLevels = 1; 								     // 미리 계산된 텍스쳐 레벨의 수
+	DepthBufferDesc.ArraySize = 1; 								     // 텍스쳐 배열의 크기
+	DepthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;          // 32비트 중 24비트는 깊이, 8비트는 스텐실
+	DepthBufferDesc.SampleDesc.Count = 1; 						     // 멀티 샘플링을 사용하지 않음
+	DepthBufferDesc.SampleDesc.Quality = 0; 				         // 멀티 샘플링을 사용하지 않음
+	DepthBufferDesc.Usage = D3D11_USAGE_DEFAULT; 					 // GPU에서 읽기/쓰기 가능
+	DepthBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;            // 텍스쳐 바인딩 플래그를 DepthStencil로 설정
+	DepthBufferDesc.CPUAccessFlags = 0; 							 // CPU에서 접근하지 않음
+	DepthBufferDesc.MiscFlags = 0; 								     // 기타 플래그
 
     HRESULT result = Device->CreateTexture2D(&DepthBufferDesc, nullptr, &DepthStencilBuffer);
 
@@ -429,7 +441,7 @@ void URenderer::CreateDepthStencilState()
     Device->CreateDepthStencilState(&DepthStencilDesc, &DepthStencilState);
     
     D3D11_DEPTH_STENCIL_DESC IgnoreDepthStencilDesc = {};
-    DepthStencilDesc.DepthEnable = TRUE;
+    DepthStencilDesc.DepthEnable = FALSE;
     DepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
     DepthStencilDesc.DepthFunc = D3D11_COMPARISON_ALWAYS;                     
     Device->CreateDepthStencilState(&IgnoreDepthStencilDesc ,&IgnoreDepthStencilState);
@@ -631,13 +643,15 @@ void URenderer::UpdateConstantDepth(int Depth) const
 void URenderer::PrepareMain()
 {
 	DeviceContext->OMSetDepthStencilState(DepthStencilState, 0);                // DepthStencil 상태 설정. StencilRef: 스텐실 테스트 결과의 레퍼런스
-    DeviceContext->OMSetRenderTargets(1, &FrameBufferRTV, DepthStencilView);
-    DeviceContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
+	DeviceContext->OMSetRenderTargets(1, &FrameBufferRTV, DepthStencilView);	// 렌더 타겟 뷰와 깊이-스텐실 뷰를 출력 렌더링 파이프라인에 바인딩
+	DeviceContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);               // 블렌딩 상태 설정
 }
 
 void URenderer::PrepareMainShader()
 {
+    DeviceContext->VSSetShader(SimpleVertexShader, nullptr, 0);
     DeviceContext->PSSetShader(SimplePixelShader, nullptr, 0);
+    DeviceContext->IASetInputLayout(SimpleInputLayout);
 }
 
 FVector4 URenderer::GetPixel(FVector MPos)
@@ -770,6 +784,84 @@ void URenderer::RenderPickingTexture()
     backBuffer->Release();
 }
 
+void URenderer::CreateText(HWND hWindow) 
+{
+    Text = new UText();
+    Text->Create(Device, DeviceContext, hWindow, UEngine::Get().GetScreenWidth(), UEngine::Get().GetScreenHeight());
+}
+
+void URenderer::RenderText() 
+{
+	ACamera* Camera = FEditorManager::Get().GetCamera();
+	FMatrix OrthoMatrix = FMatrix::OrthoLH(UEngine::Get().GetScreenWidth(), UEngine::Get().GetScreenHeight(), Camera->GetNear(), Camera->GetFar());
+    
+    DeviceContext->ClearDepthStencilView(DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+
+    TurnZBufferOff();
+    TurnOnAlphaBlending();
+
+	Text->Render(DeviceContext, WorldMatrix, ViewMatrix, OrthoMatrix);
+
+	TurnOffAlphaBlending();
+	TurnZBufferOn();
+}
+
+void URenderer::TurnZBufferOn() 
+{
+	DeviceContext->OMSetDepthStencilState(DepthStencilState, 0);
+}
+
+void URenderer::TurnZBufferOff() 
+{
+	DeviceContext->OMSetDepthStencilState(IgnoreDepthStencilState, 0);
+}
+
+
+void URenderer::CreateAlphaBlendingState() 
+{
+    D3D11_BLEND_DESC blendStateDescription;
+    ZeroMemory(&blendStateDescription, sizeof(D3D11_BLEND_DESC));
+    // 알파 블렌딩을 위한 설정
+    blendStateDescription.RenderTarget[0].BlendEnable = TRUE;
+    blendStateDescription.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+    blendStateDescription.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+    blendStateDescription.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+    blendStateDescription.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+    blendStateDescription.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+    blendStateDescription.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+    blendStateDescription.RenderTarget[0].RenderTargetWriteMask = 0x0f;
+
+    Device->CreateBlendState(&blendStateDescription, &AlphaEnableBlendingState);
+
+    blendStateDescription.RenderTarget[0].BlendEnable = FALSE;
+    Device->CreateBlendState(&blendStateDescription, &AlphaDisableBlendingState);
+}
+
+void URenderer::ReleaseAlphaBlendingState()
+{
+    if (AlphaEnableBlendingState)
+    {
+        AlphaEnableBlendingState->Release();
+        AlphaEnableBlendingState = nullptr;
+    }
+    if (AlphaDisableBlendingState)
+    {
+        AlphaDisableBlendingState->Release();
+        AlphaDisableBlendingState = nullptr;
+    }
+}
+
+void URenderer::TurnOnAlphaBlending()
+{
+    float blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+    DeviceContext->OMSetBlendState(AlphaEnableBlendingState, blendFactor, 0xffffffff);
+}
+
+void URenderer::TurnOffAlphaBlending()
+{
+    float blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+    DeviceContext->OMSetBlendState(AlphaDisableBlendingState, blendFactor, 0xffffffff);
+
 void URenderer::SetViewMode(EViewModeIndex viewMode) {
     CurrentViewMode = viewMode;
 
@@ -788,4 +880,5 @@ void URenderer::SetViewMode(EViewModeIndex viewMode) {
 
 EViewModeIndex URenderer::GetCurrentViewMode() const {
     return CurrentViewMode;
+
 }
