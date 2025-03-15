@@ -189,7 +189,7 @@ void UEngine::InitWindow(int InScreenWidth, int InScreenHeight)
 
     // Window Handle 생성
     WindowHandle = CreateWindowExW(
-        0, WindowClassName, WindowTitle,
+        WS_EX_NOREDIRECTIONBITMAP, WindowClassName, WindowTitle,
         WS_POPUP | WS_VISIBLE | WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT, CW_USEDEFAULT,
         InScreenWidth, InScreenHeight,

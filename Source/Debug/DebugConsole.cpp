@@ -3,7 +3,7 @@
 #include <cstdarg>
 #include <algorithm>
 #include "Core/Container/String.h"
-
+#include "Core/Engine.h"
 #include "ImGui/imgui_internal.h"
 
 std::vector<FString> Debug::items;
@@ -16,20 +16,21 @@ void Debug::ShowConsole(bool bWasWindowSizeUpdated, ImVec2 PreRatio, ImVec2 CurR
     static int historyPos = -1;
     bool reclaimFocus = false;
 
+    float windowWidth = UEngine::Get().GetScreenWidth();
+    float windowHeight = UEngine::Get().GetScreenHeight();
+
+    const float footer_height_to_reserve = ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing();
+    float consoleWindowWidth = static_cast<float>(windowWidth) * 1.f;
+    float consoleWindowHeight = static_cast<float>(windowHeight) * 0.2f;
+    float consoleWindowPosX = (static_cast<float>(windowWidth) - consoleWindowWidth) * 0.5f;
+    float consoleWindowPosY = (static_cast<float>(windowHeight) - consoleWindowHeight) * 1.f;
+    ImGui::SetNextWindowPos(ImVec2(consoleWindowPosX, consoleWindowPosY), ImGuiCond_Always);
+    ImGui::SetNextWindowSize(ImVec2(consoleWindowWidth, consoleWindowHeight), ImGuiCond_Always);
+
     ImGui::Begin("Console");
-    if (bWasWindowSizeUpdated)
-    {
-        auto* Window = ImGui::GetCurrentWindow();
-        ImGui::SetWindowPos(ResizeToScreen(Window->Pos, PreRatio, CurRatio));
-        ImGui::SetWindowSize(ResizeToScreen(Window->Size, PreRatio, CurRatio));
-    }
 
      if (ImGui::BeginChild("ScrollingRegion", ImVec2(0, -ImGui::GetFrameHeightWithSpacing()), true, ImGuiWindowFlags_HorizontalScrollbar))
      {
-         auto* Window = ImGui::GetCurrentWindow();
-         ImGui::SetWindowPos(ResizeToScreen(Window->Pos, PreRatio, CurRatio));
-         ImGui::SetWindowSize(ResizeToScreen(Window->Size, PreRatio, CurRatio));
-         
          for (const auto& Item : items)
              ImGui::TextUnformatted(*Item);
     
