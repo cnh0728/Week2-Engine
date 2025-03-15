@@ -265,13 +265,11 @@ void URenderer::ReleaseVertexBuffer(ID3D11Buffer* pBuffer) const
     pBuffer->Release();
 }
 
-void URenderer::UpdateConstant(const ConstantUpdateInfo& UpdateInfo) 
+void URenderer::UpdateConstant(const ConstantUpdateInfo& UpdateInfo) const
 {
     if (!ConstantBuffer) return;
 
     D3D11_MAPPED_SUBRESOURCE ConstantBufferMSR;
-
-    //ProjectionMatrix = FMatrix::OrthoLH(UEngine::Get().GetScreenWidth(), UEngine::Get().GetScreenHeight(), 0.1f, 100.0f);
 
     FMatrix MVP = 
         FMatrix::Transpose(ProjectionMatrix) * 
@@ -771,7 +769,42 @@ void URenderer::RenderPickingTexture()
     backBuffer->Release();
 }
 
-void URenderer::CreateAlphaBlendingState() {
+
+void URenderer::CreateText(HWND hWindow) 
+{
+    Text = new UText();
+    Text->Create(Device, DeviceContext, hWindow, UEngine::Get().GetScreenWidth(), UEngine::Get().GetScreenHeight());
+}
+
+void URenderer::RenderText() 
+{
+	ACamera* Camera = FEditorManager::Get().GetCamera();
+	FMatrix OrthoMatrix = FMatrix::OrthoLH(UEngine::Get().GetScreenWidth(), UEngine::Get().GetScreenHeight(), Camera->GetNear(), Camera->GetFar());
+    
+    DeviceContext->ClearDepthStencilView(DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+
+    TurnZBufferOff();
+    TurnOnAlphaBlending();
+
+	Text->Render(DeviceContext, WorldMatrix, ViewMatrix, OrthoMatrix);
+
+	TurnOffAlphaBlending();
+	TurnZBufferOn();
+}
+
+void URenderer::TurnZBufferOn() 
+{
+	DeviceContext->OMSetDepthStencilState(DepthStencilState, 0);
+}
+
+void URenderer::TurnZBufferOff() 
+{
+	DeviceContext->OMSetDepthStencilState(IgnoreDepthStencilState, 0);
+}
+
+
+void URenderer::CreateAlphaBlendingState() 
+{
     D3D11_BLEND_DESC blendStateDescription;
     ZeroMemory(&blendStateDescription, sizeof(D3D11_BLEND_DESC));
     // 알파 블렌딩을 위한 설정
@@ -814,27 +847,4 @@ void URenderer::TurnOffAlphaBlending()
 {
     float blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
     DeviceContext->OMSetBlendState(AlphaDisableBlendingState, blendFactor, 0xffffffff);
-}
-
-void URenderer::CreateText(HWND hWindow) {
-    Text = new UText();
-    Text->Create(Device, DeviceContext, hWindow, UEngine::Get().GetScreenWidth(), UEngine::Get().GetScreenHeight());
-}
-
-void URenderer::RenderText() {
-
-    DeviceContext->ClearDepthStencilView(DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
-    TurnZBufferOff();
-    TurnOnAlphaBlending();
-	Text->Render(DeviceContext, WorldMatrix, ViewMatrix, ProjectionMatrix);
-	TurnOffAlphaBlending();
-	TurnZBufferOn();
-}
-
-void URenderer::TurnZBufferOn() {
-	DeviceContext->OMSetDepthStencilState(DepthStencilState, 0);
-}
-
-void URenderer::TurnZBufferOff() {
-	DeviceContext->OMSetDepthStencilState(IgnoreDepthStencilState, 0);
 }

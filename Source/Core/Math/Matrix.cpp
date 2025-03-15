@@ -293,6 +293,7 @@ FMatrix FMatrix::PerspectiveFovLH(float FieldOfView, float AspectRatio, float Ne
 	return Result;
 }
 
+// 현재 화면 중앙이 0,0인 Pixel 좌표계로 기준이 맞춰져 있음.
 FMatrix FMatrix::OrthoLH(float ViewWidth, float ViewHeight, float NearPlane, float FarPlane)
 {
 	FMatrix Result;

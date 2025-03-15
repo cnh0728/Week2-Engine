@@ -79,6 +79,8 @@ void UWorld::Render()
 	}
 		
 	RenderMainTexture(*Renderer);
+
+	// 텍스트 렌더링 테스트
 	Renderer->RenderText();
 
 	// DisplayPickingTexture(*Renderer);

@@ -202,8 +202,6 @@ bool UText::UpdateSentence(SentenceType* Sentence, const char* Text, float DrawX
 	}
 
 	memset(Vertices, 0, (sizeof(VertexType) * Sentence->VertexCount));
-	//X = (2.0f * (DrawX / ScreenWidth)) - 1.0f;
-	//Y = 1.0f - (2.0f * (DrawY / ScreenHeight));
 
 	X = (float)(((ScreenWidth / 2) * -1) + DrawX);
 	Y = (float)((ScreenHeight / 2) - DrawY);
