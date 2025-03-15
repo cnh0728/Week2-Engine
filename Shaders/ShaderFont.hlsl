@@ -1,4 +1,5 @@
 // ShaderFont.hlsl
+
 cbuffer constants : register(b3)
 {
     matrix MVP;
@@ -28,7 +29,7 @@ PS_INPUT FontVS(VS_INPUT input)
 {
     PS_INPUT output;
 
-    output.position = mul(input.position, MVP);
+    output.position = mul(float4(input.position.xyz, 1.0f), MVP);
     output.texCoord = input.texCoord;
     
     return output;

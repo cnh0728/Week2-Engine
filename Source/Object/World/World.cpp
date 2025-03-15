@@ -77,17 +77,10 @@ void UWorld::Render()
 	{
 		RenderPickingTexture(*Renderer);
 	}
-	
-	
-	Renderer->RenderText();
+		
 	RenderMainTexture(*Renderer);
+	Renderer->RenderText();
 
-
-
-
-
-
-	
 	// DisplayPickingTexture(*Renderer);
 
 }

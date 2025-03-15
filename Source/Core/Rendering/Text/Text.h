@@ -26,7 +26,7 @@ private:
 public:
 	UText();
 	~UText();
-	bool Create(ID3D11Device* Device, ID3D11DeviceContext* DeviceContext, HWND Hwnd, uint32 ScreenWdith, uint32 ScreenHeight);
+	bool Create(ID3D11Device* Device, ID3D11DeviceContext* DeviceContext, HWND Hwnd, int ScreenWdith, int ScreenHeight);
 	void Release();
 	bool Render(ID3D11DeviceContext* DeviceContext, FMatrix WorldMatrix, FMatrix ViewMatrix, FMatrix OrthoMatrix);
 	UFont* GetFont() const { return Font; }
@@ -40,7 +40,7 @@ private:
 private:
 	UFont* Font;
 	UFontShader* FontShader;
-	uint32 ScreenWidth, ScreenHeight;
+	int ScreenWidth, ScreenHeight;
 	SentenceType* Sentence1;
 	SentenceType* Sentence2;
 };

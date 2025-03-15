@@ -100,7 +100,7 @@ public:
     void ReleaseVertexBuffer(ID3D11Buffer* pBuffer) const;
 
     /** Constant Data를 업데이트 합니다. */
-    void UpdateConstant(const ConstantUpdateInfo& UpdateInfo) const;
+    void UpdateConstant(const ConstantUpdateInfo& UpdateInfo);
 
     ID3D11Device* GetDevice() const;
     ID3D11DeviceContext* GetDeviceContext() const;
@@ -118,10 +118,14 @@ public:
 	void TurnOffAlphaBlending();
 
     void CreateText(HWND hWindow);
+
     void RenderText();
 
     void CreateAlphaBlendingState();
 	void ReleaseAlphaBlendingState();
+
+    void TurnZBufferOn();
+    void TurnZBufferOff();
 
 protected:
     /** Direct3D Device 및 SwapChain을 생성합니다. */

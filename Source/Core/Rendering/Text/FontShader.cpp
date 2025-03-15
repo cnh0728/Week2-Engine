@@ -230,6 +230,8 @@ bool UFontShader::SetShaderParameters(ID3D11DeviceContext* DeviceContext, FMatri
 
 	DataPtr = (Constants*)MappedResource.pData;
 
+	ProjectionMatrix = FMatrix::OrthoLH(1264.0f, 1181.0f, 0.1f, 100.0f);
+
 	DataPtr->MVP = FMatrix::Transpose(ProjectionMatrix) *
 		FMatrix::Transpose(ViewMatrix) *
 		FMatrix::Transpose(WorldMatrix);
@@ -238,6 +240,7 @@ bool UFontShader::SetShaderParameters(ID3D11DeviceContext* DeviceContext, FMatri
 	DeviceContext->PSSetShaderResources(0, 1, &Texture);
 
 	Result = DeviceContext->Map(ConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
+
 	if (FAILED(Result))
 	{
 		return false;
@@ -247,6 +250,10 @@ bool UFontShader::SetShaderParameters(ID3D11DeviceContext* DeviceContext, FMatri
 	DataPtr2->pixelColor = Color;
 	DeviceContext->Unmap(ConstantBuffer, 0);
 	DeviceContext->PSSetConstantBuffers(4, 1, &ConstantBuffer);
+
+	//char debugMessage[256];
+	//sprintf_s(debugMessage, "MVP: %f %f %f %f", DataPtr->MVP.M[0][0], DataPtr->MVP.M[0][1], DataPtr->MVP.M[0][2], DataPtr->MVP.M[0][3]);
+	//OutputDebugStringA(debugMessage);
 	
 	return true;
 }
@@ -259,4 +266,3 @@ void UFontShader::RenderShader(ID3D11DeviceContext* DeviceContext, uint32 IndexC
 
 	return;
 }
-

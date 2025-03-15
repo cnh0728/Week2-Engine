@@ -14,7 +14,7 @@ UText::~UText()
 {
 }
 
-bool UText::Create(ID3D11Device* Device, ID3D11DeviceContext* DeviceContext, HWND Hwnd, uint32 ScreenWidth, uint32 ScreenHeight)
+bool UText::Create(ID3D11Device* Device, ID3D11DeviceContext* DeviceContext, HWND Hwnd, int ScreenWidth, int ScreenHeight)
 {
 	bool Result;
 	this->ScreenWidth = ScreenWidth;
@@ -48,7 +48,7 @@ bool UText::Create(ID3D11Device* Device, ID3D11DeviceContext* DeviceContext, HWN
 		return false;
 	}
 
-	Result = UpdateSentence(Sentence1, "Hello World", 100, 100, 1.0f, 1.0f, 1.0f, DeviceContext);
+	Result = UpdateSentence(Sentence1, "Hello World", 500, 500, 1.0f, 1.0f, 1.0f, DeviceContext);
 	if (!Result)
 	{
 		return false;
@@ -60,7 +60,7 @@ bool UText::Create(ID3D11Device* Device, ID3D11DeviceContext* DeviceContext, HWN
 		return false;
 	}
 
-	Result = UpdateSentence(Sentence2, "Goodbye World", 100, 200, 1.0f, 1.0f, 0.0f, DeviceContext);
+	Result = UpdateSentence(Sentence2, "Goodbye World", 600, 600, 1.0f, 1.0f, 0.0f, DeviceContext);
 	if (!Result)
 	{
 		return false;
@@ -202,10 +202,13 @@ bool UText::UpdateSentence(SentenceType* Sentence, const char* Text, float DrawX
 	}
 
 	memset(Vertices, 0, (sizeof(VertexType) * Sentence->VertexCount));
-	X = (float)(-1280 / 2.0f + DrawX);
-	Y = (float)((ScreenHeight / 2.0f) - DrawY);
+	//X = (2.0f * (DrawX / ScreenWidth)) - 1.0f;
+	//Y = 1.0f - (2.0f * (DrawY / ScreenHeight));
 
-	Font->BuildVertexArray((void*)Vertices, Text, 0.1f, 0.1f);
+	X = (float)(((ScreenWidth / 2) * -1) + DrawX);
+	Y = (float)((ScreenHeight / 2) - DrawY);
+
+	Font->BuildVertexArray((void*)Vertices, Text, X, Y, ScreenWidth, ScreenHeight);
 
 	Result = DeviceContext->Map(Sentence->VertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
 	if (FAILED(Result))

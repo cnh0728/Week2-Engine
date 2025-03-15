@@ -265,11 +265,13 @@ void URenderer::ReleaseVertexBuffer(ID3D11Buffer* pBuffer) const
     pBuffer->Release();
 }
 
-void URenderer::UpdateConstant(const ConstantUpdateInfo& UpdateInfo) const
+void URenderer::UpdateConstant(const ConstantUpdateInfo& UpdateInfo) 
 {
     if (!ConstantBuffer) return;
 
     D3D11_MAPPED_SUBRESOURCE ConstantBufferMSR;
+
+    //ProjectionMatrix = FMatrix::OrthoLH(UEngine::Get().GetScreenWidth(), UEngine::Get().GetScreenHeight(), 0.1f, 100.0f);
 
     FMatrix MVP = 
         FMatrix::Transpose(ProjectionMatrix) * 
@@ -340,6 +342,15 @@ void URenderer::CreateDeviceAndSwapChain(HWND hWindow)
         static_cast<float>(SwapChainDesc.BufferDesc.Width), static_cast<float>(SwapChainDesc.BufferDesc.Height),
         0.0f, 1.0f
     };
+
+#ifdef _DEBUG
+
+    HMODULE hPixGpuCapturer = LoadLibraryA("WinPixGpuCapturer.dll");
+    if (!hPixGpuCapturer)
+    {
+        OutputDebugStringA("Failed to load WinPixGpuCapturer.dll\n");
+    }
+#endif
 }
 
 void URenderer::ReleaseDeviceAndSwapChain()
@@ -427,7 +438,7 @@ void URenderer::CreateDepthStencilState()
     Device->CreateDepthStencilState(&DepthStencilDesc, &DepthStencilState);
     
     D3D11_DEPTH_STENCIL_DESC IgnoreDepthStencilDesc = {};
-    DepthStencilDesc.DepthEnable = TRUE;
+    DepthStencilDesc.DepthEnable = FALSE;
     DepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
     DepthStencilDesc.DepthFunc = D3D11_COMPARISON_ALWAYS;                     
     Device->CreateDepthStencilState(&IgnoreDepthStencilDesc ,&IgnoreDepthStencilState);
@@ -806,11 +817,25 @@ void URenderer::TurnOffAlphaBlending()
 }
 
 void URenderer::CreateText(HWND hWindow) {
-	Text = new UText();
+    Text = new UText();
     Text->Create(Device, DeviceContext, hWindow, UEngine::Get().GetScreenWidth(), UEngine::Get().GetScreenHeight());
 }
 
 void URenderer::RenderText() {
 
+    //DeviceContext->ClearRenderTargetView(FrameBufferRTV, ClearColor);
+    DeviceContext->ClearDepthStencilView(DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+    TurnZBufferOff();
+    TurnOnAlphaBlending();
 	Text->Render(DeviceContext, WorldMatrix, ViewMatrix, ProjectionMatrix);
+	TurnOffAlphaBlending();
+	TurnZBufferOn();
+}
+
+void URenderer::TurnZBufferOn() {
+	DeviceContext->OMSetDepthStencilState(DepthStencilState, 0);
+}
+
+void URenderer::TurnZBufferOff() {
+	DeviceContext->OMSetDepthStencilState(IgnoreDepthStencilState, 0);
 }

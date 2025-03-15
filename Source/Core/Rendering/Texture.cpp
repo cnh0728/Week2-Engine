@@ -126,7 +126,7 @@ bool UTexture::Create(ID3D11Device* Device, const wchar_t* TextureFileName)
 	//return true;
 
 	HRESULT Result;
-	DirectX::ScratchImage Image;
+ 	DirectX::ScratchImage Image;
 
 	// 이미지 파일 로드
 	Result = DirectX::LoadFromTGAFile(TextureFileName, nullptr, Image);
@@ -165,39 +165,39 @@ bool UTexture::Create(ID3D11Device* Device, const wchar_t* TextureFileName)
 	}
 
 	return true;
-	ID3D11Texture2D* texture2D = static_cast<ID3D11Texture2D*>(TextureResource);
-	D3D11_TEXTURE2D_DESC desc;
-	texture2D->GetDesc(&desc);
-	PrintErrorMessage(Result);
+	//ID3D11Texture2D* texture2D = static_cast<ID3D11Texture2D*>(TextureResource);
+	//D3D11_TEXTURE2D_DESC desc;
+	//texture2D->GetDesc(&desc);
+	//PrintErrorMessage(Result);
 
-	char buffer[256];
-	sprintf_s(buffer, "Texture2D - Width: %u, Height: %u, MipLevels: %u, Format: %u\n",
-		desc.Width, desc.Height, desc.MipLevels, desc.Format);
-	OutputDebugStringA(buffer);
+	//char buffer[256];
+	//sprintf_s(buffer, "Texture2D - Width: %u, Height: %u, MipLevels: %u, Format: %u\n",
+	//	desc.Width, desc.Height, desc.MipLevels, desc.Format);
+	//OutputDebugStringA(buffer);
 
-	if (FAILED(Result))
-	{
-		return false;
-	}
+	//if (FAILED(Result))
+	//{
+	//	return false;
+	//}
 
-	// 셰이더 리소스 뷰 생성
-	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
-	ZeroMemory(&srvDesc, sizeof(srvDesc));
+	//// 셰이더 리소스 뷰 생성
+	//D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+	//ZeroMemory(&srvDesc, sizeof(srvDesc));
 
-	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D; // 뷰의 종류
-	srvDesc.Texture2D.MostDetailedMip = 0; // 사용할 가장 자세한 Mipmap 수준의 인덱스
-	srvDesc.Texture2D.MipLevels = 1; // 텍스처 뷰의 최대 Mipmap 수준
+	//srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D; // 뷰의 종류
+	//srvDesc.Texture2D.MostDetailedMip = 0; // 사용할 가장 자세한 Mipmap 수준의 인덱스
+	//srvDesc.Texture2D.MipLevels = 1; // 텍스처 뷰의 최대 Mipmap 수준
 
-	Result = Device->CreateShaderResourceView(TextureResource, &srvDesc, &Texture);
-	PrintErrorMessage(Result);
+	//Result = Device->CreateShaderResourceView(TextureResource, &srvDesc, &Texture);
+	//PrintErrorMessage(Result);
 
-	// 텍스처 리소스 해제
-	TextureResource->Release();
+	//// 텍스처 리소스 해제
+	//TextureResource->Release();
 
-	if (FAILED(Result))
-	{
-		return false;
-	}
+	//if (FAILED(Result))
+	//{
+	//	return false;
+	//}
 
 }
 
