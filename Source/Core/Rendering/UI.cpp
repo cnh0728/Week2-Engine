@@ -56,13 +56,8 @@ void UI::Update()
     if (GetCursorPos(&mousePos)) {
         HWND hwnd = GetActiveWindow();
         ScreenToClient(hwnd, &mousePos);
-
-        ImVec2 CalculatedMousePos = ResizeToScreenByCurrentRatio(ImVec2(mousePos.x, mousePos.y));
-        ImGui::GetIO().MousePos = CalculatedMousePos;
-        //UE_LOG("MousePos: (%.1f, %.1f), DisplaySize: (%.1f, %.1f)\n",CalculatedMousePos.x, CalculatedMousePos.y, GetRatio().x, GetRatio().y);
     }
 
-    
     // ImGui Frame 생성
     ImGui_ImplDX11_NewFrame();
     ImGui_ImplWin32_NewFrame();
@@ -107,16 +102,17 @@ void UI::OnUpdateWindowSize(UINT InScreenWidth, UINT InScreenHeight)
 
 void UI::RenderControlPanel()
 {
+    float windowWidth = UEngine::Get().GetScreenWidth();
+    float windowHeight = UEngine::Get().GetScreenHeight();
+
+    float controllWindowWidth = static_cast<float>(windowWidth) * 0.3f;
+    float controllWindowHeight = static_cast<float>(windowHeight) * 0.25f;
+    float controllWindowPosX = (static_cast<float>(windowWidth) - controllWindowWidth) * 0.f;
+    float controllWindowPosY = (static_cast<float>(windowHeight) - controllWindowHeight) * 0.f;
+    ImGui::SetNextWindowPos(ImVec2(controllWindowPosX, controllWindowPosY));
+    ImGui::SetNextWindowSize(ImVec2(controllWindowWidth, 0.0f), ImGuiCond_Once);
+
     ImGui::Begin("Jungle Control Panel");
-
-    if (bWasWindowSizeUpdated)
-    {
-        auto* Window = ImGui::GetCurrentWindow();
-
-        ImGui::SetWindowPos(ResizeToScreen(Window->Pos));
-        ImGui::SetWindowSize(ResizeToScreen(Window->Size));
-    }
-    
     ImGui::Text("Hello, Jungle World!");
     ImGui::Text("FPS: %.3f (what is that ms)", ImGui::GetIO().Framerate);
 
@@ -338,15 +334,17 @@ void UI::RenderShowFlag() {
 
 void UI::RenderPropertyWindow()
 {
+    float windowWidth = UEngine::Get().GetScreenWidth();
+    float windowHeight = UEngine::Get().GetScreenHeight();
+
+    float propertyWindowWidth = static_cast<float>(windowWidth) * 0.3f;
+    float propertyWindowHeight = static_cast<float>(windowHeight) * 0.25f;
+    float propertyWindowPosX = (static_cast<float>(windowWidth) - propertyWindowWidth) * 1.f;
+    float propertyWindowPosY = (static_cast<float>(windowHeight) - propertyWindowHeight) * 0.f;
+    ImGui::SetNextWindowPos(ImVec2(propertyWindowPosX, propertyWindowPosY));
+
+    ImGui::SetNextWindowSize(ImVec2(propertyWindowWidth, 0.0f));
     ImGui::Begin("Properties");
-
-    if (bWasWindowSizeUpdated)
-    {
-        auto* Window = ImGui::GetCurrentWindow();
-
-        ImGui::SetWindowPos(ResizeToScreen(Window->Pos));
-        ImGui::SetWindowSize(ResizeToScreen(Window->Size));
-    }
     
     AActor* selectedActor = FEditorManager::Get().GetSelectedActor();
     if (selectedActor != nullptr)
