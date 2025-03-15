@@ -113,6 +113,8 @@ public:
     ID3D11Device* GetDevice() const;
     ID3D11DeviceContext* GetDeviceContext() const;
 
+    BufferInfo GetBufferInfo(EPrimitiveType InPrimitiveType) const { return BufferCache->GetBufferInfo(InPrimitiveType); }
+
     /** View 변환 Matrix를 업데이트 합니다. */
     void UpdateViewMatrix(const FTransform& CameraTransform);
 
