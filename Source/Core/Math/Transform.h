@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include "Vector.h"
 #include "Matrix.h"
-#include "Core/Engine.h"
 #include "Core/Math/Plane.h"
 
 #define TORAD 0.0174532925199432957f
@@ -109,12 +108,26 @@ public:
 
 	FVector GetRight() const
 	{
-		return FVector::CrossProduct(FVector(0, 0, 1), GetForward()).GetSafeNormal();
+		FMatrix RotationMatrix = FMatrix::GetRotateMatrix(Rotation);
+		FVector Right = FVector(
+			RotationMatrix.M[0][1],
+			RotationMatrix.M[1][1],
+			RotationMatrix.M[2][1]
+		);
+
+		return Right.GetSafeNormal();
 	}
 
 	FVector GetUp() const{
-		return FVector::CrossProduct(GetForward(), GetRight()).GetSafeNormal();
+		FMatrix RotationMatrix = FMatrix::GetRotateMatrix(Rotation);
 
+		FVector Up = FVector(
+			RotationMatrix.M[0][2],
+			RotationMatrix.M[1][2],
+			RotationMatrix.M[2][2]
+		);
+		
+		return Up.GetSafeNormal();
 	}
 
 	void Translate(const FVector& InTranslation)

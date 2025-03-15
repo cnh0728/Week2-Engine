@@ -58,6 +58,10 @@ public:
     // 이동 생성자
     TMap(TMap&& Other) noexcept : PrivateMap(std::move(Other.PrivateMap)) {}
 
+    // 초기화 생성자
+    TMap(std::initializer_list<std::pair<const KeyType, ValueType>> InitList)
+    : PrivateMap(InitList) {}
+    
     // 복사 할당 연산자
     TMap& operator=(const TMap& Other)
     {

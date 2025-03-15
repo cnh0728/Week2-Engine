@@ -1,7 +1,6 @@
 // ShaderW0.hlsl
 cbuffer constants : register(b0)
 {
-    matrix MVP;
     float4 CustomColor;
     uint bUseVertexColor;
 }
@@ -20,6 +19,8 @@ struct VS_INPUT
 {
     float4 position : POSITION; // Input position from vertex buffer
     float4 color : COLOR;       // Input color from vertex buffer
+
+    // matrix MVP;
 };
 
 struct PS_INPUT
@@ -39,10 +40,13 @@ PS_INPUT mainVS(VS_INPUT input)
 {
     PS_INPUT output;
 
-    output.position = mul(input.position, MVP);
+    
+    // output.position = mul(input.position, MVP);
     // output.depthPosition = output.position;
-
-    output.color = bUseVertexColor == 1 ? input.color : CustomColor;
+    output.position = input.position;
+    
+    // output.color = bUseVertexColor == 1 ? input.color : CustomColor;
+    output.color = input.color;
     return output;
 }
 
@@ -56,7 +60,7 @@ PS_OUTPUT mainPS(PS_INPUT input) : SV_TARGET
 
     // 색상 설정 (예: 흰색)
     output.color = input.color;
-    output.depth = saturate(depth);
+    // output.depth = saturate(depth);
     // output.color = float4(depth, depth, depth, 1.0f);
     
     return output;

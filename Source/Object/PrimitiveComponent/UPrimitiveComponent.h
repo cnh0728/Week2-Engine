@@ -41,7 +41,8 @@ public:
 
 public:
 	void SetCanBeRendered(bool bRender) { bCanBeRendered = bRender; }
-
+	bool GetCanBeRendered() const { return bCanBeRendered; }
+	
 	void SetIsOrthoGraphic(bool IsOrtho) { bIsOrthoGraphic = IsOrtho; }
 	bool GetIsOrthoGraphic() { return bIsOrthoGraphic;}
 	

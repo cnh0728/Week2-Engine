@@ -104,8 +104,7 @@ void AGizmoHandle::Tick(float DeltaTime)
 	
 			FTransform AT = Actor->GetActorTransform();
 
-			DoTransform(AT, Result, Actor);
-			
+			DoTransform(AT, Result, SelectedActor);
 		}
 	}
 

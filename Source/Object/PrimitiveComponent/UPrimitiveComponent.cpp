@@ -42,10 +42,22 @@ void UPrimitiveComponent::Render()
 			bUseVertexColor = true;
 		}
 	}
-	Renderer->RenderPrimitive(this);
+	// Renderer->RenderPrimitive(this);
 }
 
 void UPrimitiveComponent::RegisterComponentWithWorld(UWorld* World)
 {
 	World->AddRenderComponent(this);
+	
+	TArray<FVertexSimple> Vertices = OriginVertices[GetType()];
+	
+	D3D11_PRIMITIVE_TOPOLOGY Topology = GetType() == EPrimitiveType::EPT_Line ? D3D11_PRIMITIVE_TOPOLOGY_LINELIST : D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+
+	VertexBufferInfo BufferInfo = VertexBufferInfo(Vertices.Num(), Topology, Vertices);
+	
+	URenderer* Renderer = UEngine::Get().GetRenderer();
+
+	uint32_t UUID = GetOwner()->GetUUID();
+	
+	Renderer->CreateVertexBuffer(UUID, BufferInfo);
 }
