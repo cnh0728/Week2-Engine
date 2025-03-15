@@ -12,6 +12,7 @@
 #include "Core/Engine.h"
 #include "Primitive/PrimitiveVertices.h"
 #include "Core/Math/Plane.h"
+#include "Text/Text.h"
 
 
 struct FVertexSimple;
@@ -123,9 +124,24 @@ public:
 
 	void OnUpdateWindowSize(int Width, int Height);
 
+    /** Alpha Blending을 켜고 끄는 함수 **/
+	void TurnOnAlphaBlending();
+	void TurnOffAlphaBlending();
+
+    void CreateText(HWND hWindow);
+
+    void RenderText();
+
+    void CreateAlphaBlendingState();
+	void ReleaseAlphaBlendingState();
+
+    void TurnZBufferOn();
+    void TurnZBufferOff();
+
     void SetViewMode(EViewModeIndex viewMode);
 
     EViewModeIndex GetCurrentViewMode() const;
+
 protected:
     /** Direct3D Device 및 SwapChain을 생성합니다. */
     void CreateDeviceAndSwapChain(HWND hWindow);
@@ -195,9 +211,17 @@ protected:
 	FMatrix ProjectionMatrix;
 
 	D3D_PRIMITIVE_TOPOLOGY CurrentTopology = D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED;
+
+	// Alpha Blending
+	ID3D11BlendState* AlphaEnableBlendingState = nullptr;
+	ID3D11BlendState* AlphaDisableBlendingState = nullptr;
+
+    // 텍스트클래스
+    UText* Text = nullptr;
+
     EViewModeIndex CurrentViewMode = EViewModeIndex::VMI_Lit;
     D3D11_FILL_MODE CurrentFillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
-	
+
 #pragma region picking
 protected:
 	// 피킹용 버퍼들
@@ -226,6 +250,7 @@ public:
 	FVector4 GetPixel(FVector MPos);
 
 	void RenderPickingTexture();
+
 	FMatrix GetProjectionMatrix() const { return ProjectionMatrix; }
 #pragma endregion picking
 };
