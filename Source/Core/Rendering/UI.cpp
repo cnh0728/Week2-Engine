@@ -21,8 +21,7 @@
 #include "Object/Gizmo/GizmoHandle.h"
 
 
-
-void UI::Initialize(HWND hWnd, const URenderer& Renderer, UINT ScreenWidth, UINT ScreenHeight)
+void UI::Initialize(HWND hWnd, URenderer& Renderer, UINT ScreenWidth, UINT ScreenHeight)
 {
     // ImGui 초기화
     IMGUI_CHECKVERSION();
@@ -47,6 +46,8 @@ void UI::Initialize(HWND hWnd, const URenderer& Renderer, UINT ScreenWidth, UINT
 
     PreRatio = GetRatio();
     CurRatio = GetRatio();
+
+    this->Renderer = &Renderer;
 }
 
 void UI::Update()
@@ -86,7 +87,6 @@ void UI::Update()
     bWasWindowSizeUpdated = false;
 }
 
-
 void UI::Shutdown()
 {
     ImGui_ImplDX11_Shutdown();
@@ -123,6 +123,8 @@ void UI::RenderControlPanel()
     RenderMemoryUsage();
     RenderPrimitiveSelection();
     RenderCameraSettings();
+    RenderViewMode();
+    RenderShowFlag();
     
     ImGui::End();
 }
@@ -247,7 +249,7 @@ void UI::RenderCameraSettings()
     if (ImGui::DragFloat("FOV", &FOV, 0.1f))
     {
         FOV = std::clamp(FOV, 0.01f, 179.99f);
-        Camera->SetFieldOfVew(FOV);
+        Camera->SetFieldOfView(FOV);
     }
 
     float NearFar[2] = { Camera->GetNear(), Camera->GetFar() };
@@ -295,7 +297,16 @@ void UI::RenderCameraSettings()
         Transform.SetRotation(UIEulerAngle);
         Camera->SetActorTransform(Transform);
     }
-    ImGui::DragFloat("Camera Speed", &Camera->CameraSpeed, 0.1f);
+    if (ImGui::DragFloat("Camera Speed", &Camera->CameraSpeed, 0.1f))
+    {
+        Camera->CameraSpeed = FMath::Clamp(Camera->CameraSpeed, .0f, 20.0f);
+    }
+
+    float CameraSensitivity = Camera->GetCameraSensitivity();
+    if (ImGui::DragFloat("Camera Sensitivity", &CameraSensitivity, 0.1f))
+    {
+        Camera->SetCameraSensitivity(CameraSensitivity);
+    }
 
     FVector Forward = Camera->GetActorTransform().GetForward();
     FVector Up = Camera->GetActorTransform().GetUp();
@@ -304,11 +315,29 @@ void UI::RenderCameraSettings()
     ImGui::Text("Camera GetForward(): (%.2f %.2f %.2f)", Forward.X, Forward.Y, Forward.Z);
     ImGui::Text("Camera GetUp(): (%.2f %.2f %.2f)", Up.X, Up.Y, Up.Z);
     ImGui::Text("Camera GetRight(): (%.2f %.2f %.2f)", Right.X, Right.Y, Right.Z);
+    ImGui::Separator();
+}
+
+void UI::RenderViewMode() {
+    const char* viewModeItems[] = { "Lit", "Unlit", "Wireframe" };
+    int currViewMode = static_cast<int>(Renderer->GetCurrentViewMode());
+
+    if (ImGui::Combo("View Mode", &currViewMode, viewModeItems, IM_ARRAYSIZE(viewModeItems))) {
+        Renderer->SetViewMode(static_cast<EViewModeIndex>(currViewMode));
+    }
+    ImGui::Separator();
+}
+
+void UI::RenderShowFlag() {
+    bool bShowPrimitives = FEditorManager::Get().IsShowFlagSet(EEngineShowFlags::SF_Primitives);
+    if (ImGui::Checkbox("Show Primtives", &bShowPrimitives))
+    {
+        FEditorManager::Get().SetShowFlag(EEngineShowFlags::SF_Primitives, bShowPrimitives);
+    }
 }
 
 void UI::RenderPropertyWindow()
 {
-
     ImGui::Begin("Properties");
 
     if (bWasWindowSizeUpdated)

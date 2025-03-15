@@ -10,6 +10,7 @@
 #include "Object/Actor/Camera.h"
 #include "Object/Actor/Sphere.h"
 #include "Static/FEditorManager.h"
+#include"Data/ConfigManager.h"
 
 class AArrow;
 class APicker;
@@ -172,6 +173,7 @@ void UEngine::Run()
 
 void UEngine::Shutdown()
 {
+    ConfigManager::Get().SaveAllConfigs();
     ShutdownWindow();
 }
 
@@ -228,9 +230,10 @@ void UEngine::InitWorld()
     World = FObjectFactory::ConstructObject<UWorld>();
 
     FEditorManager::Get().SetCamera(World->SpawnActor<ACamera>());
+    ConfigManager::Get().LoadAllConfigs();
 
     //// Test
-    AArrow* Arrow = World->SpawnActor<AArrow>();
+    // AArrow* Arrow = World->SpawnActor<AArrow>();
     //World->SpawnActor<ASphere>();
 
     World->SpawnActor<AAxis>();

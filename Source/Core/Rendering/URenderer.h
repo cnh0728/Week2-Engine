@@ -20,6 +20,13 @@ struct FVector4;
 
 class ACamera;
 
+enum class EViewModeIndex : uint32
+{
+    VMI_Lit,
+    VMI_Unlit,
+    VMI_Wireframe,
+};
+
 class URenderer
 {
 private:
@@ -54,6 +61,8 @@ private:
     };
 
 public:
+    ~URenderer();
+
     /** Renderer를 초기화 합니다. */
     void Create(HWND hWindow);
 
@@ -105,6 +114,8 @@ public:
     ID3D11Device* GetDevice() const;
     ID3D11DeviceContext* GetDeviceContext() const;
 
+    BufferInfo GetBufferInfo(EPrimitiveType InPrimitiveType) const { return BufferCache->GetBufferInfo(InPrimitiveType); }
+
     /** View 변환 Matrix를 업데이트 합니다. */
     void UpdateViewMatrix(const FTransform& CameraTransform);
 
@@ -126,6 +137,10 @@ public:
 
     void TurnZBufferOn();
     void TurnZBufferOff();
+
+    void SetViewMode(EViewModeIndex viewMode);
+
+    EViewModeIndex GetCurrentViewMode() const;
 
 protected:
     /** Direct3D Device 및 SwapChain을 생성합니다. */
@@ -204,8 +219,9 @@ protected:
     // 텍스트클래스
     UText* Text = nullptr;
 
+    EViewModeIndex CurrentViewMode = EViewModeIndex::VMI_Lit;
+    D3D11_FILL_MODE CurrentFillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
 
-	
 #pragma region picking
 protected:
 	// 피킹용 버퍼들

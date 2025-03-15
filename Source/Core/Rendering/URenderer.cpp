@@ -6,6 +6,11 @@
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Static/FEditorManager.h"
 
+URenderer::~URenderer()
+{
+    Release();
+}
+
 void URenderer::Create(HWND hWindow)
 {
     CreateDeviceAndSwapChain(hWindow);
@@ -495,13 +500,23 @@ void URenderer::ReleaseDepthStencilBuffer()
 
 void URenderer::CreateRasterizerState()
 {
+    if (RasterizerState)
+    {
+        RasterizerState->Release();
+        RasterizerState = nullptr;
+    }
+
     D3D11_RASTERIZER_DESC RasterizerDesc = {};
-    RasterizerDesc.FillMode = D3D11_FILL_SOLID; // 채우기 모드
-    //RasterizerDesc.FillMode = D3D11_FILL_WIREFRAME; // 채우기 모드
-    RasterizerDesc.CullMode = D3D11_CULL_BACK;  // 백 페이스 컬링
+    RasterizerDesc.FillMode = CurrentFillMode;
+    RasterizerDesc.CullMode = D3D11_CULL_BACK;
     RasterizerDesc.FrontCounterClockwise = FALSE;
 
-    Device->CreateRasterizerState(&RasterizerDesc, &RasterizerState);
+    HRESULT hr = Device->CreateRasterizerState(&RasterizerDesc, &RasterizerState);
+    if (FAILED(hr))
+        UE_LOG("failed for create rasterizer state");
+    else
+        DeviceContext->RSSetState(RasterizerState);
+        
 }
 
 void URenderer::ReleaseRasterizerState()
@@ -574,7 +589,7 @@ void URenderer::PrepareZIgnore()
 void URenderer::PreparePicking()
 {
     // 렌더 타겟 바인딩
-    DeviceContext->OMSetRenderTargets(1, &PickingFrameBufferRTV, DepthStencilView);
+    DeviceContext->OMSetRenderTargets(1, &PickingFrameBufferRTV, nullptr);
     DeviceContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
     DeviceContext->OMSetDepthStencilState(DepthStencilState, 0);                // DepthStencil 상태 설정. StencilRef: 스텐실 테스트 결과의 레퍼런스
 
@@ -769,7 +784,6 @@ void URenderer::RenderPickingTexture()
     backBuffer->Release();
 }
 
-
 void URenderer::CreateText(HWND hWindow) 
 {
     Text = new UText();
@@ -847,4 +861,24 @@ void URenderer::TurnOffAlphaBlending()
 {
     float blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
     DeviceContext->OMSetBlendState(AlphaDisableBlendingState, blendFactor, 0xffffffff);
+
+void URenderer::SetViewMode(EViewModeIndex viewMode) {
+    CurrentViewMode = viewMode;
+
+    switch (CurrentViewMode)
+    {
+    case EViewModeIndex::VMI_Lit:
+    case EViewModeIndex::VMI_Unlit:
+        CurrentFillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
+        break;
+    case EViewModeIndex::VMI_Wireframe:
+        CurrentFillMode = D3D11_FILL_MODE::D3D11_FILL_WIREFRAME;
+        break;
+    }
+    CreateRasterizerState();
+}
+
+EViewModeIndex URenderer::GetCurrentViewMode() const {
+    return CurrentViewMode;
+
 }

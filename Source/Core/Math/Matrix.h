@@ -44,5 +44,13 @@ struct alignas(16) FMatrix
 
 	FVector4 TransformVector4(const FVector4& Vector) const;
 
+	float GetElement(int Row, int Column) const;
+	
 	class FTransform GetTransform() const;
+	
 };
+
+inline float FMatrix::GetElement(int column, int row) const
+{
+	return M[column][row];
+}
