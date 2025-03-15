@@ -28,6 +28,7 @@ public:// UIWindows
 	void RenderViewMode();
 	void RenderShowFlag();
     void RenderPropertyWindow();
+	void RenderSceneManager();
 
 private:
 	// Mouse 전용

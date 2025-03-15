@@ -50,6 +50,8 @@ public:
 	void RemoveRenderComponent(class UPrimitiveComponent* Component) { RenderComponents.Remove(Component); }
 
 	TSet<UPrimitiveComponent*> GetRenderComponents(){ return RenderComponents; }
+
+	const TArray<AActor*>& GetActors() const { return Actors;  }
 	
 private:
 	UWorldInfo GetWorldInfo() const;

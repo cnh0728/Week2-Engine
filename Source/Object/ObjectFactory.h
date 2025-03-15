@@ -3,7 +3,7 @@
 #include "Core/EngineStatics.h"
 #include "Core/HAL/PlatformMemory.h"
 #include "Debug/DebugConsole.h"
-
+#include "Core/Container/Name.h"
 class UObject;
 
 class FObjectFactory
@@ -34,7 +34,11 @@ public:
         // Object 제거시 Index가 달라지기 때문에 임시 주석처리 <- RemoveSwap으로 해결 가능
         // NewObject->InternalIndex = UEngine::Get().GObjects.Add(NewObject);
         UEngine::Get().GObjects.Add(NewObject->GetUUID(), NewObject);
+        FString Name(typeid(T).name());
+        Name = Name.SubStr(6);
+        uint32 UUID = NewObject->UUID;
 
+        NewObject->Name = FName(*Name, UUID);
         return NewObject.get();
     }
 };

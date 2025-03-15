@@ -72,6 +72,7 @@ void UI::Update()
     
     RenderControlPanel();
     RenderPropertyWindow();
+    RenderSceneManager();
 
     Debug::ShowConsole(bWasWindowSizeUpdated, PreRatio, CurRatio);
 
@@ -391,6 +392,37 @@ void UI::RenderPropertyWindow()
 			}
 		}
     }
+    ImGui::End();
+}
+
+
+void UI::RenderSceneManager()
+{
+    const TArray<AActor*>& ActorArray = UEngine::Get().GetWorld()->GetActors();
+    uint32 NumActors = ActorArray.Num();
+
+    if (NumActors > 0) {
+        static int selected = -1;
+        ImGui::Begin("Scene Manager");
+        if (ImGui::TreeNode("Primtives"))
+        {
+
+            for (int n = 0; n < NumActors; n++)
+            {
+                char buf[32];
+
+                sprintf_s(buf, "%s", *ActorArray[n]->Name.GetString());
+                if (ImGui::Selectable(buf, selected == n))
+                    selected = n;
+            }
+            ImGui::TreePop();
+        }
+        if (selected > -1) {
+            if(NumActors > 0)
+                FEditorManager::Get().SelectActor(ActorArray[selected]);
+        }
+    }
+
     ImGui::End();
 }
 

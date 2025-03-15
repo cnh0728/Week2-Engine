@@ -862,7 +862,7 @@ void URenderer::TurnOffAlphaBlending()
 {
     float blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
     DeviceContext->OMSetBlendState(AlphaDisableBlendingState, blendFactor, 0xffffffff);
-
+}
 void URenderer::SetViewMode(EViewModeIndex viewMode) {
     CurrentViewMode = viewMode;
 

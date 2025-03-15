@@ -171,6 +171,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Core\Container\Name.cpp" />
     <ClCompile Include="Source\Core\Math\Plane.cpp" />
     <ClCompile Include="Source\Core\Rendering\Texture.cpp" />
     <ClCompile Include="Source\Core\Rendering\Text\Font.cpp" />
@@ -215,6 +216,7 @@
     <ClCompile Include="Source\Object\Actor\Sphere.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Core\Container\Name.h" />
     <ClInclude Include="Source\Core\Rendering\Texture.h" />
     <ClInclude Include="Source\Core\Rendering\Text\Font.h" />
     <ClInclude Include="Source\Core\Rendering\Text\FontShader.h" />
