@@ -15,11 +15,8 @@ class AActor;
 
 class UWorld :public UObject
 {
-	DECLARE_OBJECT(UWorld, UObject)
 public:
-	UWorld() { 
-		DECLARE_OBJECT_CONSTRUCTOR (UWorld, UObject)
-	}
+	UWorld() {	}
 	virtual ~UWorld() = default;
 
 public:
@@ -57,7 +54,7 @@ public:
 	FString SceneName;
 	uint32 Version = 1;
 	
-protected:
+//protected:
 	TArray<AActor*> Actors;
 	TArray<UPrimitiveComponent*> ZIgnoreRenderComponents;
 	TArray<AActor*> ActorsToSpawn;

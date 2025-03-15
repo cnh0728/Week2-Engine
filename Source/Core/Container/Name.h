@@ -48,7 +48,8 @@ private:
 /// "Player1" -> Number = 2
 struct FName
 {
-	FName(char* pStr) : FName(FString(pStr)) { }
+	FName(const char* pStr, uint32 InNumber);
+	FName(const char* pStr) : FName(FString(pStr)) { }
 	FName(FString str);
 	FName();
 
@@ -62,6 +63,8 @@ struct FName
 	uint32 ComparisonIndex; // 비교용 index
 	uint32 IsValid : 1 = false;
 	uint32 Number : 31; // 숫자를 의미
+
+	FString GetString() const;
 };
 
 
@@ -70,7 +73,7 @@ template <>
 struct std::hash<FString>
 {
 	std::size_t operator()(const FString& Str) const
-	{
+	{	
 		return Str.GetHash();
 	}
 };
@@ -81,8 +84,8 @@ public:
 	FNamePool() {}
 	uint32 FindOrAddComparisonName(FString ComparisonName);
 	uint32 FindOrAddDisplayName(FString DisplayName);
-	FString ResolveComparison(uint32 Id) const;
-	FString ResolveDisplay(uint32 Id) const;
+	static FString ResolveComparison(uint32 Id);
+	static FString ResolveDisplay(uint32 Id);
 #ifndef IS_FNAME_POOL_HASHED
 	uint32 GetComparisonPoolSize() const { return CurrentComparisonPoolSize - 1; }
 	uint32 GetDisplayPoolSize() const { return CurrentDisplayPoolSize - 1; }
@@ -120,21 +123,27 @@ public:
 
 
 
+//
+//#define DECLARE_OBJECT(ClassName, SuperClass) \
+//private: \
+//    static uint32_t InstanceCounter; \
+//
+//
+//#define DECLARE_OBJECT_COUNTER(ClassName) \
+//	uint32_t ClassName::InstanceCounter = 0; \
+//
+//#define DECLARE_OBJECT_CONSTRUCTOR(ClassName, SuperClass) \
+//	Name = FName((std::string(#ClassName) + std::to_string(InstanceCounter++)).c_str()); \
+//
+//
+//
 
-#define DECLARE_OBJECT(ClassName, SuperClass) \
-private: \
-    static uint32_t InstanceCounter; \
-
-#define DECLARE_OBJECT_COUNTER(ClassName, SuperClass) \
-	uint32_t ClassName::InstanceCounter = 0; \
-
-#define DECLARE_OBJECT_CONSTRUCTOR(ClassName, SuperClass) \
-	Name = FName((std::string(#ClassName) + std::to_string(InstanceCounter++)).c_str()); \
 
 
-//#define DECLARE_OBJECT_CONSTRUCTOR(ClassName) \
-//if( typeid(*this) == typeid(ClassName)) \
-//{ \
-//	Name = FName((std::string(typeid(*this).name()) + std::to_string(InstanceCounter++)).c_str()); \
-//} \
+
+
+
+
+
+
 

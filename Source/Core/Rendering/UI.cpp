@@ -75,8 +75,8 @@ void UI::Update()
     
     RenderControlPanel();
     RenderPropertyWindow();
-    RenderFNameDebug();
-
+    RenderSceneManager();
+    
     Debug::ShowConsole(bWasWindowSizeUpdated, PreRatio, CurRatio);
 
     // ImGui 렌더링
@@ -368,41 +368,60 @@ void UI::RenderPropertyWindow()
     }
     ImGui::End();
 }
+//
+//void UI::RenderFNameDebug()
+//{
+//    ImGui::Begin("FName Test");
+//
+//    static char buffer[256] = { 0 };
+//    buffer[255] = NULL;
+//    ImGui::InputText("FName text", buffer, 256);
+//    buffer;
+//    if (ImGui::Button("FName button"))
+//    {
+//        //FString fstr(buffer);
+//        FName name0 = FName(FString(buffer));
+//    }
+//    FNamePool* pool = &FNamePool::Get();
+//    for (auto& name : pool->GetComparisonNames())
+//    {
+//        ImGui::Text("%s", *name);
+//    }
+//    ImGui::Text("-----------------");
+//    for (auto& name : pool->GetDisplayNames())
+//    {
+//        ImGui::Text("%s", *name);
+//    }
+//
+//
+//    ImGui::End();
+//}
 
-void UI::RenderFNameDebug()
+void UI::RenderSceneManager()
 {
-    ImGui::Begin("FName Test");
+    const TArray<AActor*>& ActorArray = UEngine::Get().GetWorld()->Actors;
+    uint32 NumActors = ActorArray.Num();
 
-    static char buffer[256] = { 0 };
-    buffer[255] = NULL;
-    ImGui::InputText("FName text", buffer, 256);
-    buffer;
-    if (ImGui::Button("FName button"))
-    {
-        //FString fstr(buffer);
-        FName name0 = FName(FString(buffer));
+    if (NumActors > 0) {
+        static int selected = -1;
+        ImGui::Begin("Scene Manager");
+        if (ImGui::TreeNode("Primtives"))
+        {
+        
+            for (int n = 0; n < NumActors; n++)
+            {
+                char buf[32];
+            
+                sprintf_s(buf, "%s", *ActorArray[n]->Name.GetString());
+                if (ImGui::Selectable(buf, selected == n))
+                    selected = n;
+            }
+            ImGui::TreePop();
+        }
+        if (selected > -1) {
+            FEditorManager::Get().SelectActor(ActorArray[selected]);
+        }
     }
-    //ImGui::Text(buffer);
-    //static char buffer1[256] = { 0 };
-    //ImGui::InputText("FName other", buffer1, 256);
-    //if (ImGui::Button("FName button"))
-    //{
-    //    //FString fstr(buffer);
-    //    static FName name1 = FName(FString(buffer));
-    //}
-    //ImGui::Text(name0)
-    //
-    FNamePool* pool = &FNamePool::Get();
-    for (auto& name : pool->GetComparisonNames())
-    {
-        ImGui::Text("%s", *name);
-    }
-    ImGui::Text("-----------------");
-    for (auto& name : pool->GetDisplayNames())
-    {
-        ImGui::Text("%s", *name);
-    }
-
 
     ImGui::End();
 }

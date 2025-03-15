@@ -173,12 +173,12 @@ uint32 FNamePool::FindOrAddDisplayName(FString DisplayName)
 }
 
 
-FString FNamePool::ResolveComparison(uint32 Id) const
+FString FNamePool::ResolveComparison(uint32 Id)
 {
 	return ComparisonNameEntryPool[Id].Data;
 }
 
-FString FNamePool::ResolveDisplay(uint32 Id) const
+FString FNamePool::ResolveDisplay(uint32 Id)
 {
 	return DisplayNameEntryPool[Id].Data;
 }
@@ -290,8 +290,21 @@ bool FNameEntryHeader::operator==(const uint16 BitPattern) const
 }
 
 
+
 /////////////////////////////////
 /// FName
+FName::FName(const char* pStr, uint32 InNumber)
+{
+	FString String(pStr);
+	FString StringLower = String.ToLower();
+	this->DisplayIndex = FNamePool::Get().FindOrAddDisplayName(String);
+	this->ComparisonIndex = FNamePool::Get().FindOrAddComparisonName(StringLower);
+
+	this->Number = InNumber;
+	IsValid = 1;
+	return;
+}
+
 FName::FName(FString Str)
 {
 	UE_LOG("FName constructor : %s", *Str);
@@ -345,9 +358,20 @@ int32 FName::Compare(const FName& Other) const
 	{
 		return Number - Other.Number;
 	}
+	else
+	{
+		return -2147483648;
+	}
 }
 
 bool FName::operator==(const FName& Other) const
 {
 	return ComparisonIndex == Other.ComparisonIndex;
+}
+
+FString FName::GetString() const
+{
+	FString Disp = FNamePool::Get().ResolveDisplay(DisplayIndex);
+	Disp += FString::FromInt(Number);
+	return Disp;
 }
