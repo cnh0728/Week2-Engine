@@ -46,8 +46,8 @@ public:
 	bool ContainsZIgnoreComponent(UPrimitiveComponent* InComponent) {return ZIgnoreRenderComponents.Find(InComponent) != -1; }
 	
 	// render
-	void AddRenderComponent(class UPrimitiveComponent* Component) { RenderComponents.Add(Component); }
-	void RemoveRenderComponent(class UPrimitiveComponent* Component) { RenderComponents.Remove(Component); }
+	void AddRenderComponent(UPrimitiveComponent* Component) { RenderComponents.Add(Component); }
+	void RemoveRenderComponent(UPrimitiveComponent* Component) { RenderComponents.Remove(Component); }
 
 	TSet<UPrimitiveComponent*> GetRenderComponents(){ return RenderComponents; }
 

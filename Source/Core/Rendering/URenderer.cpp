@@ -27,7 +27,7 @@ void URenderer::Create(HWND hWindow)
     CreateConeVertices();
     //vertexBuffer 어디서 다만들어줬지?
     
-    CreateText(hWindow);
+    // CreateText(hWindow);
 	CreateAlphaBlendingState();
 
     InitMatrix();

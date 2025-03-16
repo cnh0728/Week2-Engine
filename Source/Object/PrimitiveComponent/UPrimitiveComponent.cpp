@@ -30,7 +30,7 @@ void UPrimitiveComponent::Render()
 	{
 		return;
 	}
-	if (GetOwner()->IsGizmoActor() == false)
+	if (GetOwner()->IsCanPick() == false)
 	{
 		if (bIsPicked)
 		{

@@ -21,11 +21,17 @@ public:
     static FVector4 EncodeUUID(unsigned int UUID);
     static uint32_t DecodeUUID(FVector4 color);
 
-    TSet<std::pair<float, AActor*>> PickActorByRay(FVector MousePos);
+    TMap<UPrimitiveComponent*, float> PickActorByRay();
     AActor* PickActorByPixel(FVector MousePos);
     bool IntersectsRay(const FVector& rayOrigin, const FVector& rayDir, float& Distance, FVector MinBound, FVector MaxBound);
+    void UpdateRayInfo();
 
     virtual void Tick(float DeltaTime) override;
     virtual void LateTick(float DeltaTime) override;
     virtual const char* GetTypeName() override;
+
+protected:
+    FVector4 RayOrigin;
+    FVector4 RayEnd;
+    FVector RayDir;
 };
