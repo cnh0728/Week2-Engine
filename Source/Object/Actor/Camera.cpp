@@ -9,14 +9,14 @@ ACamera::ACamera()
     bIsGizmo = true;
     
     Near = 0.1f;
-    Far = 100.f;
+    Far = 1000.f;
     FieldOfView = 45.f;
     ProjectionMode = ECameraProjectionMode::Perspective;
 
     RootComponent = AddComponent<USceneComponent>();
     
     FTransform StartPos = GetActorTransform();
-    StartPos.SetPosition(FVector(-5, 0, 0));
+    StartPos.SetPosition(FVector(-5, 0, 1));
     SetActorTransform(StartPos);
 }
 

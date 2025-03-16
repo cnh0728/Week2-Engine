@@ -233,13 +233,12 @@ void UEngine::InitWorld()
     World = FObjectFactory::ConstructObject<UWorld>();
 
     FEditorManager::Get().SetCamera(World->SpawnActor<ACamera>());
+    FEditorManager::Get().SetWorldGrid(World->SpawnActor<AWorldGrid>());
     ConfigManager::Get().LoadAllConfigs();
 
     //// Test
     // AArrow* Arrow = World->SpawnActor<AArrow>();
     // World->SpawnActor<ASphere>();
-
-    World->SpawnActor<AWorldGrid>();
     
     World->SpawnActor<AAxis>();
     World->SpawnActor<APicker>();

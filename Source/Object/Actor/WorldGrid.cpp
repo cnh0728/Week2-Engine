@@ -14,11 +14,11 @@ AWorldGrid::AWorldGrid()
     {
         ULineComp* XLineComponent = AddComponent<ULineComp>();
         XLineComponent->SetupAttachment(RootComponent);
-        XLineComponent->SetRelativeTransform(FTransform(FVector(0.f, static_cast<float>(i), 0.f), FVector(0.f, 0.f, 0.f), FVector(1000.f, 1.f, 1.f)));
+        XLineComponent->SetRelativeTransform(FTransform(FVector(0.f, static_cast<float>(i), 0.f), FVector(0.f, 0.f, 0.f), FVector(500.f, 1.f, 1.f)));
 
         ULineComp* YLineComponent = AddComponent<ULineComp>();
         YLineComponent->SetupAttachment(RootComponent);
-        YLineComponent->SetRelativeTransform(FTransform(FVector(static_cast<float>(i), 0.f, 0.f), FVector(0.f, 0.f, 90.f), FVector(1000.f, 1.f, 1.f)));
+        YLineComponent->SetRelativeTransform(FTransform(FVector(static_cast<float>(i), 0.f, 0.f), FVector(0.f, 0.f, 90.f), FVector(500.f, 1.f, 1.f)));
 
         // ULineComp* YLineComponent = AddComponent<ULineComp>();
     }
@@ -30,6 +30,14 @@ AWorldGrid::AWorldGrid()
     // ConeComp->SetupAttachment(CylinderComp);
     // ConeComp1->SetupAttachment(ConeComp);
     
+}
+
+void AWorldGrid::SetSpacing(float InSpacing)
+{
+    Spacing = InSpacing;
+    FTransform Transform = GetActorTransform();
+    Transform.SetScale(InSpacing, InSpacing, InSpacing);
+    SetActorTransform(Transform);
 }
 
 void AWorldGrid::BeginPlay()
