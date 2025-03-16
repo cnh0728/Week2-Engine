@@ -257,7 +257,7 @@ bool UText::RenderSentence(ID3D11DeviceContext* DeviceContext, SentenceType* Sen
 
 	DeviceContext->IASetVertexBuffers(0, 1, &Sentence->VertexBuffer, &Stride, &Offset);
 	DeviceContext->IASetIndexBuffer(Sentence->IndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	// DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	PixelColor = FVector4(Sentence->Red, Sentence->Green, Sentence->Blue, 1.0f);
 	Result = FontShader->Render(DeviceContext, Sentence->IndexCount, WorldMatrix, ViewMatrix, OrthoMatrix, Font->GetTexture(), PixelColor);
 

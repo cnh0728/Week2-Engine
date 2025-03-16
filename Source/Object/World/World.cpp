@@ -127,7 +127,11 @@ void UWorld::RenderMainTexture(URenderer& Renderer)
 	Renderer.ClearVertex();
 	for (auto& RenderComponent  : RenderComponents)
 	{
-
+		// if (RenderComponent->GetCanBeRendered() == false)
+		// {
+		// 	continue;
+		// }
+		
 		if (!FEditorManager::Get().IsShowFlagSet(EEngineShowFlags::SF_Primitives))
 			continue;
 
