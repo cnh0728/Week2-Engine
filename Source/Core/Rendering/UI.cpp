@@ -21,8 +21,7 @@
 #include "Object/Gizmo/GizmoHandle.h"
 
 
-
-void UI::Initialize(HWND hWnd, const URenderer& Renderer, UINT ScreenWidth, UINT ScreenHeight)
+void UI::Initialize(HWND hWnd, URenderer& Renderer, UINT ScreenWidth, UINT ScreenHeight)
 {
     // ImGui 초기화
     IMGUI_CHECKVERSION();
@@ -47,6 +46,8 @@ void UI::Initialize(HWND hWnd, const URenderer& Renderer, UINT ScreenWidth, UINT
 
     PreRatio = GetRatio();
     CurRatio = GetRatio();
+
+    this->Renderer = &Renderer;
 }
 
 void UI::Update()
@@ -55,13 +56,8 @@ void UI::Update()
     if (GetCursorPos(&mousePos)) {
         HWND hwnd = GetActiveWindow();
         ScreenToClient(hwnd, &mousePos);
-
-        ImVec2 CalculatedMousePos = ResizeToScreenByCurrentRatio(ImVec2(mousePos.x, mousePos.y));
-        ImGui::GetIO().MousePos = CalculatedMousePos;
-        //UE_LOG("MousePos: (%.1f, %.1f), DisplaySize: (%.1f, %.1f)\n",CalculatedMousePos.x, CalculatedMousePos.y, GetRatio().x, GetRatio().y);
     }
 
-    
     // ImGui Frame 생성
     ImGui_ImplDX11_NewFrame();
     ImGui_ImplWin32_NewFrame();
@@ -76,6 +72,7 @@ void UI::Update()
     
     RenderControlPanel();
     RenderPropertyWindow();
+    RenderSceneManager();
 
     Debug::ShowConsole(bWasWindowSizeUpdated, PreRatio, CurRatio);
 
@@ -85,7 +82,6 @@ void UI::Update()
 
     bWasWindowSizeUpdated = false;
 }
-
 
 void UI::Shutdown()
 {
@@ -107,22 +103,25 @@ void UI::OnUpdateWindowSize(UINT InScreenWidth, UINT InScreenHeight)
 
 void UI::RenderControlPanel()
 {
+    float windowWidth = UEngine::Get().GetScreenWidth();
+    float windowHeight = UEngine::Get().GetScreenHeight();
+
+    float controllWindowWidth = static_cast<float>(windowWidth) * 0.3f;
+    float controllWindowHeight = static_cast<float>(windowHeight) * 0.25f;
+    float controllWindowPosX = (static_cast<float>(windowWidth) - controllWindowWidth) * 0.f;
+    float controllWindowPosY = (static_cast<float>(windowHeight) - controllWindowHeight) * 0.f;
+    ImGui::SetNextWindowPos(ImVec2(controllWindowPosX, controllWindowPosY));
+    ImGui::SetNextWindowSize(ImVec2(controllWindowWidth, 0.0f), ImGuiCond_Once);
+
     ImGui::Begin("Jungle Control Panel");
-
-    if (bWasWindowSizeUpdated)
-    {
-        auto* Window = ImGui::GetCurrentWindow();
-
-        ImGui::SetWindowPos(ResizeToScreen(Window->Pos));
-        ImGui::SetWindowSize(ResizeToScreen(Window->Size));
-    }
-    
     ImGui::Text("Hello, Jungle World!");
     ImGui::Text("FPS: %.3f (what is that ms)", ImGui::GetIO().Framerate);
 
     RenderMemoryUsage();
     RenderPrimitiveSelection();
     RenderCameraSettings();
+    RenderViewMode();
+    RenderShowFlag();
     
     ImGui::End();
 }
@@ -247,7 +246,7 @@ void UI::RenderCameraSettings()
     if (ImGui::DragFloat("FOV", &FOV, 0.1f))
     {
         FOV = std::clamp(FOV, 0.01f, 179.99f);
-        Camera->SetFieldOfVew(FOV);
+        Camera->SetFieldOfView(FOV);
     }
 
     float NearFar[2] = { Camera->GetNear(), Camera->GetFar() };
@@ -295,7 +294,16 @@ void UI::RenderCameraSettings()
         Transform.SetRotation(UIEulerAngle);
         Camera->SetActorTransform(Transform);
     }
-    ImGui::DragFloat("Camera Speed", &Camera->CameraSpeed, 0.1f);
+    if (ImGui::DragFloat("Camera Speed", &Camera->CameraSpeed, 0.1f))
+    {
+        Camera->CameraSpeed = FMath::Clamp(Camera->CameraSpeed, .0f, 20.0f);
+    }
+
+    float CameraSensitivity = Camera->GetCameraSensitivity();
+    if (ImGui::DragFloat("Camera Sensitivity", &CameraSensitivity, 0.1f))
+    {
+        Camera->SetCameraSensitivity(CameraSensitivity);
+    }
 
     FVector Forward = Camera->GetActorTransform().GetForward();
     FVector Up = Camera->GetActorTransform().GetUp();
@@ -304,20 +312,40 @@ void UI::RenderCameraSettings()
     ImGui::Text("Camera GetForward(): (%.2f %.2f %.2f)", Forward.X, Forward.Y, Forward.Z);
     ImGui::Text("Camera GetUp(): (%.2f %.2f %.2f)", Up.X, Up.Y, Up.Z);
     ImGui::Text("Camera GetRight(): (%.2f %.2f %.2f)", Right.X, Right.Y, Right.Z);
+    ImGui::Separator();
+}
+
+void UI::RenderViewMode() {
+    const char* viewModeItems[] = { "Lit", "Unlit", "Wireframe" };
+    int currViewMode = static_cast<int>(Renderer->GetCurrentViewMode());
+
+    if (ImGui::Combo("View Mode", &currViewMode, viewModeItems, IM_ARRAYSIZE(viewModeItems))) {
+        Renderer->SetViewMode(static_cast<EViewModeIndex>(currViewMode));
+    }
+    ImGui::Separator();
+}
+
+void UI::RenderShowFlag() {
+    bool bShowPrimitives = FEditorManager::Get().IsShowFlagSet(EEngineShowFlags::SF_Primitives);
+    if (ImGui::Checkbox("Show Primtives", &bShowPrimitives))
+    {
+        FEditorManager::Get().SetShowFlag(EEngineShowFlags::SF_Primitives, bShowPrimitives);
+    }
 }
 
 void UI::RenderPropertyWindow()
 {
+    float windowWidth = UEngine::Get().GetScreenWidth();
+    float windowHeight = UEngine::Get().GetScreenHeight();
 
+    float propertyWindowWidth = static_cast<float>(windowWidth) * 0.3f;
+    float propertyWindowHeight = static_cast<float>(windowHeight) * 0.25f;
+    float propertyWindowPosX = (static_cast<float>(windowWidth) - propertyWindowWidth) * 1.f;
+    float propertyWindowPosY = (static_cast<float>(windowHeight) - propertyWindowHeight) * 0.f;
+    ImGui::SetNextWindowPos(ImVec2(propertyWindowPosX, propertyWindowPosY));
+
+    ImGui::SetNextWindowSize(ImVec2(propertyWindowWidth, 0.0f));
     ImGui::Begin("Properties");
-
-    if (bWasWindowSizeUpdated)
-    {
-        auto* Window = ImGui::GetCurrentWindow();
-
-        ImGui::SetWindowPos(ResizeToScreen(Window->Pos));
-        ImGui::SetWindowSize(ResizeToScreen(Window->Size));
-    }
     
     AActor* selectedActor = FEditorManager::Get().GetSelectedActor();
     if (selectedActor != nullptr)
@@ -364,6 +392,37 @@ void UI::RenderPropertyWindow()
 			}
 		}
     }
+    ImGui::End();
+}
+
+
+void UI::RenderSceneManager()
+{
+    const TArray<AActor*>& ActorArray = UEngine::Get().GetWorld()->GetActors();
+    uint32 NumActors = ActorArray.Num();
+
+    if (NumActors > 0) {
+        static int selected = -1;
+        ImGui::Begin("Scene Manager");
+        if (ImGui::TreeNode("Primtives"))
+        {
+
+            for (int n = 0; n < NumActors; n++)
+            {
+                char buf[32];
+
+                sprintf_s(buf, "%s", *ActorArray[n]->Name.GetString());
+                if (ImGui::Selectable(buf, selected == n))
+                    selected = n;
+            }
+            ImGui::TreePop();
+        }
+        if (selected > -1) {
+            if(NumActors > 0)
+                FEditorManager::Get().SelectActor(ActorArray[selected]);
+        }
+    }
+
     ImGui::End();
 }
 

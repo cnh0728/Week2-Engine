@@ -14,7 +14,7 @@ public:
     int NumOfSpawn = 0;
 	bool bIsInitialized = false;
     
-    void Initialize(HWND hWnd, const class URenderer& Renderer, UINT ScreenWidth, UINT ScreenHeight);
+    void Initialize(HWND hWnd, URenderer& Renderer, UINT ScreenWidth, UINT ScreenHeight);
     void Update();
     void Shutdown();
 
@@ -25,7 +25,10 @@ public:// UIWindows
 	void RenderMemoryUsage();
     void RenderPrimitiveSelection();
     void RenderCameraSettings();
+	void RenderViewMode();
+	void RenderShowFlag();
     void RenderPropertyWindow();
+	void RenderSceneManager();
 
 private:
 	// Mouse 전용
@@ -76,4 +79,5 @@ private:
 
 	ImVec2 PreRatio;
 	ImVec2 CurRatio;
+	URenderer* Renderer;
 };

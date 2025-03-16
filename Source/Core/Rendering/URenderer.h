@@ -12,8 +12,8 @@
 #include "Core/Engine.h"
 #include "Primitive/PrimitiveVertices.h"
 #include "Core/Math/Plane.h"
-// #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Core/Math/Transform.h"
+#include "Text/Text.h"
 
 
 struct FVertexSimple;
@@ -68,6 +68,11 @@ private:
 	uint32_t VertexCount;
 	TArray<FVertexSimple> Vertices;
 	uint32_t PreCount;
+enum class EViewModeIndex : uint32
+{
+    VMI_Lit,
+    VMI_Unlit,
+    VMI_Wireframe,
 };
 
 class URenderer
@@ -103,6 +108,8 @@ private:
     };
 
 public:
+    ~URenderer();
+
     /** Renderer를 초기화 합니다. */
     void Create(HWND hWindow);
 
@@ -158,6 +165,8 @@ public:
     ID3D11Device* GetDevice() const;
     ID3D11DeviceContext* GetDeviceContext() const;
 
+    BufferInfo GetBufferInfo(EPrimitiveType InPrimitiveType) const { return BufferCache->GetBufferInfo(InPrimitiveType); }
+
     /** View 변환 Matrix를 업데이트 합니다. */
     void UpdateViewMatrix(const FTransform& CameraTransform);
 
@@ -166,8 +175,24 @@ public:
 
 	void OnUpdateWindowSize(int Width, int Height);
 
-	// BufferInfo GetBufferInfo(EPrimitiveType InPrimitiveType) const {return BufferCache->GetBufferInfo(InPrimitiveType);}
-	
+    /** Alpha Blending을 켜고 끄는 함수 **/
+	void TurnOnAlphaBlending();
+	void TurnOffAlphaBlending();
+
+    void CreateText(HWND hWindow);
+
+    void RenderText();
+
+    void CreateAlphaBlendingState();
+	void ReleaseAlphaBlendingState();
+
+    void TurnZBufferOn();
+    void TurnZBufferOff();
+
+    void SetViewMode(EViewModeIndex viewMode);
+
+    EViewModeIndex GetCurrentViewMode() const;
+
 protected:
     /** Direct3D Device 및 SwapChain을 생성합니다. */
     void CreateDeviceAndSwapChain(HWND hWindow);
@@ -239,7 +264,17 @@ protected:
 	
 	D3D11_PRIMITIVE_TOPOLOGY CurrentTopology = D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED; // 같은 토폴로지 세팅인데 또 하면 낭비니까 체크
 
-	uint32_t MaxInstance = 300;
+
+	// Alpha Blending
+	ID3D11BlendState* AlphaEnableBlendingState = nullptr;
+	ID3D11BlendState* AlphaDisableBlendingState = nullptr;
+
+    // 텍스트클래스
+    UText* Text = nullptr;
+
+    EViewModeIndex CurrentViewMode = EViewModeIndex::VMI_Lit;
+    D3D11_FILL_MODE CurrentFillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
+
 #pragma region picking
 protected:
 	// 피킹용 버퍼들
@@ -268,8 +303,10 @@ public:
 	FVector4 GetPixel(FVector MPos);
 
 	void RenderPickingTexture();
+
     void CreateConeVertices();
     void CreateCylinderVertices();
     FMatrix GetProjectionMatrix() const { return ProjectionMatrix; }
+
 #pragma endregion picking
 };

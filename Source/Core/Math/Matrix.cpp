@@ -293,6 +293,33 @@ FMatrix FMatrix::PerspectiveFovLH(float FieldOfView, float AspectRatio, float Ne
 	return Result;
 }
 
+// 현재 화면 중앙이 0,0인 Pixel 좌표계로 기준이 맞춰져 있음.
+FMatrix FMatrix::OrthoLH(float ViewWidth, float ViewHeight, float NearPlane, float FarPlane)
+{
+	FMatrix Result;
+	Result.M[0][0] = 1.0f / ViewWidth;
+	Result.M[0][1] = 0.0f;
+	Result.M[0][2] = 0.0f;
+	Result.M[0][3] = 0.0f;
+
+	Result.M[1][0] = 0.0f;
+	Result.M[1][1] = 1.0f / ViewHeight;
+	Result.M[1][2] = 0.0f;
+	Result.M[1][3] = 0.0f;
+
+	Result.M[2][0] = 0.0f;
+	Result.M[2][1] = 0.0f;
+	Result.M[2][2] = 1.0f / (FarPlane - NearPlane);
+	Result.M[2][3] = 0.0f;
+
+	Result.M[3][0] = 0.0f;
+	Result.M[3][1] = 0.0f;
+	Result.M[3][2] = -NearPlane / (FarPlane - NearPlane);
+	Result.M[3][3] = 1.0f;
+
+	return Result;
+}
+
 FVector FMatrix::GetTranslation() const
 {
 	return FVector(M[3][0], M[3][1], M[3][2]);

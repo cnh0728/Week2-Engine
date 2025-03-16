@@ -96,10 +96,13 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <AdditionalIncludeDirectories>$(ProjectDir)Source;$(ProjectDir)Source\ThirdParty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(ProjectDir)Source\ThirdParty\DirectXTex\Lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>DirectXTex.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -120,6 +123,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(ProjectDir)Source\ThirdParty\DirectXTex\Lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>DirectXTex.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -134,10 +139,13 @@
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(ProjectDir)Source\ThirdParty\DirectXTex\Lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>DirectXTex.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -158,11 +166,22 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(ProjectDir)Source\ThirdParty\DirectXTex\Lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>DirectXTex.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Core\Container\Name.cpp" />
     <ClCompile Include="Source\Core\Math\Plane.cpp" />
     <ClCompile Include="Source\Object\Actor\WorldGrid.cpp" />
+    <ClCompile Include="Source\Core\Rendering\Texture.cpp" />
+    <ClCompile Include="Source\Core\Rendering\Text\Font.cpp" />
+    <ClCompile Include="Source\Core\Rendering\Text\FontShader.cpp" />
+    <ClCompile Include="Source\Core\Rendering\Text\Text.cpp" />
+    <ClCompile Include="Source\Data\ConfigManager.cpp" />
+    <ClCompile Include="Source\Data\JsonSaveHelper.cpp" />
+    <ClCompile Include="Source\Data\UCameraSettings.cpp" />
+    <ClCompile Include="Source\Data\UDeveloperSettings.cpp" />
     <ClCompile Include="Source\Object\Actor\Camera.cpp" />
     <ClCompile Include="Source\Object\Actor\Cone.cpp" />
     <ClCompile Include="Source\Object\Actor\Cylinder.cpp" />
@@ -183,7 +202,6 @@
     <ClCompile Include="Source\Core\HAL\PlatformMemory.cpp" />
     <ClCompile Include="Source\Core\Math\Matrix.cpp" />
     <ClCompile Include="Source\Core\Math\Vector.cpp" />
-    <ClCompile Include="Source\JsonSaveHelper.cpp" />
     <ClCompile Include="Source\Object\ObjectFactory.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui_demo.cpp" />
@@ -199,13 +217,19 @@
     <ClCompile Include="Source\Object\Actor\Sphere.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Shaders\ShaderW0.hlsl">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </FxCompile>
+    <ClInclude Include="Source\Core\Container\Name.h" />
+    <ClInclude Include="Source\Core\Rendering\Texture.h" />
+    <ClInclude Include="Source\Core\Rendering\Text\Font.h" />
+    <ClInclude Include="Source\Core\Rendering\Text\FontShader.h" />
+    <ClInclude Include="Source\Core\Rendering\Text\Text.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Object\Actor\WorldGrid.h" />
+    <ClInclude Include="FEngineShowFlags.h" />
+    <ClInclude Include="Source\Data\ConfigManager.h" />
+    <ClInclude Include="Source\Data\JsonSaveHelper.h" />
+    <ClInclude Include="Source\Data\UCameraSettings.h" />
+    <ClInclude Include="Source\Data\UDeveloperSettings.h" />
     <ClInclude Include="Source\Object\Actor\Camera.h" />
     <ClInclude Include="Source\Object\Actor\Cone.h" />
     <ClInclude Include="Source\Object\Actor\Cube.h" />
@@ -227,10 +251,10 @@
     <ClInclude Include="Source\Core\Math\Matrix.h" />
     <ClInclude Include="Source\Core\Math\Plane.h" />
     <ClInclude Include="Source\Core\Math\Vector.h" />
-    <ClInclude Include="Source\JsonSaveHelper.h" />
     <ClInclude Include="Source\Core\Math\Transform.h" />
     <ClInclude Include="Source\Object\Actor\Cylinder.h" />
     <ClInclude Include="Source\Object\ObjectFactory.h" />
+    <ClInclude Include="Source\ThirdParty\DirectXTex\Include\DirectXTex.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imconfig.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imgui.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imgui_impl_dx11.h" />
@@ -262,6 +286,31 @@
     <ClInclude Include="Source\Object\PrimitiveComponent\UPrimitiveComponent.h" />
     <ClInclude Include="Source\Object\World\World.h" />
     <ClInclude Include="Source\Object\Actor\Sphere.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Source\ThirdParty\DirectXTex\Include\DirectXTex.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Shaders\ShaderFont.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Shaders\ShaderW0.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Source\Core\Rendering\Text\font01.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Source\Core\Rendering\Text\cork2.png" />
+    <Image Include="Source\Core\Rendering\Text\font01.tga" />
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
