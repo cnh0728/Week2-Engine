@@ -317,11 +317,10 @@ void URenderer::AddVertices(UPrimitiveComponent* Component)
 
     // FMatrix WorldMatrix = Component->GetComponentTransformMatrix();
         
-    FMatrix MVP = 
-        Component->GetComponentTransformMatrix() *    // 상수 버퍼를 CPU 메모리에 매핑   // 상수 버퍼를 CPU 메모리에 매핑
-        ViewMatrix * 
-        ProjectionMatrix;
-    //월드매트릭스만 해주면 안되고 MVP다해줘야함
+    FMatrix WorldMatrix = Component->GetComponentTransformMatrix()
+    * ViewMatrix * ProjectionMatrix;
+    
+    //월드매트릭스만 해주고 V, P는 Constant로 넘기기 (Primitivie별로 곱해줄 필요없으니까
     
     uint32_t UUID = Component->GetOwner()->GetUUID();
 
@@ -330,7 +329,7 @@ void URenderer::AddVertices(UPrimitiveComponent* Component)
     for (FVertexSimple &Vertex : Vertices )
     {
         FVector4 VertexPos(Vertex.X, Vertex.Y, Vertex.Z, 1.0f);
-        VertexPos = VertexPos * MVP;
+        VertexPos = VertexPos * WorldMatrix;
         Vertex.X = VertexPos.X / VertexPos.W;
         Vertex.Y = VertexPos.Y / VertexPos.W;
         Vertex.Z = VertexPos.Z / VertexPos.W;
@@ -396,7 +395,7 @@ void URenderer::ReleaseVertexBuffer(uint32_t UUID)
     if (VertexBuffers[UUID].GetBuffer() != nullptr)
     {
         VertexBuffers[UUID].GetBuffer()->Release();
-        //VertexBuffers.Remove(UUID);
+        VertexBuffers.Remove(UUID);
     }
 }
 
@@ -409,31 +408,31 @@ void URenderer::ReleaseAllVertexBuffer()
         
         if (Value.GetBuffer() != nullptr)
         {
-            ReleaseVertexBuffer(Key);
+            VertexBuffers[Key].GetBuffer()->Release();
         }
     }
     VertexBuffers.Empty();
 }
 
-void URenderer::UpdateConstant(const ConstantUpdateInfo& UpdateInfo) const
+void URenderer::UpdateConstant() const
 {
     if (!ConstantBuffer) return;
 
     D3D11_MAPPED_SUBRESOURCE ConstantBufferMSR;
 
-    FMatrix MVP = 
-        FMatrix::Transpose(ProjectionMatrix) * 
-        FMatrix::Transpose(ViewMatrix) * 
-        FMatrix::Transpose(UpdateInfo.TransformMatrix);    // 상수 버퍼를 CPU 메모리에 매핑
+    FMatrix VP =  //버텍스는 이미 곱해져서 갈거라 VP만
+        FMatrix::Identity();
+        // FMatrix::Transpose(ProjectionMatrix) * 
+        // FMatrix::Transpose(ViewMatrix);
 
     // D3D11_MAP_WRITE_DISCARD는 이전 내용을 무시하고 새로운 데이터로 덮어쓰기 위해 사용
     DeviceContext->Map(ConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &ConstantBufferMSR);
     {
         // 매핑된 메모리를 FConstants 구조체로 캐스팅
         FConstants* Constants = static_cast<FConstants*>(ConstantBufferMSR.pData);
-        // Constants->MVP = MVP;
-		Constants->Color = UpdateInfo.Color;
-		Constants->bUseVertexColor = UpdateInfo.bUseVertexColor ? 1 : 0;
+        Constants->VP = VP;
+		// Constants->Color = UpdateInfo.Color;
+		// Constants->bUseVertexColor = UpdateInfo.bUseVertexColor ? 1 : 0;
     }
     DeviceContext->Unmap(ConstantBuffer, 0);
 }
@@ -940,7 +939,9 @@ inline void URenderer::CreateConeVertices()
         vertices.Add({ 0.0f, 0.0f, height, 0.0f, 1.0f, 0.0f, 1.0f });
 	}
 
-	OriginVertices[EPrimitiveType::EPT_Cylinder] = vertices;
+    const TArray<FVertexSimple> tmpArray = vertices;
+    
+	OriginVertices[EPrimitiveType::EPT_Cone] = tmpArray;
 }
 
 inline void URenderer::CreateCylinderVertices()
@@ -983,5 +984,5 @@ inline void URenderer::CreateCylinderVertices()
 		vertices.Add({ x1, y1, height, 0.0f, 0.0f, 1.0f, 1.0f });
 	}
 
-	OriginVertices[EPrimitiveType::EPT_Cone] = vertices;
+	OriginVertices[EPrimitiveType::EPT_Cylinder] = vertices;
 }

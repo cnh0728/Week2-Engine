@@ -1,8 +1,9 @@
 // ShaderW0.hlsl
 cbuffer constants : register(b0)
 {
-    float4 CustomColor;
-    uint bUseVertexColor;
+    matrix MVP;
+    // float4 CustomColor;
+    // uint bUseVertexColor;
 }
 
 cbuffer UUIDColor : register(b1){
@@ -41,9 +42,9 @@ PS_INPUT mainVS(VS_INPUT input)
     PS_INPUT output;
 
     
-    // output.position = mul(input.position, MVP);
+    output.position = mul(input.position, MVP);
     // output.depthPosition = output.position;
-    output.position = input.position;
+    // output.position = input.position;
     
     // output.color = bUseVertexColor == 1 ? input.color : CustomColor;
     output.color = input.color;

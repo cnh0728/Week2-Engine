@@ -9,16 +9,20 @@
 AGizmoHandle::AGizmoHandle()
 {
 	bIsGizmo = true;
+	
+	RootComponent = AddComponent<USceneComponent>();
+
 	// !NOTE : Z방향으로 서있음
 	// z
 	UCylinderComp* ZArrow = AddComponent<UCylinderComp>();
+	ZArrow->SetupAttachment(RootComponent);
 	ZArrow->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, 0.0f, 0.0f), FVector(1, 1, 1)));
 	ZArrow->SetCustomColor(FVector4(0.0f, 0.0f, 1.0f, 1.0f));
 	CylinderComponents.Add(ZArrow);
 
 	// x
 	UCylinderComp* XArrow = AddComponent<UCylinderComp>();
-	XArrow->SetupAttachment(ZArrow);
+	XArrow->SetupAttachment(RootComponent);
 	XArrow->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, 90.0f, 0.0f), FVector(1, 1, 1)));
 	XArrow->SetCustomColor(FVector4(1.0f, 0.0f, 0.0f, 1.0f));
 	CylinderComponents.Add(XArrow);
@@ -26,11 +30,12 @@ AGizmoHandle::AGizmoHandle()
 
 	// y
 	UCylinderComp* YArrow = AddComponent<UCylinderComp>();
-	YArrow->SetupAttachment(ZArrow);
+	YArrow->SetupAttachment(RootComponent);
 	YArrow->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(90.0f, 0.0f, 0.0f), FVector(1, 1, 1)));
 	YArrow->SetCustomColor(FVector4(0.0f, 1.0f, 0.0f, 1.0f));
 	CylinderComponents.Add(YArrow);
-	RootComponent = ZArrow;
+
+	
 	
 	UEngine::Get().GetWorld()->AddZIgnoreComponent(ZArrow);
 	UEngine::Get().GetWorld()->AddZIgnoreComponent(XArrow);

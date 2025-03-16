@@ -51,7 +51,7 @@ public:
 	}
 
 	ID3D11Buffer*& GetBuffer() { return VertexBuffer; }
-	int GetCount() const { return VertexCount; }
+	uint32_t GetCount() const { return VertexCount; }
 	D3D_PRIMITIVE_TOPOLOGY GetTopology() const { return Topology; }
 	TArray<FVertexSimple> GetVertices() const { return Vertices; }
 	uint32_t GetPreCount() const { return PreCount; }
@@ -75,10 +75,10 @@ class URenderer
 private:
     struct alignas(16) FConstants
     {
-        // FMatrix MVP;
-        FVector4 Color;
+        FMatrix VP;
+        // FVector4 Color;
 		// true인 경우 Vertex Color를 사용하고, false인 경우 Color를 사용합니다.
-        uint32 bUseVertexColor;
+        // uint32 bUseVertexColor;
     };
 	
 	struct alignas(16) FPickingConstants
@@ -153,7 +153,7 @@ public:
 	void ReleaseVertexBuffer(uint32_t UUID);
     void ReleaseAllVertexBuffer();
     /** Constant Data를 업데이트 합니다. */
-    void UpdateConstant(const ConstantUpdateInfo& UpdateInfo) const;
+    void UpdateConstant() const;
 
     ID3D11Device* GetDevice() const;
     ID3D11DeviceContext* GetDeviceContext() const;

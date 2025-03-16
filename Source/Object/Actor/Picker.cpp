@@ -237,7 +237,7 @@ TSet<std::pair<float, AActor*>> APicker::PickActorByRay(FVector MousePos)
         FMatrix CompWorldMatrix = Component->GetComponentTransformMatrix(); //GetWorldMatrix 부모들 다 적용시키는 걸로 바꿔줘야함
         //이제 정점 돌면서 월드매트릭스 곱하기
         URenderer* Renderer = UEngine::Get().GetRenderer();
-        VertexBufferInfo Info = Renderer->GetVertexBufferInfo(Component->GetUUID());
+        VertexBufferInfo Info = Renderer->GetVertexBufferInfo(Component->GetOwner()->GetUUID());
         // TArray<FVertexSimple> Vertices = Info.GetVertices();
         // int Size = Info.GetCount();
 

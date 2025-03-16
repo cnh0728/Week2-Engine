@@ -72,7 +72,8 @@ void UWorld::Render()
 	ACamera* cam = FEditorManager::Get().GetCamera();
 	Renderer->UpdateViewMatrix(cam->GetActorTransform());
 	Renderer->UpdateProjectionMatrix(cam);
-	
+
+	Renderer->UpdateConstant();
 	// if (APlayerInput::Get().GetMouseDown(false))
 	// {
 	// 	RenderPickingTexture(*Renderer);
@@ -121,7 +122,7 @@ void UWorld::RenderMainTexture(URenderer& Renderer)
 
 	//여기서 새로운 버텍스정보 만들어주기 때문에 그전에 비워주기
 	Renderer.ClearVertex();
-	for (auto& RenderComponent : RenderComponents)
+	for (auto& RenderComponent  : RenderComponents)
 	{
 		// if (RenderComponent->GetOwner()->GetDepth() > 0)
 		// {

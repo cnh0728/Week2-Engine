@@ -5,19 +5,20 @@
 AWorldGrid::AWorldGrid()
 {
     bCanEverTick = true;
+    bIsGizmo = true;
 
-    USceneComponent* RootComponent = AddComponent<USceneComponent>();
-    RootComponent = RootComponent;
+    // RootSceneComponent;
+    RootComponent = AddComponent<USceneComponent>();
     
-    for (int i=-50; i<=50; i++)
+    for (int i=-500; i<=500; i++)
     {
         ULineComp* XLineComponent = AddComponent<ULineComp>();
-        XLineComponent->SetRelativeTransform(FTransform(FVector(0.f, static_cast<float>(i), 0.f), FQuat(0.f, 0., 0.f,  0.f), FVector(10.f, 1.f, 1.f)));
         XLineComponent->SetupAttachment(RootComponent);
+        XLineComponent->SetRelativeTransform(FTransform(FVector(0.f, static_cast<float>(i), 0.f), FVector(0.f, 0.f, 0.f), FVector(1000.f, 1.f, 1.f)));
 
         ULineComp* YLineComponent = AddComponent<ULineComp>();
-        YLineComponent->SetRelativeTransform(FTransform(FVector(static_cast<float>(i), 0.f, 0.f), FQuat(0.f, 0., PIDIV2/2, PIDIV2/2), FVector(10.f, 1.f, 1.f)));
         YLineComponent->SetupAttachment(RootComponent);
+        YLineComponent->SetRelativeTransform(FTransform(FVector(static_cast<float>(i), 0.f, 0.f), FVector(0.f, 0.f, 90.f), FVector(1000.f, 1.f, 1.f)));
 
         // ULineComp* YLineComponent = AddComponent<ULineComp>();
     }
