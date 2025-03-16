@@ -69,14 +69,14 @@ struct FName
 
 
 // hash function을 FString에도 이용가능하게 변경
-template <>
-struct std::hash<FString>
-{
-	std::size_t operator()(const FString& Str) const
-	{	
-		return Str.GetHash();
-	}
-};
+//template <>
+//struct std::hash<FString>
+//{
+//	std::size_t operator()(const FString& Str) const
+//	{	
+//		return Str.GetHash();
+//	}
+//};
 
 class FNamePool : public TSingleton<FNamePool>
 {
@@ -92,11 +92,11 @@ public:
 #endif
 
 //private:
-	static constexpr std::hash<FString> Hasher;
+	//static constexpr std::hash<FString> Hasher;
 	//TMap<uint32, FNameEntry> Entries;
 
 	
-	std::hash<FString> ProbeHasher;
+	//std::hash<FString> ProbeHasher;
 
 	static constexpr uint32 PoolSize = 1024;
 #ifndef IS_FNAME_POOL_HASHED

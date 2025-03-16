@@ -1,4 +1,4 @@
-#include "Vector.h"
+﻿#include "Vector.h"
 #include "Matrix.h"
 
 const FVector FVector::ZeroVector = {};
@@ -27,4 +27,21 @@ FVector FVector4::GetCoord() const
 FVector4 FVector4::operator*(const FMatrix& RHS) const
 {
 	return RHS.TransformVector4(*this);
+}
+
+FVector4& FVector4::operator*=(float Scalar)
+{
+	X *= Scalar; Y *= Scalar; Z *= Scalar; W *= Scalar;
+	return *this;
+}
+
+FVector4& FVector4::operator/=(float Scalar)
+{
+	X /= Scalar; Y /= Scalar; Z /= Scalar; W /= Scalar;
+	return *this;
+}
+
+FVector4 FVector4::operator-(const FVector4& Other) const
+{
+	return { X - Other.X, Y - Other.Y, Z - Other.Z, W - Other.W};
 }

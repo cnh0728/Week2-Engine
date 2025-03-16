@@ -216,7 +216,7 @@ TSet<std::pair<float, AActor*>> APicker::PickActorByRay(FVector MousePos)
     TSet<UPrimitiveComponent*> PrimitiveComponents = GetWorld()->GetRenderComponents();
     TSet<std::pair<float,AActor*>> PickedActors; //PriorityQueue 구현
 
-    FVector RayDir = (RayEnd - RayOrigin).GetSafeNormal();
+    //FVector RayDir = (RayEnd - RayOrigin).GetSafeNormal();
     
     for (UPrimitiveComponent* Component : PrimitiveComponents)
     {
@@ -229,26 +229,26 @@ TSet<std::pair<float, AActor*>> APicker::PickActorByRay(FVector MousePos)
         FVertexSimple* Vertices = Info.GetVertices();
         int Size = Info.GetSize();
         
-        for (int i=0; i<Size; i++)
-        {
-            FVector4 CompVertex = FVector4(Vertices[i].X, Vertices[i].Y, Vertices[i].Z, 1.0f);
-            FVector4 WorldVertexLocation = CompVertex * CompWorldMatrix;
-            
-            //최소값과 최대값 구하기
-            MinBound.X = min(MinBound.X, WorldVertexLocation.X);
-            MinBound.Y = min(MinBound.Y, WorldVertexLocation.Y);
-            MinBound.Z = min(MinBound.Z, WorldVertexLocation.Z);
-            MaxBound.X = max(MaxBound.X, WorldVertexLocation.X);
-            MaxBound.Y = max(MaxBound.Y, WorldVertexLocation.Y);
-            MaxBound.Z = max(MaxBound.Z, WorldVertexLocation.Z);
-        }
+        //for (int i=0; i<Size; i++)
+        //{
+        //    FVector4 CompVertex = FVector4(Vertices[i].X, Vertices[i].Y, Vertices[i].Z, 1.0f);
+        //    FVector4 WorldVertexLocation = CompVertex * CompWorldMatrix;
+        //    
+        //    //최소값과 최대값 구하기
+        //    MinBound.X = min(MinBound.X, WorldVertexLocation.X);
+        //    MinBound.Y = min(MinBound.Y, WorldVertexLocation.Y);
+        //    MinBound.Z = min(MinBound.Z, WorldVertexLocation.Z);
+        //    MaxBound.X = max(MaxBound.X, WorldVertexLocation.X);
+        //    MaxBound.Y = max(MaxBound.Y, WorldVertexLocation.Y);
+        //    MaxBound.Z = max(MaxBound.Z, WorldVertexLocation.Z);
+        //}
 
-        //Priority Queue 구현해서 Add하기
-        float Distance = FVector::Distance(RayOrigin, Component->GetComponentTransform().GetPosition());
-        if (IntersectsRay(RayOrigin, RayDir, Distance, MinBound, MaxBound))
-        {
-            PickedActors.Add({Distance,Component->GetOwner()}); //Priority Queue 구현
-        }
+        ////Priority Queue 구현해서 Add하기
+        //float Distance = FVector::Distance(RayOrigin, Component->GetComponentTransform().GetPosition());
+        //if (IntersectsRay(RayOrigin, RayDir, Distance, MinBound, MaxBound))
+        //{
+        //    PickedActors.Add({Distance,Component->GetOwner()}); //Priority Queue 구현
+        //}
         
     }
     return PickedActors;

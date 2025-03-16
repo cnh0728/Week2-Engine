@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "MathUtility.h"
 
 struct FMatrix;
@@ -205,7 +205,7 @@ struct alignas(16) FVector4
     {
     }
 
-    FVector4(FVector Vec, float W): FVector(Vec), W(W)
+    FVector4(FVector Vec, float W): X(Vec.X), Y(Vec.Y), Z(Vec.Z), W(W)
     {
     }
     FVector4(float InX, float InY, float InZ, float InW)
@@ -216,4 +216,8 @@ struct alignas(16) FVector4
     FVector XYZ() const;
     FVector GetCoord() const;
     FVector4 operator*(const FMatrix& RHS) const;
+    FVector4& operator*=(float Scalar);
+    FVector4& operator/=(float Scalar);
+    FVector4 operator-(const FVector4& Other) const;
+
 };

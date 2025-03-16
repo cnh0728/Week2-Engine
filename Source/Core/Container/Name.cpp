@@ -1,5 +1,4 @@
 ﻿#include "Name.h"
-#include "Debug/DebugConsole.h"
 
 FNameEntry FNamePool::ComparisonNameEntryPool[PoolSize] = { 0 };
 FNameEntry FNamePool::DisplayNameEntryPool[PoolSize] = { 0 };
@@ -9,7 +8,7 @@ FNameEntry FNamePool::DisplayNameEntryPool[PoolSize] = { 0 };
 uint32 FNamePool::FindOrAddComparisonName(FString ComparisonName)
 {
 	//FString InNameStringPartLower = InDisplayName.ToLower();
-	uint32 InHash = Hasher(ComparisonName) % PoolSize; // pool size에 맞게 조절
+	uint32 InHash = ComparisonName.GetHash() % PoolSize; // pool size에 맞게 조절
 	
 	// 캐시 비교
 	// cache 확인
@@ -93,7 +92,7 @@ uint32 FNamePool::FindOrAddComparisonName(FString ComparisonName)
 
 uint32 FNamePool::FindOrAddDisplayName(FString DisplayName)
 {
-	uint32 InHash = Hasher(DisplayName) % PoolSize; // pool size에 맞게 조절
+	uint32 InHash = DisplayName.GetHash() % PoolSize; // pool size에 맞게 조절
 
 	// 캐시 비교
 	// cache 확인
