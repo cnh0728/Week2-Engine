@@ -9,7 +9,7 @@
 std::vector<FString> Debug::items;
 
 
-void Debug::ShowConsole(bool bWasWindowSizeUpdated, ImVec2 PreRatio, ImVec2 CurRatio)
+void Debug::ShowConsole(bool bWasWindowSizeUpdated)
 {    
     static char inputBuf[256] = "";
     static std::vector<FString> history;
@@ -102,29 +102,4 @@ void Debug::Log(const char* format, ...)
     va_end(args);
 
     items.emplace_back(buffer);
-}
-
-ImVec2 Debug::ResizeToScreen(const ImVec2& vec2, ImVec2 PreRatio, ImVec2 CurRatio)
-{
-    float min;
-    if (CurRatio.x < CurRatio.y)
-    {
-        min = CurRatio.x;
-    }
-    else
-    {
-        min = CurRatio.y;
-    }
-
-    float preMin;
-    if (PreRatio.x < PreRatio.y)
-    {
-        preMin = PreRatio.x;
-    }
-    else
-    {
-        preMin = PreRatio.y;
-    }
-    
-    return {vec2.x * PreRatio.x / CurRatio.x * min / preMin, vec2.y * PreRatio.y / CurRatio.y * min / preMin};
 }

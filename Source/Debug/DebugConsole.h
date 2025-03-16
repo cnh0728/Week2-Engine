@@ -12,8 +12,7 @@ class Debug
     static std::vector<FString> items; // 출력 로그
 
 public:
-    static void ShowConsole(bool bWasWindowSizeUpdated, ImVec2 PreRatio, ImVec2 CurRatio);
+    static void ShowConsole(bool bWasWindowSizeUpdated);
     static void ProcessCommand(const FString& command, std::vector<FString>& log);
     static void Log(const char* format, ...);
-    static ImVec2 ResizeToScreen(const ImVec2& vec2, ImVec2 PreRatio, ImVec2 CurRatio);
 };

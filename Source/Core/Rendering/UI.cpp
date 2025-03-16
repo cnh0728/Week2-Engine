@@ -44,10 +44,6 @@ void UI::Initialize(HWND hWnd, URenderer& Renderer, UINT ScreenWidth, UINT Scree
     bIsInitialized = true;
     
     io.DisplaySize = ScreenSize;
-
-    PreRatio = GetRatio();
-    CurRatio = GetRatio();
-
     this->Renderer = &Renderer;
 }
 
@@ -64,18 +60,13 @@ void UI::Update()
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
 
-    if (bWasWindowSizeUpdated)
-    {
-        PreRatio = CurRatio;
-        CurRatio = GetRatio();
-        UE_LOG("Current Ratio: %f, %f", CurRatio.x, CurRatio.y);
-    }
-    
+    windowWidth = UEngine::Get().GetScreenWidth();
+    windowHeight = UEngine::Get().GetScreenHeight();
+
     RenderControlPanel();
     RenderPropertyWindow();
     RenderSceneManager();
-
-    Debug::ShowConsole(bWasWindowSizeUpdated, PreRatio, CurRatio);
+    Debug::ShowConsole(bWasWindowSizeUpdated);
 
     // ImGui 렌더링
     ImGui::Render();
@@ -104,16 +95,7 @@ void UI::OnUpdateWindowSize(UINT InScreenWidth, UINT InScreenHeight)
 
 void UI::RenderControlPanel()
 {
-    float windowWidth = UEngine::Get().GetScreenWidth();
-    float windowHeight = UEngine::Get().GetScreenHeight();
-
-    float controllWindowWidth = static_cast<float>(windowWidth) * 0.3f;
-    float controllWindowHeight = static_cast<float>(windowHeight) * 0.25f;
-    float controllWindowPosX = (static_cast<float>(windowWidth) - controllWindowWidth) * 0.f;
-    float controllWindowPosY = (static_cast<float>(windowHeight) - controllWindowHeight) * 0.f;
-    ImGui::SetNextWindowPos(ImVec2(controllWindowPosX, controllWindowPosY));
-    ImGui::SetNextWindowSize(ImVec2(controllWindowWidth, 0.0f), ImGuiCond_Once);
-
+    SetWindowLayout(0.4f, 0.5f, 0.f, 0.f);
     ImGui::Begin("Jungle Control Panel");
     ImGui::Text("Hello, Jungle World!");
     ImGui::Text("FPS: %.3f (what is that ms)", ImGui::GetIO().Framerate);
@@ -353,16 +335,8 @@ void UI::RenderShowFlag() {
 
 void UI::RenderPropertyWindow()
 {
-    float windowWidth = UEngine::Get().GetScreenWidth();
-    float windowHeight = UEngine::Get().GetScreenHeight();
-
-    float propertyWindowWidth = static_cast<float>(windowWidth) * 0.3f;
-    float propertyWindowHeight = static_cast<float>(windowHeight) * 0.25f;
-    float propertyWindowPosX = (static_cast<float>(windowWidth) - propertyWindowWidth) * 1.f;
-    float propertyWindowPosY = (static_cast<float>(windowHeight) - propertyWindowHeight) * 0.f;
-    ImGui::SetNextWindowPos(ImVec2(propertyWindowPosX, propertyWindowPosY));
-
-    ImGui::SetNextWindowSize(ImVec2(propertyWindowWidth, 0.0f));
+    SetWindowLayout(0.3f, 0.1f, 0.f, 0.6f);
+    
     ImGui::Begin("Properties");
     
     AActor* selectedActor = FEditorManager::Get().GetSelectedActor();
@@ -413,12 +387,12 @@ void UI::RenderPropertyWindow()
     ImGui::End();
 }
 
-
 void UI::RenderSceneManager()
 {
     const TArray<AActor*>& ActorArray = UEngine::Get().GetWorld()->GetActors();
     uint32 NumActors = ActorArray.Num();
 
+    SetWindowLayout(0.3f, 0.3f, 1.f, 0.f);
     if (NumActors > 0) {
         static int selected = -1;
         ImGui::Begin("Scene Manager");
@@ -442,5 +416,16 @@ void UI::RenderSceneManager()
     }
 
     ImGui::End();
+}
+
+void UI::SetWindowLayout(float widthRatio, float heightRatio, float posXRatio, float posYRatio)
+{
+    float controllWindowWidth = static_cast<float>(windowWidth) * widthRatio;
+    float controllWindowHeight = static_cast<float>(windowHeight) * heightRatio;
+    float controllWindowPosX = (static_cast<float>(windowWidth) - controllWindowWidth) * posXRatio;
+    float controllWindowPosY = (static_cast<float>(windowHeight) - controllWindowHeight) * posYRatio;
+
+    ImGui::SetNextWindowPos(ImVec2(controllWindowPosX, controllWindowPosY));
+    ImGui::SetNextWindowSize(ImVec2(controllWindowWidth, controllWindowHeight), ImGuiCond_Once);
 }
 
