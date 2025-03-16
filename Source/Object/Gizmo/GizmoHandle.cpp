@@ -10,8 +10,6 @@ AGizmoHandle::AGizmoHandle()
 {
 	bIsGizmo = true;
 	
-	RootComponent = AddComponent<USceneComponent>();
-
 	// !NOTE : Z방향으로 서있음
 	// z
 	UCylinderComp* ZArrow = AddComponent<UCylinderComp>();

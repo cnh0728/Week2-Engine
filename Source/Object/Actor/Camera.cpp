@@ -12,8 +12,6 @@ ACamera::ACamera()
     Far = 1000.f;
     FieldOfView = 45.f;
     ProjectionMode = ECameraProjectionMode::Perspective;
-
-    RootComponent = AddComponent<USceneComponent>();
     
     FTransform StartPos = GetActorRelativeTransform();
     StartPos.SetPosition(FVector(-5, 0, 1));
