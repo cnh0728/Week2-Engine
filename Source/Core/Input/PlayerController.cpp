@@ -21,14 +21,10 @@ void APlayerController::HandleCameraMovement(float DeltaTime) {
     }
 
     ACamera* Camera = FEditorManager::Get().GetCamera();
-    
-    //전프레임이랑 비교
-    //x좌표 받아와서 x만큼 x축회전
-    //y좌표 받아와서 y만큼 y축 회전
+
     FVector MousePrePos = APlayerInput::Get().GetMousePrePos();
     FVector MousePos = APlayerInput::Get().GetMousePos();
     FVector DeltaPos = MousePos - MousePrePos;
-    //FQuat CameraRot = FEditorManager::Get().GetCamera()->GetActorTransform().GetRotation();
 
     FTransform CameraTransform = Camera->GetActorRelativeTransform();
 
@@ -39,21 +35,8 @@ void APlayerController::HandleCameraMovement(float DeltaTime) {
     TargetRotation.Y = FMath::Clamp(TargetRotation.Y, -Camera->MaxYDegree, Camera->MaxYDegree);
     CameraTransform.SetRotation(TargetRotation);
 
-    
-    //CameraTransform.Rotate({0, Camera->CameraSpeed * DeltaPos.Y * DeltaTime, Camera->CameraSpeed * DeltaPos.X * DeltaTime});
-
-    /*FQuat xDelta = FQuat(FVector(0, 0, 1), DeltaPos.X * DeltaTime);
-	FQuat yDelta = FQuat(FVector(0, 1, 0), DeltaPos.Y * DeltaTime);
-	FQuat newRot = FQuat::MultiplyQuaternions(CameraRot, xDelta);
-	newRot = FQuat::MultiplyQuaternions(newRot, yDelta);*/
-
-
-    //FTransform NewTransf = Camera->GetActorTransform();
-    //NewTransf.SetRotation(FQuat::AddQuaternions(CameraRot, DeltaQuaternion));
-    //Camera->SetActorTransform(NewTransf);
-    
     float CamSpeed = Camera->CameraSpeed;
-
+    
     if (APlayerInput::Get().IsPressedKey(EKeyCode::A)) {
         NewVelocity -= Camera->GetRight();
     }
@@ -98,12 +81,22 @@ void APlayerController::HandleGizmoMovement(float DeltaTime)
     {
         return;
     }
+}
 
-    
+void APlayerController::ProcessKeyBind(float DeltaTime)
+{
+    if (APlayerInput::Get().GetKeyDown(EKeyCode::Delete))
+    {
+        if (AActor* SelectedActor = FEditorManager::Get().GetSelectedActor())
+        {
+            SelectedActor->Destroy();
+        }
+    }
 }
 
 void APlayerController::ProcessPlayerInput(float DeltaTime) {
 
     HandleGizmoMovement(DeltaTime);
     HandleCameraMovement(DeltaTime);
+    ProcessKeyBind(DeltaTime);
 }

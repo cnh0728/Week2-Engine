@@ -6,9 +6,6 @@ AWorldGrid::AWorldGrid()
 {
     bCanEverTick = true;
     bCanPick = false;
-
-    // RootSceneComponent;
-    RootComponent = AddComponent<USceneComponent>();
     
     for (int i=-500; i<=500; i++)
     {

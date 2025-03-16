@@ -7,6 +7,7 @@
 
 AActor::AActor() : Depth{ 0 }
 {
+	RootComponent = AddComponent<USceneComponent>();
 }
 
 void AActor::BeginPlay()
