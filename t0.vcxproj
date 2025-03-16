@@ -253,6 +253,7 @@
     <ClInclude Include="Source\Core\Math\Vector.h" />
     <ClInclude Include="Source\Core\Math\Transform.h" />
     <ClInclude Include="Source\Object\Actor\Cylinder.h" />
+    <ClInclude Include="Source\Object\Gizmo\Axis.h" />
     <ClInclude Include="Source\Object\ObjectFactory.h" />
     <ClInclude Include="Source\ThirdParty\DirectXTex\Include\DirectXTex.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imconfig.h" />
@@ -308,9 +309,7 @@
     <Text Include="Source\Core\Rendering\Text\font01.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Source\Core\Rendering\Text\cork2.png" />
     <Image Include="Source\Core\Rendering\Text\font01.tga" />
-    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
