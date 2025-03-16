@@ -38,6 +38,7 @@ public:
 	void SetWorld(UWorld* InWorld) { World = InWorld; }
 
 	bool IsGizmoActor() const { return bIsGizmo; }
+	bool IsCanPick() const { return bCanPick; }
 
 private:
 	virtual void Pick();
@@ -101,6 +102,7 @@ protected:
 	bool bCanEverTick = true;
 	USceneComponent* RootComponent = nullptr;
 	bool bIsGizmo = false;
+	bool bCanPick = true;
 
 private:
 	UWorld* World = nullptr;

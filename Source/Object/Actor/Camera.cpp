@@ -6,7 +6,7 @@
 
 ACamera::ACamera()
 {
-    bIsGizmo = true;
+    bCanPick = false;
     
     Near = 0.1f;
     Far = 100.f;

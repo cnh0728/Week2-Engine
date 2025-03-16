@@ -12,7 +12,7 @@
 
 APicker::APicker()
 {    
-    bIsGizmo = true;
+    bCanPick = false;
 }
 
 FVector4 APicker::EncodeUUID(unsigned int UUID)
@@ -47,38 +47,50 @@ void APicker::LateTick(float DeltaTime)
         GetCursorPos(&pt);
         ScreenToClient(UEngine::Get().GetWindowHandle(), &pt);
         
-        TSet<std::pair<float,AActor*>> PickedActors = PickActorByRay(FVector(pt.x, pt.y, 0.0f)); //PriorityQueue 구현
-        AActor* PickedActor = nullptr;
+        TSet<std::pair<float,UPrimitiveComponent*>> PickedPrimitives = PickActorByRay(FVector(pt.x, pt.y, 0.0f)); //PriorityQueue 구현
+        
+        UPrimitiveComponent* PickedComponent = nullptr;
         float MinDistance = FLT_MAX;
-        for (auto& [Key, Value] : PickedActors)
+        bool IsFindGizmo = false;
+        for (auto& [Key, Value] : PickedPrimitives)
         {
-            if (MinDistance > Key)
+            //프리미티브 돌면서 가장 가까운 액터 찾는 포문. 기즈모면 젤 우선해서 
+            
+            AActor* ValueActor = Value->GetOwner();
+            
+            if (ValueActor->IsGizmoActor())
             {
-                MinDistance = Key;
-                PickedActor = Value;
+                if (IsFindGizmo == false)
+                {
+                    MinDistance = Key;
+                    IsFindGizmo = true;
+                    PickedComponent = Value;
+                }else
+                {
+                    if (MinDistance > Key)
+                    {
+                        MinDistance = Key;
+                        PickedComponent = Value;
+                    }
+                }
+                
+            }
+
+            if (IsFindGizmo == false) //기즈모가 아니면서
+            {
+                if (Value->GetOwner()->IsCanPick()) //집을수 있는 애면서
+                {
+                    if (MinDistance > Key) //더 가까우면 바꾸기
+                    {
+                        MinDistance = Key;
+                        PickedComponent = Value;
+                    }
+                }
             }
         }
         
-        if (PickedActors.Num() > 0)
-        {
-            UE_LOG("Pick %u", PickedActor->GetUUID());
-        }else
-        {
-            UE_LOG("UnPick");
-        }
-
-        for (auto& [Key, Value] : PickedActors)
-        {
-            if (Value->IsGizmoActor())
-            {
-                PickedActor = Value;
-                break;
-            }
-        }
-        
-        // PickedActor = PickActorByPixel(FVector(pt.x, pt.y, 0.0f));
-
-        if (PickedActor == nullptr)
+        //여기서부턴 선택된 프리미티브 취소 로직
+        if (PickedComponent == nullptr) //피킹된 애가 없으면 선택없애기
         {
             FEditorManager::Get().SelectActor(nullptr);   
             return;
@@ -86,39 +98,42 @@ void APicker::LateTick(float DeltaTime)
         
         //pickedActor가 클릭돼있을때 클릭하면 nullptr, 픽한애 없어도 nullptr
         
-        if (PickedActor->IsGizmoActor() == false)
+        if (PickedComponent->GetOwner()->IsGizmoActor() == false) //기즈모가 아니면서
         {
-            if (PickedActor == FEditorManager::Get().GetSelectedActor())
+            if (PickedComponent->GetOwner() == FEditorManager::Get().GetSelectedActor()) //이미 선택헀던 애면 선택 없애기
             {
-                PickedActor = nullptr;
+                PickedComponent = nullptr;
                 FEditorManager::Get().SelectActor(nullptr);
                 return;
             }
         }
 
-        FEditorManager::Get().SelectActor(PickedActor);   
+        //둘다 아니면 최종 선택된애로 선정
+        FEditorManager::Get().SelectActor(PickedComponent->GetOwner());   
         
-        if (PickedActor != nullptr)
-        {
-            UE_LOG("Picked Actor: %u", PickedActor->GetUUID());
-        }
-    }
-
-    if (APlayerInput::Get().IsPressedMouse(false))
-    {
-        POINT pt;
-        GetCursorPos(&pt);
-        ScreenToClient(UEngine::Get().GetWindowHandle(), &pt);
-        FVector4 color = UEngine::Get().GetRenderer()->GetPixel(FVector(pt.x, pt.y, 0));
-        uint32_t UUID = DecodeUUID(color);
-
-        UActorComponent* PickedComponent = UEngine::Get().GetObjectByUUID<UActorComponent>(UUID);\
         if (PickedComponent != nullptr)
         {
-            if (AGizmoHandle* Gizmo = dynamic_cast<AGizmoHandle*>(PickedComponent->GetOwner()))
+            UE_LOG("Picked Actor: %u", PickedComponent->GetUUID());
+        }
+    // }
+    //
+    // if (APlayerInput::Get().IsPressedMouse(false))
+    // {
+    //     POINT pt;
+    //     GetCursorPos(&pt);
+    //     ScreenToClient(UEngine::Get().GetWindowHandle(), &pt);
+    //     FVector4 color = UEngine::Get().GetRenderer()->GetPixel(FVector(pt.x, pt.y, 0));
+    //     uint32_t UUID = DecodeUUID(color);
+
+        // UActorComponent* PickedComponent = UEngine::Get().GetObjectByUUID<UActorComponent>(UUID);
+
+        //기즈모 로직인데 기즈모가 젤 우선으로 피킹되게 돼있으니까 들어올수있음
+        if (PickedComponent != nullptr)
+        {
+            if (AGizmoHandle* Gizmo = dynamic_cast<AGizmoHandle*>(PickedComponent)) //픽된 애가 기즈모면 (아니면 이프문 진입안함)
             {
                 if (Gizmo->GetSelectedAxis() != ESelectedAxis::None) return;
-                UCylinderComp* CylinderComp = static_cast<UCylinderComp*>(PickedComponent);
+                UCylinderComp* CylinderComp = dynamic_cast<UCylinderComp*>(PickedComponent);
                 FVector4 CompColor = CylinderComp->GetCustomColor();
                 if (1.0f - FMath::Abs(CompColor.X) < KINDA_SMALL_NUMBER) // Red - X축
                 {
@@ -193,7 +208,7 @@ bool APicker::IntersectsRay(const FVector& rayOrigin, const FVector& rayDir, flo
     return false;
 }
 
-TSet<std::pair<float, AActor*>> APicker::PickActorByRay(FVector MousePos)
+TSet<std::pair<float, UPrimitiveComponent*>> APicker::PickActorByRay(FVector MousePos)
 {
     RECT Rect;
     GetClientRect(UEngine::Get().GetWindowHandle(), &Rect);
@@ -211,22 +226,18 @@ TSet<std::pair<float, AActor*>> APicker::PickActorByRay(FVector MousePos)
     // View 공간으로 변환
     FMatrix InvProjMat = UEngine::Get().GetRenderer()->GetProjectionMatrix().Inverse();
     RayOrigin = InvProjMat.TransformVector4(RayOrigin);
-    // RayOrigin.W = 1;
     RayEnd = InvProjMat.TransformVector4(RayEnd);
-    RayEnd *= 1000.0f;  // 프러스텀의 Far 값이 적용이 안돼서 수동으로 곱함
-    // RayEnd.W = 1;
+    RayEnd *= FEditorManager::Get().GetCamera()->GetFar();
 			 
     // 마우스 포인터의 월드 위치와 방향
     FMatrix InvViewMat = FEditorManager::Get().GetCamera()->GetViewMatrix().Inverse();
     RayOrigin = InvViewMat.TransformVector4(RayOrigin);
-    // RayOrigin /= RayOrigin.W = 1;
     RayEnd = InvViewMat.TransformVector4(RayEnd);
-    // RayEnd /= RayEnd.W = 1;
     RayOrigin /= RayOrigin.W;
     RayEnd /= RayEnd.W;
     TSet<UPrimitiveComponent*> PrimitiveComponents = GetWorld()->GetRenderComponents();
-    TSet<std::pair<float,AActor*>> PickedActors; //PriorityQueue 구현
-
+    TSet<std::pair<float,UPrimitiveComponent*>> PickedPrimitive; //PriorityQueue 구현
+    
     FVector RayDir = (RayEnd - RayOrigin).GetSafeNormal();
     
     for (UPrimitiveComponent* Component : PrimitiveComponents)
@@ -235,11 +246,6 @@ TSet<std::pair<float, AActor*>> APicker::PickActorByRay(FVector MousePos)
 
         //정점데이터에 월드매트릭스 곱해서 x,y,z minX minY minZ maxX maxY maxZ 구하기
         FMatrix CompWorldMatrix = Component->GetComponentTransformMatrix(); //GetWorldMatrix 부모들 다 적용시키는 걸로 바꿔줘야함
-        //이제 정점 돌면서 월드매트릭스 곱하기
-        URenderer* Renderer = UEngine::Get().GetRenderer();
-        VertexBufferInfo Info = Renderer->GetVertexBufferInfo(Component->GetOwner()->GetUUID());
-        // TArray<FVertexSimple> Vertices = Info.GetVertices();
-        // int Size = Info.GetCount();
 
         TArray<FVertexSimple> Vertices = OriginVertices[Component->GetType()];
         int Size = Vertices.Num();
@@ -262,11 +268,11 @@ TSet<std::pair<float, AActor*>> APicker::PickActorByRay(FVector MousePos)
         float Distance = FVector::Distance(RayOrigin, Component->GetComponentTransform().GetPosition());
         if (IntersectsRay(RayOrigin, RayDir, Distance, MinBound, MaxBound))
         {
-            PickedActors.Add({Distance,Component->GetOwner()}); //Priority Queue 구현
+            PickedPrimitive.Add(Distance,Component); //Priority Queue 구현
         }
         
     }
-    return PickedActors;
+    return PickedPrimitive;
 }
 
 AActor* APicker::PickActorByPixel(FVector MousePos)

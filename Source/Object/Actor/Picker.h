@@ -21,7 +21,7 @@ public:
     static FVector4 EncodeUUID(unsigned int UUID);
     static uint32_t DecodeUUID(FVector4 color);
 
-    TSet<std::pair<float, AActor*>> PickActorByRay(FVector MousePos);
+    TSet<std::pair<float, UPrimitiveComponent*>> PickActorByRay(FVector MousePos);
     AActor* PickActorByPixel(FVector MousePos);
     bool IntersectsRay(const FVector& rayOrigin, const FVector& rayDir, float& Distance, FVector MinBound, FVector MaxBound);
 

@@ -317,8 +317,8 @@ void URenderer::AddVertices(UPrimitiveComponent* Component)
 
     // FMatrix WorldMatrix = Component->GetComponentTransformMatrix();
         
-    FMatrix WorldMatrix = Component->GetComponentTransformMatrix()
-    * ViewMatrix * ProjectionMatrix;
+    FMatrix WorldMatrix = Component->GetComponentTransformMatrix();
+
     
     //월드매트릭스만 해주고 V, P는 Constant로 넘기기 (Primitivie별로 곱해줄 필요없으니까
     
@@ -421,9 +421,8 @@ void URenderer::UpdateConstant() const
     D3D11_MAPPED_SUBRESOURCE ConstantBufferMSR;
 
     FMatrix VP =  //버텍스는 이미 곱해져서 갈거라 VP만
-        FMatrix::Identity();
-        // FMatrix::Transpose(ProjectionMatrix) * 
-        // FMatrix::Transpose(ViewMatrix);
+        FMatrix::Transpose(ProjectionMatrix) * 
+        FMatrix::Transpose(ViewMatrix);
 
     // D3D11_MAP_WRITE_DISCARD는 이전 내용을 무시하고 새로운 데이터로 덮어쓰기 위해 사용
     DeviceContext->Map(ConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &ConstantBufferMSR);
@@ -834,8 +833,8 @@ FVector4 URenderer::GetPixel(FVector MPos)
         color.W = static_cast<float>(pixelData[3]); // A
     }
 
-    std::cout << "X: " << (int)color.X << " Y: " << (int)color.Y 
-              << " Z: " << color.Z << " A: " << color.W << "\n";
+    // std::cout << "X: " << (int)color.X << " Y: " << (int)color.Y 
+    //           << " Z: " << color.Z << " A: " << color.W << "\n";
 
     // 6. 매핑 해제 및 정리
     DeviceContext->Unmap(stagingTexture, 0);
