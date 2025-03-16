@@ -4,6 +4,7 @@
 #include "Object/World/World.h"
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Static/FEditorManager.h"
+#include "Object/ActorComponent/TextComponent.h"
 
 AActor::AActor() : Depth{ 0 }
 {
@@ -158,5 +159,13 @@ void AActor::SetUseVertexColor(bool bUseVertexColor)
 		{
 			PrimitiveComponent->SetUseVertexColor(bUseVertexColor);
 		}
+	}
+}
+
+
+void AActor::SetUUIDTextCanBeRendered(bool bRender) {
+	if (UUIDTextComponent)
+	{
+		UUIDTextComponent->SetCanBeRendered(bRender);
 	}
 }

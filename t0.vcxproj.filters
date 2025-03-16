@@ -154,6 +154,9 @@
     <ClCompile Include="Source\Object\USceneComponent.cpp">
       <Filter>Object</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Object\ActorComponent\TextComponent.cpp">
+      <Filter>Object\PrimitiveComponent</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Core\AbstractClass\Singleton.h">
@@ -344,6 +347,9 @@
     </ClInclude>
     <ClInclude Include="Source\Object\USceneComponent.h">
       <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Object\ActorComponent\TextComponent.h">
+      <Filter>Object\PrimitiveComponent</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

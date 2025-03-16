@@ -168,7 +168,7 @@ void UI::RenderPrimitiveSelection()
             }
             else if (strcmp(items[currentItem], "Cube") == 0)
             {
-                World->SpawnActor<ACube>();
+                ACube* NewCube = World->SpawnActor<ACube>();
             }
             else if (strcmp(items[currentItem], "Cylinder") == 0)
             {

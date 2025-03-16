@@ -13,6 +13,7 @@
 #include "Object/Actor/Sphere.h"
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Static/FEditorManager.h"
+#include "Object/ActorComponent/TextComponent.h"
 
 
 void UWorld::BeginPlay()
@@ -82,7 +83,7 @@ void UWorld::Render()
 	RenderMainTexture(*Renderer);
   
   	// 텍스트 렌더링 테스트
-	Renderer->RenderText();
+	//Renderer->RenderText();
 
 	// DisplayPickingTexture(*Renderer);
 
@@ -142,6 +143,16 @@ void UWorld::RenderMainTexture(URenderer& Renderer)
 	}
 	
 	Renderer.Render();
+
+	for (auto& RenderComponent : RenderComponents)
+	{
+		if (UTextComponent* TextComponent = dynamic_cast<UTextComponent*>(RenderComponent))
+		{
+			TextComponent->RenderText(Renderer, TextComponent->GetText());
+		}
+	}
+
+	//Renderer.RenderText();
 	
 	// Renderer.PrepareZIgnore();
 	// for (auto& RenderComponent: ZIgnoreRenderComponents)

@@ -1,5 +1,4 @@
 ﻿#include "Cylinder.h"
-
 #include <Object/PrimitiveComponent/UPrimitiveComponent.h>
 
 ACylinder::ACylinder()
@@ -10,11 +9,16 @@ ACylinder::ACylinder()
     RootComponent = CylinderComponent;
 	
     SetActorTransform(FTransform());
+
+	UUIDTextComponent = AddComponent<UUUIDTextComponent>();
+	UUIDTextComponent->SetupAttachment(RootComponent);
+	UUIDTextComponent->SetRelativeTransform(FTransform());
 }
 
 void ACylinder::BeginPlay()
 {
     Super::BeginPlay();
+    UUIDTextComponent->SetUUIDText(GetUUID());
 }
 
 void ACylinder::Tick(float DeltaTime)

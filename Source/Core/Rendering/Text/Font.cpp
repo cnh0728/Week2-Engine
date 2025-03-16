@@ -102,7 +102,7 @@ void UFont::ReleaseTexture()
 	}
 }	
 
-void UFont::BuildVertexArray(void* Vertices, const char* Sentence, float DrawX, float DrawY, int ScreenWidth, int ScreenHeight) 
+void UFont::BuildVertexArray(void* Vertices, const FString Sentence, float DrawX, float DrawY, int ScreenWidth, int ScreenHeight) 
 {
 	VertexType* VertexPtr;
 	int numLetters, index, i, letter;
@@ -111,7 +111,7 @@ void UFont::BuildVertexArray(void* Vertices, const char* Sentence, float DrawX, 
 	VertexPtr = (VertexType*)Vertices;
 
 	// 문자열의 길이를 저장합니다.
-	numLetters = (int)strlen(Sentence);	
+	numLetters = Sentence.Len();
 
 	index = 0;
 
@@ -120,11 +120,11 @@ void UFont::BuildVertexArray(void* Vertices, const char* Sentence, float DrawX, 
 
 		// 글자 간격은 최소 3.0f로 설정합니다.
 		if (letter == 0) {
-			DrawX = DrawX + 3.0f;
+			DrawX = DrawX + 3.0f / (float)ScreenWidth;
 		}
 		else {
-			float NDC_Size = Font[letter].size;
-			float NDC_Height = 32.0f;
+			float NDC_Size = Font[letter].size / (float)ScreenWidth;
+			float NDC_Height = 32.0f / (float)ScreenHeight;
 
 			VertexPtr[index].position = FVector(0, DrawX, DrawY);  // Top left.
 			VertexPtr[index].texture = FVector(Font[letter].left, 0.0f, 0.0f);
@@ -144,7 +144,7 @@ void UFont::BuildVertexArray(void* Vertices, const char* Sentence, float DrawX, 
 			VertexPtr[index].position = FVector(0.0f, DrawX + NDC_Size, DrawY - NDC_Height);  // Bottom right.
 			VertexPtr[index].texture = FVector(Font[letter].right, 1.0f, 0.0f);
 			index++;
-			DrawX = DrawX + NDC_Size + 1.0f;
+			DrawX = DrawX + NDC_Size + 1.0f / (float)ScreenWidth;
 		}
 	}
 	return;

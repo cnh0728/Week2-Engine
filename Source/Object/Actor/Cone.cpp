@@ -1,6 +1,5 @@
 ﻿#include "Cone.h"
-
-#include <Object/PrimitiveComponent/UPrimitiveComponent.h>
+#include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 
 ACone::ACone()
 {
@@ -10,11 +9,17 @@ ACone::ACone()
     RootComponent = ConeComponent;
 	
     SetActorTransform(FTransform());
+
+    UUIDTextComponent = AddComponent<UUUIDTextComponent>();
+    UUIDTextComponent->SetupAttachment(RootComponent);
+    UUIDTextComponent->SetRelativeTransform(FTransform());
+
 }
 
 void ACone::BeginPlay()
 {
     Super::BeginPlay();
+    UUIDTextComponent->SetUUIDText(GetUUID());
 }
 
 void ACone::Tick(float DeltaTime)

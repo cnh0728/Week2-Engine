@@ -1,5 +1,8 @@
 ﻿#pragma once
 #include "Actor.h"
+
+class UUUIDTextComponent;
+
 class ACube : public AActor
 {
 	using Super = AActor;

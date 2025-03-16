@@ -1,5 +1,5 @@
 ﻿#include "Cube.h"
-#include <Object/PrimitiveComponent/UPrimitiveComponent.h>
+#include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 
 ACube::ACube()
 {
@@ -9,11 +9,16 @@ ACube::ACube()
 	RootComponent = CubeComponent;
 
 	CubeComponent->SetRelativeTransform(FTransform());
+
+	UUIDTextComponent = AddComponent<UUUIDTextComponent>();
+	UUIDTextComponent->SetupAttachment(RootComponent);
+	UUIDTextComponent->SetRelativeTransform(FTransform());
 }
 
 void ACube::BeginPlay()
 {
 	Super::BeginPlay();
+	UUIDTextComponent->SetUUIDText(GetUUID());
 }
 
 void ACube::Tick(float DeltaTime)
