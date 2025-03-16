@@ -32,7 +32,7 @@ public:
 	bool IsPicked() const { return bIsPicked; }
 
 public:
-	void SetupAttachment(USceneComponent* InParent, bool bUpdateChildTransform = false);
+	void SetupAttachment(USceneComponent* InParent);
 
 //protected:
 // 추후 Getter Setter 추가 예정

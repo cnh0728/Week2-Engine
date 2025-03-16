@@ -9,7 +9,7 @@ ACone::ACone()
     UConeComp* ConeComponent = AddComponent<UConeComp>();
     RootComponent = ConeComponent;
 	
-    SetActorTransform(FTransform());
+    SetActorRelatvieTransform(FTransform());
 }
 
 void ACone::BeginPlay()

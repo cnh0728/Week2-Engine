@@ -5,7 +5,7 @@
 AWorldGrid::AWorldGrid()
 {
     bCanEverTick = true;
-    bIsGizmo = true;
+    bCanPick = false;
 
     // RootSceneComponent;
     RootComponent = AddComponent<USceneComponent>();
@@ -35,9 +35,9 @@ AWorldGrid::AWorldGrid()
 void AWorldGrid::SetSpacing(float InSpacing)
 {
     Spacing = InSpacing;
-    FTransform Transform = GetActorTransform();
+    FTransform Transform = GetActorRelativeTransform();
     Transform.SetScale(InSpacing, InSpacing, InSpacing);
-    SetActorTransform(Transform);
+    SetActorRelatvieTransform(Transform);
 }
 
 void AWorldGrid::BeginPlay()
