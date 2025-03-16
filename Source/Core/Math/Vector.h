@@ -217,4 +217,14 @@ struct alignas(16) FVector4 : public FVector
 
     FVector4 operator*(struct FMatrix Mat);
     FVector4 operator/(float Scalar);
+    FVector GetCoord() const
+    {
+        if (abs(W) < SMALL_NUMBER)
+        {
+            return FVector(0, 0, 0);
+        }
+        float denom = 1 / W;
+        return FVector(X, Y, Z) * denom;
+    }
+
 };

@@ -1,6 +1,6 @@
 ﻿#include "World.h"
 #include <cassert>
-#include "JsonSavehelper.h"
+#include "Data/JsonSavehelper.h"
 
 #include "Core/Container/Map.h"
 #include "Core/Input/PlayerInput.h"
@@ -81,6 +81,11 @@ void UWorld::Render()
 	
 	RenderMainTexture(*Renderer);
 
+
+
+	// 텍스트 렌더링 테스트
+	Renderer->RenderText();
+
 	// DisplayPickingTexture(*Renderer);
 
 }
@@ -129,6 +134,10 @@ void UWorld::RenderMainTexture(URenderer& Renderer)
 		// 	continue;
 		// }
 		// uint32 depth = RenderComponent->GetOwner()->GetDepth();
+
+		if (!FEditorManager::Get().IsShowFlagSet(EEngineShowFlags::SF_Primitives))
+			continue;
+
 		// RenderComponent->UpdateConstantDepth(Renderer, depth);
 
 		//여기서 위치정해줌 ㅇㅇ

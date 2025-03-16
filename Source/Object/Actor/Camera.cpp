@@ -20,7 +20,7 @@ ACamera::ACamera()
     SetActorTransform(StartPos);
 }
 
-void ACamera::SetFieldOfVew(float Fov)
+void ACamera::SetFieldOfView(float Fov)
 {
     FieldOfView = Fov;
 }
@@ -33,6 +33,12 @@ void ACamera::SetFar(float Far)
 void ACamera::SetNear(float Near)
 {
     this->Near = Near;
+}
+
+void ACamera::SetCameraSensitivity(float sensitivity)
+{
+    float clampedSensitivity = FMath::Clamp(sensitivity, 0.1f, 10.0f);
+    this->CameraSensitivity = clampedSensitivity;
 }
 
 float ACamera::GetFieldOfView() const
@@ -48,4 +54,9 @@ float ACamera::GetNear() const
 float ACamera::GetFar() const
 {
     return Far;
+}
+
+float ACamera::GetCameraSensitivity() const
+{
+    return CameraSensitivity;
 }

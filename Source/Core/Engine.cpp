@@ -11,6 +11,7 @@
 #include "Object/Actor/Sphere.h"
 #include "Object/Actor/WorldGrid.h"
 #include "Static/FEditorManager.h"
+#include"Data/ConfigManager.h"
 
 class AArrow;
 class APicker;
@@ -174,7 +175,9 @@ void UEngine::Run()
 void UEngine::Shutdown()
 {
     Renderer->Release();
-    
+
+    ConfigManager::Get().SaveAllConfigs();
+
     ShutdownWindow();
 }
 
@@ -190,7 +193,7 @@ void UEngine::InitWindow(int InScreenWidth, int InScreenHeight)
 
     // Window Handle 생성
     WindowHandle = CreateWindowExW(
-        0, WindowClassName, WindowTitle,
+        WS_EX_NOREDIRECTIONBITMAP, WindowClassName, WindowTitle,
         WS_POPUP | WS_VISIBLE | WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT, CW_USEDEFAULT,
         InScreenWidth, InScreenHeight,
@@ -231,13 +234,14 @@ void UEngine::InitWorld()
     World = FObjectFactory::ConstructObject<UWorld>();
 
     FEditorManager::Get().SetCamera(World->SpawnActor<ACamera>());
+    ConfigManager::Get().LoadAllConfigs();
 
     //// Test
     // AArrow* Arrow = World->SpawnActor<AArrow>();
     //World->SpawnActor<ASphere>();
 
     World->SpawnActor<AWorldGrid>();
-    
+
     World->SpawnActor<AAxis>();
     World->SpawnActor<APicker>();
 

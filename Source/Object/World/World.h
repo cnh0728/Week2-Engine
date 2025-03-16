@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "JsonSavehelper.h"
+#include "Data/JsonSavehelper.h"
 #include "Core/Engine.h"
 #include "Core/Container/Array.h"
 #include "Core/Container/Set.h"
@@ -10,6 +10,7 @@
 
 #include "Object/Actor/Arrow.h"
 #include "Object/Actor/Picker.h"
+#include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 
 class AActor;
 class UPrimitiveComponent;
@@ -49,6 +50,8 @@ public:
 	void RemoveRenderComponent(class UPrimitiveComponent* Component) { RenderComponents.Remove(Component); }
 
 	TSet<UPrimitiveComponent*> GetRenderComponents(){ return RenderComponents; }
+
+	const TArray<AActor*>& GetActors() const { return Actors;  }
 	
 private:
 	UWorldInfo GetWorldInfo() const;
