@@ -187,7 +187,7 @@ void URenderer::Prepare()
     // DeviceContext->
     
     // InputAssembler의 Vertex 해석 방식을 설정
-    DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    // DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST); //왜인진 모르겠는데 매프레임 해줘야하나봄.
 
     // Rasterization할 Viewport를 설정 
     DeviceContext->RSSetViewports(1, &ViewportInfo);
@@ -212,10 +212,6 @@ void URenderer::PrepareShader() const
     if (ConstantBuffer)
     {
         DeviceContext->VSSetConstantBuffers(0, 1, &ConstantBuffer);
-    }
-    if (ConstantsDepthBuffer)
-    {
-        DeviceContext->PSSetConstantBuffers(2, 1, &ConstantsDepthBuffer);
     }
 }
 
@@ -861,8 +857,8 @@ FVector4 URenderer::GetPixel(FVector MPos)
         color.W = static_cast<float>(pixelData[3]); // A
     }
 
-    std::cout << "X: " << (int)color.X << " Y: " << (int)color.Y 
-              << " Z: " << color.Z << " A: " << color.W << "\n";
+    // std::cout << "X: " << (int)color.X << " Y: " << (int)color.Y 
+    //           << " Z: " << color.Z << " A: " << color.W << "\n";
 
     // 6. 매핑 해제 및 정리
     DeviceContext->Unmap(stagingTexture, 0);
