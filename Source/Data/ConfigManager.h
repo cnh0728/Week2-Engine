@@ -2,7 +2,7 @@
 
 #include <vector>
 #include "Data/UDeveloperSettings.h"
-#include "UCameraSettings.h" 
+#include "SettingsLoader.h" 
 #include "Core/AbstractClass/Singleton.h"
 #include "Core/Container/Array.h"
 

@@ -22,7 +22,8 @@ public:
 
 public:// UIWindows
     void RenderControlPanel();
-	void RenderMemoryUsage();
+    void RenderWorldGridSetting();
+    void RenderMemoryUsage();
     void RenderPrimitiveSelection();
     void RenderCameraSettings();
 	void RenderViewMode();

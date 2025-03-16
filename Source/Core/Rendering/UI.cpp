@@ -16,6 +16,7 @@
 #include "Object/Actor/Arrow.h"
 #include "Object/Actor/Cone.h"
 #include "Object/Actor/Cylinder.h"
+#include "Object/Actor/WorldGrid.h"
 #include "Static/FEditorManager.h"
 #include "Object/World/World.h"
 #include "Object/Gizmo/GizmoHandle.h"
@@ -120,10 +121,27 @@ void UI::RenderControlPanel()
     RenderMemoryUsage();
     RenderPrimitiveSelection();
     RenderCameraSettings();
+    RenderWorldGridSetting();
     RenderViewMode();
     RenderShowFlag();
     
     ImGui::End();
+}
+
+void UI::RenderWorldGridSetting()
+{
+    AWorldGrid* WorldGrid = FEditorManager::Get().GetWorldGrid();
+
+    float Spacing = WorldGrid->GetSpacing();
+    
+    if (ImGui::DragFloat("Grid Spacing", &Spacing, 0.1f))
+    {
+        Spacing = std::clamp(Spacing, 0.f, 10.f);
+
+        WorldGrid->SetSpacing(Spacing);
+    }
+    
+    ImGui::Separator();
 }
 
 void UI::RenderMemoryUsage()

@@ -1,16 +1,17 @@
-﻿#include "UCameraSettings.h"
+﻿#include "SettingsLoader.h"
 #include "Object/World/World.h"
 #include "Static/FEditorManager.h"
 #include "Object/Actor/Camera.h"
 #include <fstream>
 
-UCameraSettings::UCameraSettings(const FString& InConfigFilename)
+USettingsLoader::USettingsLoader(const FString& InConfigFilename)
 	:UDeveloperSettings(InConfigFilename)
 {
 	Camera = FEditorManager::Get().GetCamera();
+	WorldGrid = FEditorManager::Get().GetWorldGrid();
 }
 
-bool UCameraSettings::LoadConfig()
+bool USettingsLoader::LoadConfig()
 {
 	if (!UDeveloperSettings::LoadConfig())
 		return false;
@@ -27,12 +28,25 @@ bool UCameraSettings::LoadConfig()
 		}
 	}
 
+	if (ConfigData.find(FString("GridSpacing")) != ConfigData.end())
+	{
+		try
+		{
+			float GridSpacing = std::stof(std::string(*(ConfigData[FString("GridSpacing")])));
+			WorldGrid->SetSpacing(GridSpacing);
+		}catch (...)
+		{
+			WorldGrid->SetSpacing(1.0f);
+		}
+	}
+
 	return true;
 }
 
-bool UCameraSettings::SaveConfig()
+bool USettingsLoader::SaveConfig()
 {
 	ConfigData[FString("CameraSensitivity")] = FString(std::to_string(Camera->GetCameraSensitivity()));
+	ConfigData[FString("GridSpacing")] = FString(std::to_string(WorldGrid->GetSpacing()));
 
 	std::ofstream OutFile(*ConfigFilename);
 	if (!OutFile.is_open())
@@ -42,6 +56,7 @@ bool UCameraSettings::SaveConfig()
 	{
 		OutFile << *Pair.first << "=" << *Pair.second << "\n";
 	}
+
 
 	OutFile.close();
 	return true;

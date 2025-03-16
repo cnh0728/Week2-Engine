@@ -180,7 +180,7 @@
     <ClCompile Include="Source\Core\Rendering\Text\Text.cpp" />
     <ClCompile Include="Source\Data\ConfigManager.cpp" />
     <ClCompile Include="Source\Data\JsonSaveHelper.cpp" />
-    <ClCompile Include="Source\Data\UCameraSettings.cpp" />
+    <ClCompile Include="Source\Data\SettingsLoader.cpp" />
     <ClCompile Include="Source\Data\UDeveloperSettings.cpp" />
     <ClCompile Include="Source\Object\Actor\Camera.cpp" />
     <ClCompile Include="Source\Object\Actor\Cone.cpp" />
@@ -228,7 +228,7 @@
     <ClInclude Include="FEngineShowFlags.h" />
     <ClInclude Include="Source\Data\ConfigManager.h" />
     <ClInclude Include="Source\Data\JsonSaveHelper.h" />
-    <ClInclude Include="Source\Data\UCameraSettings.h" />
+    <ClInclude Include="Source\Data\SettingsLoader.h" />
     <ClInclude Include="Source\Data\UDeveloperSettings.h" />
     <ClInclude Include="Source\Object\Actor\Camera.h" />
     <ClInclude Include="Source\Object\Actor\Cone.h" />
