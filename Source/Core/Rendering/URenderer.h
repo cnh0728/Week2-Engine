@@ -12,14 +12,62 @@
 #include "Core/Engine.h"
 #include "Primitive/PrimitiveVertices.h"
 #include "Core/Math/Plane.h"
+#include "Core/Math/Transform.h"
 #include "Text/Text.h"
 
 
 struct FVertexSimple;
 struct FVector4;
-
+class UPrimitiveComponent;
 class ACamera;
 
+struct VertexBufferInfo
+{
+public:
+	VertexBufferInfo() = default;
+	VertexBufferInfo(ID3D11Buffer* InBuffer, uint32_t VerticeCount, D3D_PRIMITIVE_TOPOLOGY InTopology, TArray<FVertexSimple>& InVertices)
+	{
+		VertexBuffer = InBuffer;
+		// InstanceBuffer = InInstanceBuffer;
+		VertexCount = VerticeCount;
+		Topology = InTopology;
+		//orginVertex에서 가져올거라서 복사해와야함
+		Vertices = InVertices;
+		PreCount = VerticeCount;
+	}
+
+	VertexBufferInfo(uint32_t VerticeCount, D3D_PRIMITIVE_TOPOLOGY InTopology, TArray<FVertexSimple>& InVertices)
+	{
+		// InstanceBuffer = InInstanceBuffer;
+		VertexCount = VerticeCount;
+		Topology = InTopology;
+		//orginVertex에서 가져올거라서 복사해와야함
+		Vertices = InVertices;
+		PreCount = VerticeCount;
+	}
+	
+	~VertexBufferInfo()
+	{
+	}
+
+	ID3D11Buffer*& GetBuffer() { return VertexBuffer; }
+	uint32_t GetCount() const { return VertexCount; }
+	D3D_PRIMITIVE_TOPOLOGY GetTopology() const { return Topology; }
+	TArray<FVertexSimple> GetVertices() const { return Vertices; }
+	uint32_t GetPreCount() const { return PreCount; }
+
+	void AddVertices(TArray<FVertexSimple> InVertices){ Vertices.Insert(Vertices.end(), InVertices.begin(), InVertices.end()); VertexCount = Vertices.Num(); }
+	void ClearVertices(){ Vertices = {}; VertexCount = 0; }
+	// ID3D11Buffer* GetInstanceBuffer() { return InstanceBuffer; }
+	// void SetInstanceBuffer(ID3D11Buffer* InInstanceBuffer) { InstanceBuffer = InInstanceBuffer; }
+	
+private:
+	ID3D11Buffer* VertexBuffer;
+	// ID3D11Buffer* InstanceBuffer;
+	D3D_PRIMITIVE_TOPOLOGY Topology;
+	uint32_t VertexCount;
+	TArray<FVertexSimple> Vertices;
+	uint32_t PreCount;
 enum class EViewModeIndex : uint32
 {
     VMI_Lit,
@@ -32,11 +80,10 @@ class URenderer
 private:
     struct alignas(16) FConstants
     {
-        FMatrix MVP;
-        FVector4 Color;
+        FMatrix VP;
+        // FVector4 Color;
 		// true인 경우 Vertex Color를 사용하고, false인 경우 Color를 사용합니다.
-        uint32 bUseVertexColor;
-        FVector Padding;
+        // uint32 bUseVertexColor;
     };
 	
 	struct alignas(16) FPickingConstants
@@ -79,37 +126,41 @@ public:
 
     /** 스왑 체인의 백 버퍼와 프론트 버퍼를 교체하여 화면에 출력 */
     void SwapBuffer() const;
+    void Prepare();
 
     /** 렌더링 파이프라인을 준비 합니다. */
     void Prepare() const;
 
     /** 셰이더를 준비 합니다. */
     void PrepareShader() const;
-
-	void RenderPrimitive(class UPrimitiveComponent* PrimitiveComp);
-
-    /**
-     * Buffer에 있는 Vertex를 그립니다.
-     * @param pBuffer 렌더링에 사용할 버텍스 버퍼에 대한 포인터
-     * @param numVertices 버텍스 버퍼에 저장된 버텍스의 총 개수
-     */
-    void RenderPrimitiveInternal(ID3D11Buffer* pBuffer, UINT numVertices) const;
+    void Render();
+    void CreateVertexBuffer(uint32_t UUID, VertexBufferInfo BufferInfo);
 
     /**
      * 정점 데이터로 Vertex Buffer를 생성합니다.
-     * @param Vertices 버퍼로 변환할 정점 데이터 배열의 포인터
-     * @param ByteWidth 버퍼의 총 크기 (바이트 단위)
      * @return 생성된 버텍스 버퍼에 대한 ID3D11Buffer 포인터, 실패 시 nullptr
      *
      * @note 이 함수는 D3D11_USAGE_IMMUTABLE 사용법으로 버퍼를 생성합니다.
      */
-    ID3D11Buffer* CreateVertexBuffer(const FVertexSimple* Vertices, UINT ByteWidth) const;
+    void ClearVertex();
+	void AddVertices(UPrimitiveComponent* Component);
+    void ResizeVertexBuffer(uint32_t UUID);
+    void InsertNewVerticesIntoVertexBuffer(uint32_t UUID);
+    void UpdateVertexBuffer();
+    TMap<uint32_t, bool> CheckChangedVertexCountUUID();
 
+	VertexBufferInfo GetVertexBufferInfo(uint32_t UUID) { return VertexBuffers[UUID];}
+	void SetVertexBufferInfo(uint32_t UUID, VertexBufferInfo BufferInfo)
+	{
+		if (VertexBuffers.Contains(UUID)){ VertexBuffers[UUID] = BufferInfo;}
+		else							{    VertexBuffers.Add(UUID, BufferInfo);}
+	}
+	
     /** Buffer를 해제합니다. */
-    void ReleaseVertexBuffer(ID3D11Buffer* pBuffer) const;
-
+	void ReleaseVertexBuffer(uint32_t UUID);
+    void ReleaseAllVertexBuffer();
     /** Constant Data를 업데이트 합니다. */
-    void UpdateConstant(const ConstantUpdateInfo& UpdateInfo) const;
+    void UpdateConstant() const;
 
     ID3D11Device* GetDevice() const;
     ID3D11DeviceContext* GetDeviceContext() const;
@@ -170,7 +221,7 @@ protected:
     /** 레스터라이저 상태를 해제합니다. */
     void ReleaseRasterizerState();
 
-    void CreateBufferCache();
+    // void CreateBufferCache();
 
     void InitMatrix();
 
@@ -185,7 +236,8 @@ protected:
     ID3D11RenderTargetView* FrameBufferRTV = nullptr;       // 텍스처를 렌더 타겟으로 사용하는 뷰
     ID3D11RasterizerState* RasterizerState = nullptr;       // 래스터라이저 상태(컬링, 채우기 모드 등 정의)
     ID3D11Buffer* ConstantBuffer = nullptr;                 // 쉐이더에 데이터를 전달하기 위한 상수 버퍼
-
+	TMap<uint32_t, VertexBufferInfo> VertexBuffers;
+	
     FLOAT ClearColor[4] = { 0.025f, 0.025f, 0.025f, 1.0f }; // 화면을 초기화(clear)할 때 사용할 색상 (RGBA)
     D3D11_VIEWPORT ViewportInfo = {};                       // 렌더링 영역을 정의하는 뷰포트 정보
 
@@ -204,13 +256,14 @@ protected:
 	
 	// Buffer Cache
 
-	std::unique_ptr<FBufferCache> BufferCache;
+	// std::unique_ptr<FBufferCache> BufferCache;
 
 	FMatrix WorldMatrix;
     FMatrix ViewMatrix;
 	FMatrix ProjectionMatrix;
+	
+	D3D11_PRIMITIVE_TOPOLOGY CurrentTopology = D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED; // 같은 토폴로지 세팅인데 또 하면 낭비니까 체크
 
-	D3D_PRIMITIVE_TOPOLOGY CurrentTopology = D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED;
 
 	// Alpha Blending
 	ID3D11BlendState* AlphaEnableBlendingState = nullptr;
@@ -251,6 +304,9 @@ public:
 
 	void RenderPickingTexture();
 
-	FMatrix GetProjectionMatrix() const { return ProjectionMatrix; }
+    void CreateConeVertices();
+    void CreateCylinderVertices();
+    FMatrix GetProjectionMatrix() const { return ProjectionMatrix; }
+
 #pragma endregion picking
 };

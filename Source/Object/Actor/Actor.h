@@ -57,6 +57,7 @@ public:
 		Components.Add(ObjectInstance);
 		ObjectInstance->SetOwner(this);
 
+
 		// 만약 SceneComponent를 상속 받았다면
 		//if constexpr (std::is_base_of_v<USceneComponent, T>)
 		//{

@@ -13,7 +13,7 @@
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 
 class AActor;
-
+class UPrimitiveComponent;
 
 class UWorld :public UObject
 {
@@ -61,7 +61,7 @@ public:
 	uint32 Version = 1;
 	
 protected:
-	TArray<AActor*> Actors;
+	TArray<AActor*>  Actors;
 	TArray<UPrimitiveComponent*> ZIgnoreRenderComponents;
 	TArray<AActor*> ActorsToSpawn;
 	TArray<AActor*> PendingDestroyActors; // TODO: 추후에 TQueue로 변경

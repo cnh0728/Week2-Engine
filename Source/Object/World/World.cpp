@@ -73,14 +73,15 @@ void UWorld::Render()
 	Renderer->UpdateViewMatrix(cam->GetActorTransform());
 	Renderer->UpdateProjectionMatrix(cam);
 
-	if (APlayerInput::Get().GetMouseDown(false))
-	{
-		RenderPickingTexture(*Renderer);
-	}
-		
+	Renderer->UpdateConstant();
+	// if (APlayerInput::Get().GetMouseDown(false))
+	// {
+	// 	RenderPickingTexture(*Renderer);
+	// }
+	
 	RenderMainTexture(*Renderer);
-
-	// 텍스트 렌더링 테스트
+  
+  	// 텍스트 렌더링 테스트
 	Renderer->RenderText();
 
 	// DisplayPickingTexture(*Renderer);
@@ -92,50 +93,58 @@ void UWorld::RenderPickingTexture(URenderer& Renderer)
 	Renderer.PreparePicking();
 	Renderer.PreparePickingShader();
 
-	for (auto& RenderComponent : RenderComponents)
-	{
-		if (RenderComponent->GetOwner()->GetDepth() > 0)
-		{
-			continue;
-		}
-		uint32 UUID = RenderComponent->GetUUID();
-		RenderComponent->UpdateConstantPicking(Renderer, APicker::EncodeUUID(UUID));
-		RenderComponent->Render();
-	}
-
-	Renderer.PrepareZIgnore();
-	for (auto& RenderComponent: ZIgnoreRenderComponents)
-	{
-		uint32 UUID = RenderComponent->GetUUID();
-		RenderComponent->UpdateConstantPicking(Renderer, APicker::EncodeUUID(UUID));
-		uint32 depth = RenderComponent->GetOwner()->GetDepth();
-		RenderComponent->Render();
-	}
+	Renderer.Render();
+	
+	// for (auto& RenderComponent : RenderComponents)
+	// {
+	// 	if (RenderComponent->GetOwner()->GetDepth() > 0)
+	// 	{
+	// 		continue;
+	// 	}
+	// 	uint32 UUID = RenderComponent->GetUUID();
+	// 	RenderComponent->UpdateConstantPicking(Renderer, APicker::EncodeUUID(UUID));
+	// 	RenderComponent->Render();
+	// }
+	//
+	// Renderer.PrepareZIgnore();
+	// for (auto& RenderComponent: ZIgnoreRenderComponents)
+	// {
+	// 	uint32 UUID = RenderComponent->GetUUID();
+	// 	RenderComponent->UpdateConstantPicking(Renderer, APicker::EncodeUUID(UUID));
+	// 	uint32 depth = RenderComponent->GetOwner()->GetDepth();
+	// 	RenderComponent->Render();
+	// }
 }
 
 void UWorld::RenderMainTexture(URenderer& Renderer)
 {
 	Renderer.PrepareMain();
 	Renderer.PrepareMainShader();
-	for (auto& RenderComponent : RenderComponents)
-	{
-		if (!FEditorManager::Get().IsShowFlagSet(EEngineShowFlags::SF_Primitives) && !dynamic_cast<ULineComp*>(RenderComponent))
-			continue;
-		if (RenderComponent->GetOwner()->GetDepth() > 0)
-		{
-			continue;
-		}
-		uint32 depth = RenderComponent->GetOwner()->GetDepth();
-		// RenderComponent->UpdateConstantDepth(Renderer, depth);
-		RenderComponent->Render();
-	}
 
-	Renderer.PrepareZIgnore();
-	for (auto& RenderComponent: ZIgnoreRenderComponents)
+	//TODO: 현재 ZIgnoreRender 구현안돼있음 하고 구현하기
+
+	//여기서 새로운 버텍스정보 만들어주기 때문에 그전에 비워주기
+	Renderer.ClearVertex();
+	for (auto& RenderComponent  : RenderComponents)
 	{
-		uint32 depth = RenderComponent->GetOwner()->GetDepth();
-		RenderComponent->Render();
+
+		if (!FEditorManager::Get().IsShowFlagSet(EEngineShowFlags::SF_Primitives))
+			continue;
+
+		// RenderComponent->UpdateConstantDepth(Renderer, depth);
+
+		//여기서 위치정해줌 ㅇㅇ
+		Renderer.AddVertices(RenderComponent);
 	}
+	
+	Renderer.Render();
+	
+	// Renderer.PrepareZIgnore();
+	// for (auto& RenderComponent: ZIgnoreRenderComponents)
+	// {
+	// 	uint32 depth = RenderComponent->GetOwner()->GetDepth();
+	// 	RenderComponent->Render();
+	// }
 }
 
 void UWorld::DisplayPickingTexture(URenderer& Renderer)
@@ -170,10 +179,13 @@ bool UWorld::DestroyActor(AActor* InActor)
 
 	// 삭제될 때 Destroyed 호출
 	InActor->Destroyed();
-
+	
 	// World에서 제거
 	Actors.Remove(InActor);
 
+	//Render할 목록에서 제거
+	UEngine::Get().GetRenderer()->ReleaseVertexBuffer(InActor->GetUUID());
+	
 	// 제거 대기열에 추가
 	PendingDestroyActors.Add(InActor);
 	return true;

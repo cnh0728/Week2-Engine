@@ -9,6 +9,7 @@
 #include "Core/Input/PlayerController.h"
 #include "Object/Actor/Camera.h"
 #include "Object/Actor/Sphere.h"
+#include "Object/Actor/WorldGrid.h"
 #include "Static/FEditorManager.h"
 #include"Data/ConfigManager.h"
 
@@ -136,7 +137,7 @@ void UEngine::Run()
 		// Renderer Update
         Renderer->Prepare();
         Renderer->PrepareShader();
-
+        
 		// World Update
 		if (World)
 		{
@@ -173,6 +174,8 @@ void UEngine::Run()
 
 void UEngine::Shutdown()
 {
+    Renderer->Release();
+    
     ConfigManager::Get().SaveAllConfigs();
     ShutdownWindow();
 }
@@ -236,6 +239,8 @@ void UEngine::InitWorld()
     // AArrow* Arrow = World->SpawnActor<AArrow>();
     //World->SpawnActor<ASphere>();
 
+    World->SpawnActor<AWorldGrid>();
+    
     World->SpawnActor<AAxis>();
     World->SpawnActor<APicker>();
 

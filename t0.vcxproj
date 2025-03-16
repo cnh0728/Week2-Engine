@@ -173,6 +173,7 @@
   <ItemGroup>
     <ClCompile Include="Source\Core\Container\Name.cpp" />
     <ClCompile Include="Source\Core\Math\Plane.cpp" />
+    <ClCompile Include="Source\Object\Actor\WorldGrid.cpp" />
     <ClCompile Include="Source\Core\Rendering\Texture.cpp" />
     <ClCompile Include="Source\Core\Rendering\Text\Font.cpp" />
     <ClCompile Include="Source\Core\Rendering\Text\FontShader.cpp" />
@@ -223,6 +224,7 @@
     <ClInclude Include="Source\Core\Rendering\Text\Text.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Object\Actor\WorldGrid.h" />
     <ClInclude Include="FEngineShowFlags.h" />
     <ClInclude Include="Source\Data\ConfigManager.h" />
     <ClInclude Include="Source\Data\JsonSaveHelper.h" />

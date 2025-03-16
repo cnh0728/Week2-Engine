@@ -16,11 +16,17 @@ void URenderer::Create(HWND hWindow)
     CreateDeviceAndSwapChain(hWindow);
     CreateFrameBuffer();
     CreateRasterizerState();
-    CreateBufferCache();
+    // CreateBufferCache();
     CreateDepthStencilBuffer();
     CreateDepthStencilState();
 
     CreatePickingTexture(hWindow);
+
+
+    CreateCylinderVertices();
+    CreateConeVertices();
+    //vertexBuffer 어디서 다만들어줬지?
+    
     CreateText(hWindow);
 	CreateAlphaBlendingState();
 
@@ -37,6 +43,7 @@ void URenderer::Release()
     ReleaseFrameBuffer();
     ReleaseDepthStencilBuffer();
     ReleaseDeviceAndSwapChain();
+    ReleaseAllVertexBuffer();
     ReleaseAlphaBlendingState();
 }
 
@@ -80,6 +87,12 @@ void URenderer::CreateShader()
     {
         { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
         { "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+
+	    // 인스턴스 데이터 (Per-Instance)
+        // { "WORLD", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+        // { "WORLD", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 16, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+        // { "WORLD", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 32, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
+        // { "WORLD", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 48, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
     };
 
     Device->CreateInputLayout(Layout, ARRAYSIZE(Layout), VertexShaderCSO->GetBufferPointer(), VertexShaderCSO->GetBufferSize(), &SimpleInputLayout);
@@ -166,8 +179,8 @@ void URenderer::SwapBuffer() const
     SwapChain->Present(1, 0); // SyncInterval: VSync 활성화 여부
 }
 
-void URenderer::Prepare() const
-{
+void URenderer::Prepare()
+{    
     // 화면 지우기
     DeviceContext->ClearRenderTargetView(FrameBufferRTV, ClearColor);
     DeviceContext->ClearDepthStencilView(DepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
@@ -206,89 +219,226 @@ void URenderer::PrepareShader() const
     }
 }
 
-void URenderer::RenderPrimitive(UPrimitiveComponent* PrimitiveComp)
+TMap<uint32_t, bool> URenderer::CheckChangedVertexCountUUID()
 {
-    if (BufferCache == nullptr)
+    TMap<uint32_t, bool> UUIDs;
+
+    for (auto& Pair : VertexBuffers)
+    {
+        auto& Key = Pair.Key;
+        
+        VertexBufferInfo BufferInfo = VertexBuffers[Key];
+    
+        if (BufferInfo.GetCount() > 0)
+        {
+            if (BufferInfo.GetCount() != BufferInfo.GetPreCount())
+            {
+                UUIDs.Add(Key, true);
+            }else
+            {
+                UUIDs.Add(Key, false);
+            }
+        }
+    }
+
+    return UUIDs;
+}
+
+void URenderer::Render()
+{
+    //Pending으로 돌면서 버텍스 갯수 달라졌으면 resize, 같으면 동적할당으로 버텍스버퍼 업데이트
+    UpdateVertexBuffer();
+    
+    for (auto& Pair : VertexBuffers)
+    { 
+        auto& Key = Pair.Key;
+        auto& Value = Pair.Value;
+
+        //그려야하느게 없으면 컨티뉴
+        if (Value.GetCount() == 0)
+        {
+            continue;
+        }
+
+        if (CurrentTopology != Value.GetTopology())
+        {
+            D3D11_PRIMITIVE_TOPOLOGY Topology = Value.GetTopology();
+            DeviceContext->IASetPrimitiveTopology(Topology);
+            CurrentTopology = Topology;
+        }
+        
+        ID3D11Buffer* VertexBuffer = Value.GetBuffer();
+
+        UINT Offset = 0;
+        DeviceContext->IASetVertexBuffers(0, 1, &VertexBuffer, &Stride, &Offset);
+        
+        DeviceContext->Draw(Value.GetCount(), 0);
+        
+    }
+}
+
+void URenderer::CreateVertexBuffer(uint32_t UUID, VertexBufferInfo BufferInfo)
+{
+    TArray<FVertexSimple> Vertices = BufferInfo.GetVertices();
+    FVertexSimple* RawVertices = Vertices.GetData();
+    D3D11_PRIMITIVE_TOPOLOGY Topology = BufferInfo.GetTopology();
+
+    uint32_t ByteWidth = BufferInfo.GetCount() * sizeof(FVertexSimple);
+
+    if (ByteWidth == 0)
+    {
+        return;
+    }
+    
+    D3D11_BUFFER_DESC VertexBufferDesc = {};
+    VertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+    VertexBufferDesc.ByteWidth = ByteWidth;
+    VertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+    VertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+    
+    D3D11_SUBRESOURCE_DATA VertexBufferSRD = {};
+    VertexBufferSRD.pSysMem = RawVertices;
+
+    //UUID받으면 설정이 빈 버퍼 만들어주기
+    ID3D11Buffer* VertexBuffer;
+    Device->CreateBuffer(&VertexBufferDesc, &VertexBufferSRD, &VertexBuffer);
+    
+    VertexBufferInfo NewBufferInfo = {VertexBuffer, static_cast<uint32_t>(ByteWidth/sizeof(FVertexSimple)), Topology, Vertices};
+    SetVertexBufferInfo(UUID, NewBufferInfo);
+    // VertexBuffers.Add(UUID, NewBufferInfo);
+ }
+
+void URenderer::ClearVertex()
+{
+    for (auto& Pair : VertexBuffers)
+    {
+        auto& Value = Pair.Value;
+        
+        if (Value.GetCount() > 0)
+        {
+            Value.ClearVertices();
+        }
+    }
+}
+
+void URenderer::AddVertices(UPrimitiveComponent* Component)
+{
+    //자기 컴포넌트 매트릭스 곱해서 버텍스 ADD하기
+
+    FMatrix WorldMatrix = Component->GetComponentTransformMatrix();
+    
+    //월드매트릭스만 해주고 V, P는 Constant로 넘기기 (Primitivie별로 곱해줄 필요없으니까
+    
+    uint32_t UUID = Component->GetOwner()->GetUUID();
+
+    TArray<FVertexSimple> Vertices = OriginVertices[Component->GetType()];
+    
+    for (FVertexSimple &Vertex : Vertices )
+    {
+        FVector4 VertexPos(Vertex.X, Vertex.Y, Vertex.Z, 1.0f);
+        VertexPos = VertexPos * WorldMatrix;
+        Vertex.X = VertexPos.X / VertexPos.W;
+        Vertex.Y = VertexPos.Y / VertexPos.W;
+        Vertex.Z = VertexPos.Z / VertexPos.W;
+    }
+    
+    VertexBufferInfo& BufferInfo = VertexBuffers[UUID];
+    BufferInfo.AddVertices(Vertices);
+}
+
+void URenderer::ResizeVertexBuffer(uint32_t UUID)
+{
+    if (VertexBuffers.Contains(UUID) == false)
     {
         return;
     }
 
-	BufferInfo Info = BufferCache->GetBufferInfo(PrimitiveComp->GetType());
-
-	if (Info.GetBuffer() == nullptr)
-	{
-		return;
-	}
-
-	//if (CurrentTopology != Info.GetTopology())
-	{
-		DeviceContext->IASetPrimitiveTopology(Info.GetTopology());
-		CurrentTopology = Info.GetTopology();
-	}
-
-    ConstantUpdateInfo UpdateInfo{ 
-        PrimitiveComp->GetComponentTransformMatrix(), 
-        PrimitiveComp->GetCustomColor(), 
-        PrimitiveComp->IsUseVertexColor()
-    };
-
-    UpdateConstant(UpdateInfo);
+    VertexBufferInfo BufferInfo = VertexBuffers[UUID]; //버텍스버퍼를 제외한 이전 정보 저장용
     
-    RenderPrimitiveInternal(Info.GetBuffer(), Info.GetSize());
+    ReleaseVertexBuffer(UUID);
 
+    CreateVertexBuffer(UUID, BufferInfo);
 }
 
-void URenderer::RenderPrimitiveInternal(ID3D11Buffer* pBuffer, UINT numVertices) const
+void URenderer::InsertNewVerticesIntoVertexBuffer(uint32_t UUID)
 {
-    UINT Offset = 0;
-    DeviceContext->IASetVertexBuffers(0, 1, &pBuffer, &Stride, &Offset);
-
-    DeviceContext->Draw(numVertices, 0);
-}
-
-ID3D11Buffer* URenderer::CreateVertexBuffer(const FVertexSimple* Vertices, UINT ByteWidth) const
-{
-    D3D11_BUFFER_DESC VertexBufferDesc = {};
-    VertexBufferDesc.ByteWidth = ByteWidth;
-    VertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-    VertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-
-    D3D11_SUBRESOURCE_DATA VertexBufferSRD = {};
-    VertexBufferSRD.pSysMem = Vertices;
-
-    ID3D11Buffer* VertexBuffer;
-    const HRESULT Result = Device->CreateBuffer(&VertexBufferDesc, &VertexBufferSRD, &VertexBuffer);
-    if (FAILED(Result))
+    if (VertexBuffers.Contains(UUID) == false)
     {
-        return nullptr;
+        return;
     }
-    return VertexBuffer;
+
+    VertexBufferInfo BufferInfo = VertexBuffers[UUID];
+    D3D11_MAPPED_SUBRESOURCE mappedResource;
+    ID3D11Buffer* VertexBuffer = BufferInfo.GetBuffer();
+    
+    DeviceContext->Map(VertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+
+    memcpy(mappedResource.pData, BufferInfo.GetVertices().GetData(), BufferInfo.GetCount() * sizeof(FVertexSimple));
+    DeviceContext->Unmap(VertexBuffer, 0);
+    
 }
 
-void URenderer::ReleaseVertexBuffer(ID3D11Buffer* pBuffer) const
+void URenderer::UpdateVertexBuffer()
 {
-    pBuffer->Release();
+    TMap<uint32_t, bool> VertexChangeUUID = CheckChangedVertexCountUUID();
+
+    for (auto& pair : VertexChangeUUID)
+    {
+        auto& UUID = pair.Key;
+        auto& IsVertexCountChanged = pair.Value;
+        
+        if (IsVertexCountChanged)
+        {
+            ResizeVertexBuffer(UUID);
+        }else
+        {
+            InsertNewVerticesIntoVertexBuffer(UUID);
+        }
+    }
 }
 
-void URenderer::UpdateConstant(const ConstantUpdateInfo& UpdateInfo) const
+void URenderer::ReleaseVertexBuffer(uint32_t UUID)
+{
+    if (VertexBuffers[UUID].GetBuffer() != nullptr)
+    {
+        VertexBuffers[UUID].GetBuffer()->Release();
+        VertexBuffers.Remove(UUID);
+    }
+}
+
+void URenderer::ReleaseAllVertexBuffer()
+{
+    for (auto& pair: VertexBuffers)
+    {
+        auto& Key = pair.Key;
+        auto& Value = pair.Value;
+        
+        if (Value.GetBuffer() != nullptr)
+        {
+            VertexBuffers[Key].GetBuffer()->Release();
+        }
+    }
+    VertexBuffers.Empty();
+}
+
+void URenderer::UpdateConstant() const
 {
     if (!ConstantBuffer) return;
 
     D3D11_MAPPED_SUBRESOURCE ConstantBufferMSR;
 
-    FMatrix MVP = 
+    FMatrix VP =  //버텍스는 이미 곱해져서 갈거라 VP만
         FMatrix::Transpose(ProjectionMatrix) * 
-        FMatrix::Transpose(ViewMatrix) * 
-        FMatrix::Transpose(UpdateInfo.TransformMatrix);    // 상수 버퍼를 CPU 메모리에 매핑
+        FMatrix::Transpose(ViewMatrix);
 
     // D3D11_MAP_WRITE_DISCARD는 이전 내용을 무시하고 새로운 데이터로 덮어쓰기 위해 사용
     DeviceContext->Map(ConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &ConstantBufferMSR);
     {
         // 매핑된 메모리를 FConstants 구조체로 캐스팅
         FConstants* Constants = static_cast<FConstants*>(ConstantBufferMSR.pData);
-        Constants->MVP = MVP;
-		Constants->Color = UpdateInfo.Color;
-		Constants->bUseVertexColor = UpdateInfo.bUseVertexColor ? 1 : 0;
+        Constants->VP = VP;
+		// Constants->Color = UpdateInfo.Color;
+		// Constants->bUseVertexColor = UpdateInfo.bUseVertexColor ? 1 : 0;
     }
     DeviceContext->Unmap(ConstantBuffer, 0);
 }
@@ -528,10 +678,10 @@ void URenderer::ReleaseRasterizerState()
     }
 }
 
-void URenderer::CreateBufferCache()
-{
-    BufferCache = std::make_unique<FBufferCache>();
-}
+// void URenderer::CreateBufferCache()
+// {
+//     BufferCache = std::make_unique<FBufferCache>();
+// }
 
 void URenderer::InitMatrix()
 {
@@ -785,6 +935,84 @@ void URenderer::RenderPickingTexture()
     backBuffer->Release();
 }
 
+inline void URenderer::CreateConeVertices()
+{
+	TArray<FVertexSimple> vertices;
+
+	int segments = 36;
+	float radius = 1.f;
+	float height = 1.f;
+
+
+	// 원뿔의 바닥
+	for (int i = 0; i < segments; ++i)
+	{
+		float angle = 2.0f * PI * i / segments;
+		float nextAngle = 2.0f * PI * (i + 1) / segments;
+
+		float x1 = radius * cos(angle);
+		float y1 = radius * sin(angle);
+		float x2 = radius * cos(nextAngle);
+		float y2 = radius * sin(nextAngle);
+
+		 // 바닥 삼각형 (반시계 방향으로 추가)
+        vertices.Add({ 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f });
+        vertices.Add({ x2, y2, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f });
+        vertices.Add({ x1, y1, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f });
+
+        // 옆면 삼각형 (시계 방향으로 추가)
+        vertices.Add({ x1, y1, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f });
+        vertices.Add({ x2, y2, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f });
+        vertices.Add({ 0.0f, 0.0f, height, 0.0f, 1.0f, 0.0f, 1.0f });
+	}
+
+    const TArray<FVertexSimple> tmpArray = vertices;
+    
+	OriginVertices[EPrimitiveType::EPT_Cone] = tmpArray;
+}
+
+inline void URenderer::CreateCylinderVertices()
+{
+	TArray<FVertexSimple> vertices;
+	
+	int segments = 36;
+	float radius = .03f;
+	float height = .5f;
+
+
+	// 원기둥의 바닥과 윗면
+	for (int i = 0; i < segments; ++i)
+	{
+		float angle = 2.0f * PI * i / segments;
+		float nextAngle = 2.0f * PI * (i + 1) / segments;
+
+		float x1 = radius * cos(angle);
+		float y1 = radius * sin(angle);
+		float x2 = radius * cos(nextAngle);
+		float y2 = radius * sin(nextAngle);
+
+		// 바닥 삼각형
+		vertices.Add({ 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f });
+		vertices.Add({ x2, y2, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f });
+		vertices.Add({ x1, y1, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f });
+
+		// 윗면 삼각형
+		vertices.Add({ 0.0f, 0.0f, height, 0.0f, 1.0f, 0.0f, 1.0f });
+		vertices.Add({ x1, y1, height, 0.0f, 1.0f, 0.0f, 1.0f });
+		vertices.Add({ x2, y2, height, 0.0f, 1.0f, 0.0f, 1.0f });
+
+		// 옆면 삼각형 두 개
+		vertices.Add({ x1, y1, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f });
+		vertices.Add({ x2, y2, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f });
+		vertices.Add({ x1, y1, height, 0.0f, 0.0f, 1.0f, 1.0f });
+
+		vertices.Add({ x2, y2, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f });
+		vertices.Add({ x2, y2, height, 0.0f, 0.0f, 1.0f, 1.0f });
+		vertices.Add({ x1, y1, height, 0.0f, 0.0f, 1.0f, 1.0f });
+	}
+
+	OriginVertices[EPrimitiveType::EPT_Cylinder] = vertices;
+}
 void URenderer::CreateText(HWND hWindow) 
 {
     Text = new UText();

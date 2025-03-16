@@ -39,6 +39,9 @@ public:
     // 이동 생성자
     TArray(TArray&& Other) noexcept;
 
+    // 초기화 생성자
+    TArray(std::initializer_list<T> InitList);
+
     // 복사 할당 연산자
     TArray& operator=(const TArray& Other);
 
@@ -58,7 +61,15 @@ public:
         requires std::is_invocable_r_v<bool, Predicate, const T&>
     SizeType RemoveAll(const Predicate& Pred);
     T* GetData();
-
+    T* ToArray() const;
+    
+    SizeType Insert(SizeType Index, const T& Item);
+    SizeType Insert(SizeType Index, T&& Item);
+    void Insert(SizeType Index, const T* Items, SizeType Count);
+    void Insert(SizeType Index, std::initializer_list<T> InitList);
+    template <typename InputIt>
+    void Insert(typename std::vector<T, Allocator>::iterator Position, InputIt First, InputIt Last);
+    
     /**
      * Array에서 Item을 찾습니다.
      * @param Item 찾으려는 Item
@@ -216,6 +227,20 @@ T* TArray<T, Allocator>::GetData()
 }
 
 template <typename T, typename Allocator>
+T* TArray<T, Allocator>::ToArray() const
+{
+    SizeType size = Num();
+    if (size == 0)
+    {
+        return nullptr;
+    }
+
+    T* newArray = new T[size];
+    std::copy(PrivateVector.begin(), PrivateVector.end(), newArray);
+    return newArray;
+}
+
+template <typename T, typename Allocator>
 typename TArray<T, Allocator>::SizeType TArray<T, Allocator>::Find(const T& Item)
 {
     const auto it = std::find(PrivateVector.begin(), PrivateVector.end(), Item);
@@ -262,3 +287,59 @@ void TArray<T, Allocator>::Sort(const Compare& CompFn)
 }
 
 template <typename T, typename Allocator = FDefaultAllocator<T>> class TArray;
+
+template <typename T, typename Allocator>
+TArray<T, Allocator>::TArray(std::initializer_list<T> InitList)
+    : PrivateVector(InitList) {}
+    
+template <typename T, typename Allocator>
+typename TArray<T, Allocator>::SizeType TArray<T, Allocator>::Insert(SizeType Index, const T& Item)
+{
+    if (Index >= 0 && static_cast<SizeType>(Index) <= PrivateVector.size())
+    {
+        PrivateVector.insert(PrivateVector.begin() + Index, Item);
+        return Index;
+    }
+    throw std::out_of_range("Index out of range in TArray::Insert");
+}
+
+template <typename T, typename Allocator>
+typename TArray<T, Allocator>::SizeType TArray<T, Allocator>::Insert(SizeType Index, T&& Item)
+{
+    if (Index >= 0 && static_cast<SizeType>(Index) <= PrivateVector.size())
+    {
+        PrivateVector.insert(PrivateVector.begin() + Index, std::move(Item));
+        return Index;
+    }
+    throw std::out_of_range("Index out of range in TArray::Insert");
+}
+
+template <typename T, typename Allocator>
+void TArray<T, Allocator>::Insert(SizeType Index, const T* Items, SizeType Count)
+{
+    if (Index >= 0 && static_cast<SizeType>(Index) <= PrivateVector.size())
+    {
+        PrivateVector.insert(PrivateVector.begin() + Index, Items, Items + Count);
+        return;
+    }
+    throw std::out_of_range("Index out of range in TArray::Insert");
+}
+
+template <typename T, typename Allocator>
+void TArray<T, Allocator>::Insert(SizeType Index, std::initializer_list<T> InitList)
+{
+    if (Index >= 0 && static_cast<SizeType>(Index) <= PrivateVector.size())
+    {
+        PrivateVector.insert(PrivateVector.begin() + Index, InitList.begin(), InitList.end());
+        return;
+    }
+    throw std::out_of_range("Index out of range in TArray::Insert");
+}
+
+
+template <typename T, typename Allocator>
+template <typename InputIt>
+void TArray<T, Allocator>::Insert(typename std::vector<T, Allocator>::iterator Position, InputIt First, InputIt Last)
+{
+    PrivateVector.insert(Position, First, Last);
+}
