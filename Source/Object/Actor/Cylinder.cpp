@@ -10,16 +10,13 @@ ACylinder::ACylinder()
 	
     SetActorRelatvieTransform(FTransform());
 
-	UUIDTextComponent = AddComponent<UUUIDTextComponent>();
-	UUIDTextComponent->SetupAttachment(RootComponent);
-    UUIDTextComponent->SetRelativeTransform(FTransform(FVector(0.0f, 0.3f, 0.6f), FVector(), FVector().One()));
-
 }
 
 void ACylinder::BeginPlay()
 {
+    SetUUIDTag();
+    
     Super::BeginPlay();
-    UUIDTextComponent->SetText(FString::FromInt(GetUUID()));
 }
 
 void ACylinder::Tick(float DeltaTime)

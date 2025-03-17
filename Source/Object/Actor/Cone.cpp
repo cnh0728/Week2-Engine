@@ -10,15 +10,14 @@ ACone::ACone()
 
     SetActorRelatvieTransform(FTransform());
 
-    UUIDTextComponent = AddComponent<UUUIDTextComponent>();
-    UUIDTextComponent->SetupAttachment(RootComponent);
-    UUIDTextComponent->SetRelativeTransform(FTransform(FVector(0.0f, 0.7f, 1.2f), FVector(), FVector().One()));
 }
 
 void ACone::BeginPlay()
 {
+    SetUUIDTag();
+    
     Super::BeginPlay();
-    UUIDTextComponent->SetText(FString::FromInt(GetUUID()));
+
 }
 
 void ACone::Tick(float DeltaTime)

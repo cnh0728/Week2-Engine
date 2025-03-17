@@ -13,6 +13,7 @@ AActor::AActor() : Depth{ 0 }
 
 void AActor::BeginPlay()
 {
+	
 	for (auto& Component : Components)
 	{
 		Component->BeginPlay();
@@ -160,6 +161,18 @@ bool AActor::Destroy()
 //	}
 //}
 
+
+void AActor::SetUUIDTag()
+{
+	//Super::BeginPlay 보다 빨리 실행해야 한다. -> 늦게하면 component에 추가가 안됨
+	FString UUIDTag("UUID: ");
+	UUIDTag += FString::FromInt(GetUUID());
+	
+	UUIDTextComponent = AddComponent<UTextComponent>();
+	UUIDTextComponent->SetupAttachment(RootComponent);
+	UUIDTextComponent->SetRelativeTransform(FTransform(FVector(0.0f, 0.9f, 0.9f), FVector(), FVector().One()));
+	UUIDTextComponent->SetText(UUIDTag);
+}
 
 void AActor::SetUUIDTextCanBeRendered(bool bRender) {
 	if (UUIDTextComponent)
