@@ -42,25 +42,7 @@ bool UText::Create(ID3D11Device* Device, ID3D11DeviceContext* DeviceContext, HWN
 		return false;
 	}
 
-	Result = InitializeSentence(&Sentence1, 16, Device);
-	if (!Result)
-	{
-		return false;
-	}
-
-	Result = UpdateSentence(Sentence1, "Hello World", 500, 500, 1.0f, 1.0f, 1.0f, DeviceContext);
-	if (!Result)
-	{
-		return false;
-	}
-	
-	Result = InitializeSentence(&Sentence2, 16, Device);
-	if (!Result)
-	{
-		return false;
-	}
-
-	Result = UpdateSentence(Sentence2, "Goodbye World", 600, 600, 1.0f, 1.0f, 0.0f, DeviceContext);
+	Result = InitializeSentence(&Sentence1, 32, Device);
 	if (!Result)
 	{
 		return false;
@@ -87,19 +69,21 @@ void UText::Release()
 	}
 }
 
-bool UText::Render(ID3D11DeviceContext* DeviceContext, FMatrix WorldMatrix, FMatrix ViewMatrix, FMatrix OrthoMatrix)
+bool UText::Render(ID3D11DeviceContext* DeviceContext, const FMatrix& WorldMatrix, const FMatrix& ViewMatrix, const FMatrix& OrthoMatrix, const FString& Text)
 {
 	bool Result;
+
+	Result = UpdateSentence(Sentence1, Text, 1.0f, 1.0f, 1.0f, DeviceContext);
+	if (!Result)
+	{
+		return false;
+	}
 	Result = RenderSentence(DeviceContext, Sentence1, WorldMatrix, ViewMatrix, OrthoMatrix);
 	if (!Result)
 	{
 		return false;
 	}
-	Result = RenderSentence(DeviceContext, Sentence2, WorldMatrix, ViewMatrix, OrthoMatrix);
-	if (!Result)
-	{
-		return false;
-	}
+
 	return true;
 }
 
@@ -175,7 +159,7 @@ bool UText::InitializeSentence(SentenceType** Sentence, int MaxLength, ID3D11Dev
 	return true;
 }
 
-bool UText::UpdateSentence(SentenceType* Sentence, const char* Text, float DrawX, float DrawY, float Red, float Green, float Blue, ID3D11DeviceContext* DeviceContext)
+bool UText::UpdateSentence(SentenceType* Sentence, FString Text, float Red, float Green, float Blue, ID3D11DeviceContext* DeviceContext)
 {
 	int NumLetters;
 	VertexType* Vertices;
@@ -188,7 +172,7 @@ bool UText::UpdateSentence(SentenceType* Sentence, const char* Text, float DrawX
 	Sentence->Green = Green;
 	Sentence->Blue = Blue;
 
-	NumLetters = (int)strlen(Text);
+	NumLetters = Text.Len();
 
 	if (NumLetters > Sentence->MaxLength)
 	{
@@ -203,10 +187,7 @@ bool UText::UpdateSentence(SentenceType* Sentence, const char* Text, float DrawX
 
 	memset(Vertices, 0, (sizeof(VertexType) * Sentence->VertexCount));
 
-	X = (float)(((ScreenWidth / 2) * -1) + DrawX);
-	Y = (float)((ScreenHeight / 2) - DrawY);
-
-	Font->BuildVertexArray((void*)Vertices, Text, X, Y, ScreenWidth, ScreenHeight);
+	Font->BuildVertexArray((void*)Vertices, Text, ScreenWidth, ScreenHeight);
 
 	Result = DeviceContext->Map(Sentence->VertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
 	if (FAILED(Result))
@@ -257,7 +238,7 @@ bool UText::RenderSentence(ID3D11DeviceContext* DeviceContext, SentenceType* Sen
 
 	DeviceContext->IASetVertexBuffers(0, 1, &Sentence->VertexBuffer, &Stride, &Offset);
 	DeviceContext->IASetIndexBuffer(Sentence->IndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-	// DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	PixelColor = FVector4(Sentence->Red, Sentence->Green, Sentence->Blue, 1.0f);
 	Result = FontShader->Render(DeviceContext, Sentence->IndexCount, WorldMatrix, ViewMatrix, OrthoMatrix, Font->GetTexture(), PixelColor);
 

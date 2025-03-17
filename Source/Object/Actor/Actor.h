@@ -6,6 +6,7 @@
 #include "Core/Container/Set.h"
 #include "Object/ObjectFactory.h"
 #include "Object/USceneComponent.h"
+#include "Object/PrimitiveComponent/UUIDTextComponent.h"
 
 class UWorld;
 
@@ -46,6 +47,8 @@ public:
 
 	bool IsGizmoActor() const { return bIsGizmo; }
 	bool IsCanPick() const { return bCanPick; }
+
+	virtual void SetUUIDTextCanBeRendered(bool bRender);
 	
 private:
 	virtual void Pick();
@@ -114,6 +117,7 @@ protected:
 	USceneComponent* RootComponent = nullptr;
 	bool bCanPick = true;
 	bool bIsGizmo = false;
+	UUUIDTextComponent* UUIDTextComponent = nullptr;
 	
 
 	AActor* Parent = nullptr;

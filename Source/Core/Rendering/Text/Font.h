@@ -4,6 +4,7 @@
 #include <d3d11.h>
 #include "Core/Math/Vector.h"
 #include "Core/Rendering/Texture.h"
+#include "Core/Container/String.h"
 
 
 class UFont {
@@ -23,7 +24,7 @@ public:
 	~UFont();
 	bool Create(ID3D11Device* Device, const wchar_t* FontFileName, const wchar_t* TextureFileName);
 	void Release();
-	void BuildVertexArray(void* Vertices, const char* Sentence, float DrawX, float DrawY, int ScreenWidth, int ScreenHeight);
+	void BuildVertexArray(void* Vertices, const FString Sentence, int ScreenWidth, int ScreenHeight);
 	ID3D11ShaderResourceView* GetTexture() const { return Texture ? Texture->GetTexture() : nullptr; }
 
 private:

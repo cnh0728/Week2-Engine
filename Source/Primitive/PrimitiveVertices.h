@@ -37,6 +37,7 @@ enum class EPrimitiveType : uint8
 	EPT_Line,
 	EPT_Cylinder,
 	EPT_Cone,
+	EPT_Text,
 	EPT_Max,
 	EPT_Bounding_Box,
 };

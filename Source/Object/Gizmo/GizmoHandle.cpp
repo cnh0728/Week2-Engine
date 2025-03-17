@@ -36,7 +36,12 @@ AGizmoHandle::AGizmoHandle()
 	UEngine::Get().GetWorld()->AddZIgnoreComponent(XArrow);
 	UEngine::Get().GetWorld()->AddZIgnoreComponent(YArrow);
 
-	SetActive(false);
+	SetActive(false); 
+}
+
+void AGizmoHandle::BeginPlay()
+{
+	AActor::BeginPlay();
 }
 
 void AGizmoHandle::Tick(float DeltaTime)

@@ -4,6 +4,7 @@
 #include "Object/World/World.h"
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Static/FEditorManager.h"
+#include "Object/PrimitiveComponent/TextComponent.h"
 
 AActor::AActor() : Depth{ 0 }
 {
@@ -158,6 +159,14 @@ bool AActor::Destroy()
 //		}
 //	}
 //}
+
+
+void AActor::SetUUIDTextCanBeRendered(bool bRender) {
+	if (UUIDTextComponent)
+	{
+		UUIDTextComponent->SetCanBeRendered(bRender);
+	}
+}
 
 void AActor::SetupAttachment(AActor* InParent)
 {

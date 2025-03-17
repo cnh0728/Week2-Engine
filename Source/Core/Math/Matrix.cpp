@@ -193,6 +193,14 @@ FMatrix FMatrix::Transpose(const FMatrix& Matrix)
 	return Result;
 }
 
+FMatrix FMatrix::SetTranslateMatrix(FVector Translation)
+{
+	M[3][0] = Translation.X;
+	M[3][1] = Translation.Y;
+	M[3][2] = Translation.Z;
+	return *this;
+}
+
 FMatrix FMatrix::GetTranslateMatrix(float X, float Y, float Z)
 {
 	FMatrix Result;
