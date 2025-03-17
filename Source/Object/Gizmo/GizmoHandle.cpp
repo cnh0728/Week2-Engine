@@ -133,6 +133,10 @@ void AGizmoHandle::SetActive(bool bActive)
 			{
 				if (auto SelectedActorPrimitive = dynamic_cast<UPrimitiveComponent*>(SelectedActorComponent))
 				{
+					if (dynamic_cast<UTextComponent*>(SelectedActorComponent))
+					{
+						continue;
+					}
 					auto BoundingBox = AddComponent<UBoundingBoxComponent>();
 					SelectedActorBoundingBox.Add(BoundingBox);
 					BoundingBox->SetupAttachment(RootComponent);
