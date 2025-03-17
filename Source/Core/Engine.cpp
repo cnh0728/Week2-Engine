@@ -57,7 +57,7 @@ LRESULT UEngine::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         break;
     case WM_SIZE:
 		UEngine::Get().UpdateWindowSize(LOWORD(lParam), HIWORD(lParam));
-		break;
+		break;        
     default:
         return DefWindowProc(hWnd, uMsg, wParam, lParam);
     }

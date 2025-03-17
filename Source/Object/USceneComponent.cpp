@@ -1,4 +1,6 @@
 ﻿#include "USceneComponent.h"
+
+#include "Actor/Actor.h"
 #include "Debug/DebugConsole.h"
 #include "PrimitiveComponent/UPrimitiveComponent.h"
 
@@ -44,12 +46,23 @@ const FMatrix USceneComponent::GetComponentTransformMatrix()
 	{
 		// 부모가 있을 경우 부모 월드 * 내 로컬
 		FMatrix ParentWorld = Parent->GetComponentTransformMatrix();
-		FMatrix MyLocal = RelativeTransform.GetMatrix();
+		FMatrix MyLocal = GetRelativeTransformMatrix();
 
 		FMatrix NewMatrix = MyLocal * ParentWorld;
 		return NewMatrix;
 	}
 
+	//여기까지 왔으면 부모가 없는애고(루트컴포넌트) 액터의 부모가 있으면 부모월드 * 내 로컬
+	if (AActor* ParentActor = GetOwner()->GetParent())
+	{
+		FMatrix ParentActorWorld = ParentActor->GetActorTransformMatrix();
+		FMatrix MyLocal = GetRelativeTransformMatrix();
+
+		FMatrix NewMatrix = MyLocal * ParentActorWorld;
+		return NewMatrix;
+	}
+
+	//컴포넌트도 최상단이고 액터도 최상단이면 이거
 	return GetRelativeTransformMatrix();
 }
 
@@ -68,7 +81,7 @@ void USceneComponent::Pick(bool bPicked)
 	}
 }
 
-void USceneComponent::SetupAttachment(USceneComponent* InParent, bool bUpdateChildTransform)
+void USceneComponent::SetupAttachment(USceneComponent* InParent)
 {
 	if (InParent)
 	{

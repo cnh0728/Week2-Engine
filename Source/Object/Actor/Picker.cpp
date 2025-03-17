@@ -12,7 +12,7 @@
 
 APicker::APicker()
 {    
-    bIsGizmo = true;
+    bCanPick = false;
 }
 
 FVector4 APicker::EncodeUUID(unsigned int UUID)
@@ -35,114 +35,137 @@ uint32_t APicker::DecodeUUID(FVector4 color)
 void APicker::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
-}
 
-void APicker::LateTick(float DeltaTime)
-{
-    AActor::LateTick(DeltaTime);
+    APlayerInput& Input = APlayerInput::Get();
 
-    if(APlayerInput::Get().GetMouseDown(false))
+    UPrimitiveComponent* PickedComponent = nullptr;
+    
+    UpdateRayInfo();
+
+    if(Input.GetMouseDown(false))
     {
-        POINT pt;
-        GetCursorPos(&pt);
-        ScreenToClient(UEngine::Get().GetWindowHandle(), &pt);
+        TMap<UPrimitiveComponent*, float> PickedPrimitives = PickActorByRay(); //PriorityQueue 구현
         
-        TSet<std::pair<float,AActor*>> PickedActors = PickActorByRay(FVector(pt.x, pt.y, 0.0f)); //PriorityQueue 구현
-        AActor* PickedActor = nullptr;
         float MinDistance = FLT_MAX;
-        for (auto& [Key, Value] : PickedActors)
+        bool IsFindGizmo = false;
+        for (auto& [Primitive, Distance] : PickedPrimitives)
         {
-            if (MinDistance > Key)
+            //프리미티브 돌면서 가장 가까운 액터 찾는 포문. 기즈모면 젤 우선해서 
+            
+            AActor* ValueActor = Primitive->GetOwner();
+            
+            if (ValueActor->IsGizmoActor())
             {
-                MinDistance = Key;
-                PickedActor = Value;
+                if (IsFindGizmo == false)
+                {
+                    MinDistance = Distance;
+                    IsFindGizmo = true;
+                    PickedComponent = Primitive;
+                }else
+                {
+                    if (MinDistance > Distance)
+                    {
+                        MinDistance = Distance;
+                        PickedComponent = Primitive;
+                    }
+                }
+            }
+
+            if (IsFindGizmo == false) //기즈모가 아니면서
+            {
+                if (Primitive->GetOwner()->IsCanPick()) //집을수 있는 애면서
+                {
+                    if (MinDistance > Distance) //더 가까우면 바꾸기
+                    {
+                        MinDistance = Distance;
+                        PickedComponent = Primitive;
+                    }
+                }
             }
         }
         
-        if (PickedActors.Num() > 0)
+        //여기서부턴 선택된 프리미티브 취소 로직
+        if (PickedComponent == nullptr) 
         {
-            UE_LOG("Pick %u", PickedActor->GetUUID());
-        }else
-        {
-            UE_LOG("UnPick");
-        }
-
-        for (auto& [Key, Value] : PickedActors)
-        {
-            if (Value->IsGizmoActor())
-            {
-                PickedActor = Value;
-                break;
-            }
-        }
-        
-        // PickedActor = PickActorByPixel(FVector(pt.x, pt.y, 0.0f));
-
-        if (PickedActor == nullptr)
-        {
-            FEditorManager::Get().SelectActor(nullptr);   
+            // FEditorManager::Get().SelectActor(nullptr);   //피킹된 애가 없으면 선택없애기
             return;
         }
         
         //pickedActor가 클릭돼있을때 클릭하면 nullptr, 픽한애 없어도 nullptr
         
-        if (PickedActor->IsGizmoActor() == false)
+        if (IsFindGizmo == false) //기즈모가 아니면서
         {
-            if (PickedActor == FEditorManager::Get().GetSelectedActor())
+            if (PickedComponent->GetOwner() == FEditorManager::Get().GetSelectedActor()) //이미 선택헀던 애면 선택 없애기
             {
-                PickedActor = nullptr;
+                PickedComponent = nullptr;
                 FEditorManager::Get().SelectActor(nullptr);
                 return;
             }
-        }
-
-        FEditorManager::Get().SelectActor(PickedActor);   
-        
-        if (PickedActor != nullptr)
+            //아니면 최종 선택된애로 선정
+            FEditorManager::Get().SelectActor(PickedComponent->GetOwner());   
+        }else //기즈모면
         {
-            UE_LOG("Picked Actor: %u", PickedActor->GetUUID());
+            AGizmoHandle* Gizmo = dynamic_cast<AGizmoHandle*>(PickedComponent->GetOwner());
+
+            if (Gizmo == nullptr)
+            {
+                return;
+            }
+                
+            UCylinderComp* CylinderComp = dynamic_cast<UCylinderComp*>(PickedComponent);
+            FVector4 CompColor = CylinderComp->GetCustomColor();
+            if (1.0f - FMath::Abs(CompColor.X) < KINDA_SMALL_NUMBER) // Red - X축
+            {
+                Gizmo->SetSelectedAxis(ESelectedAxis::X);
+            }
+            else if (1.0f - FMath::Abs(CompColor.Y) < KINDA_SMALL_NUMBER) // Green - Y축
+            {
+                Gizmo->SetSelectedAxis(ESelectedAxis::Y);
+            }
+            else  // Blue - Z축
+            {
+                Gizmo->SetSelectedAxis(ESelectedAxis::Z);
+            }
+        }
+        
+        if (PickedComponent != nullptr)
+        {
+            UE_LOG("Picked Actor: %u", PickedComponent->GetUUID());
         }
     }
 
-    if (APlayerInput::Get().IsPressedMouse(false))
+    if (Input.IsPressedMouse(false))
     {
-        POINT pt;
-        GetCursorPos(&pt);
-        ScreenToClient(UEngine::Get().GetWindowHandle(), &pt);
-        FVector4 color = UEngine::Get().GetRenderer()->GetPixel(FVector(pt.x, pt.y, 0));
-        uint32_t UUID = DecodeUUID(color);
+        AGizmoHandle* Gizmo = FEditorManager::Get().GetGizmoHandle();
+        AActor* Actor = FEditorManager::Get().GetSelectedActor();
 
-        UActorComponent* PickedComponent = UEngine::Get().GetObjectByUUID<UActorComponent>(UUID);
-        if (PickedComponent != nullptr)
+        if (Gizmo == nullptr || Gizmo->GetSelectedAxis() == ESelectedAxis::None || Actor == nullptr)
         {
-            if (AGizmoHandle* Gizmo = dynamic_cast<AGizmoHandle*>(PickedComponent->GetOwner()))
-            {
-                if (Gizmo->GetSelectedAxis() != ESelectedAxis::None) return;
-                UCylinderComp* CylinderComp = static_cast<UCylinderComp*>(PickedComponent);
-                // todo : axis 색 지정
-                //FVector4 CompColor = CylinderComp->GetCustomColor();
-                //if (1.0f - FMath::Abs(CompColor.X) < KINDA_SMALL_NUMBER) // Red - X축
-                //{
-                //    Gizmo->SetSelectedAxis(ESelectedAxis::X);
-                //}
-                //else if (1.0f - FMath::Abs(CompColor.Y) < KINDA_SMALL_NUMBER) // Green - Y축
-                //{
-                //    Gizmo->SetSelectedAxis(ESelectedAxis::Y);
-                //}
-                //else  // Blue - Z축
-                //{
-                //    Gizmo->SetSelectedAxis(ESelectedAxis::Z);
-                //}
-            }
+            return;
         }
+        
+        float Distance = FVector::Distance(RayOrigin, Actor->GetActorRelativeTransform().GetPosition());
+			
+        // Ray 방향으로 Distance만큼 재계산
+        FVector Result = RayOrigin + RayDir * Distance;
+	
+        FTransform AT = Actor->GetActorRelativeTransform();
+            
+        Gizmo->DoTransform(AT, Result, Actor);
     }
     else
     {
+        //마우스를 놨을때
         if (AGizmoHandle* Handle = FEditorManager::Get().GetGizmoHandle())
         {
             Handle->SetSelectedAxis(ESelectedAxis::None);
         }
     }
+}
+
+void APicker::LateTick(float DeltaTime)
+{
+    AActor::LateTick(DeltaTime);
 }
 
 bool APicker::IntersectsRay(const FVector& rayOrigin, const FVector& rayDir, float& Distance, FVector MinBound, FVector MaxBound)
@@ -194,41 +217,45 @@ bool APicker::IntersectsRay(const FVector& rayOrigin, const FVector& rayDir, flo
     return false;
 }
 
-TSet<std::pair<float, AActor*>> APicker::PickActorByRay(FVector MousePos)
+void APicker::UpdateRayInfo()
 {
+    POINT pt;
+    GetCursorPos(&pt);
+    ScreenToClient(UEngine::Get().GetWindowHandle(), &pt);
+    
     RECT Rect;
     GetClientRect(UEngine::Get().GetWindowHandle(), &Rect);
     int ScreenWidth = Rect.right - Rect.left;
     int ScreenHeight = Rect.bottom - Rect.top;
 			 
     // 커서 위치를 NDC로 변경
-    float PosX = 2.0f * MousePos.X / ScreenWidth - 1.0f;
-    float PosY = -2.0f * MousePos.Y / ScreenHeight + 1.0f;
+    float PosX = 2.0f * pt.x / ScreenWidth - 1.0f;
+    float PosY = -2.0f * pt.y / ScreenHeight + 1.0f;
 			 
     // Projection 공간으로 변환
-    FVector4 RayOrigin {PosX, PosY, 0.0f, 1.0f};
-    FVector4 RayEnd {PosX, PosY, 1.0f, 1.0f};
+    RayOrigin = {PosX, PosY, 0.0f, 1.0f};
+    RayEnd = {PosX, PosY, 1.0f, 1.0f};
 			 
     // View 공간으로 변환
     FMatrix InvProjMat = UEngine::Get().GetRenderer()->GetProjectionMatrix().Inverse();
     RayOrigin = InvProjMat.TransformVector4(RayOrigin);
-    // RayOrigin.W = 1;
     RayEnd = InvProjMat.TransformVector4(RayEnd);
-    RayEnd *= 1000.0f;  // 프러스텀의 Far 값이 적용이 안돼서 수동으로 곱함
-    // RayEnd.W = 1;
+    RayEnd *= FEditorManager::Get().GetCamera()->GetFar();
 			 
     // 마우스 포인터의 월드 위치와 방향
     FMatrix InvViewMat = FEditorManager::Get().GetCamera()->GetViewMatrix().Inverse();
     RayOrigin = InvViewMat.TransformVector4(RayOrigin);
-    // RayOrigin /= RayOrigin.W = 1;
     RayEnd = InvViewMat.TransformVector4(RayEnd);
-    // RayEnd /= RayEnd.W = 1;
     RayOrigin /= RayOrigin.W;
     RayEnd /= RayEnd.W;
-    TSet<UPrimitiveComponent*> PrimitiveComponents = GetWorld()->GetRenderComponents();
-    TSet<std::pair<float,AActor*>> PickedActors; //PriorityQueue 구현
+    
+    RayDir = (RayEnd - RayOrigin).GetSafeNormal();
+}
 
-    FVector RayDir = (RayEnd - RayOrigin).GetSafeNormal();
+TMap<UPrimitiveComponent*, float> APicker::PickActorByRay()
+{
+    TSet<UPrimitiveComponent*> PrimitiveComponents = GetWorld()->GetRenderComponents();
+    TMap<UPrimitiveComponent*, float> PickedPrimitive; //PriorityQueue 구현
     
     for (UPrimitiveComponent* Component : PrimitiveComponents)
     {
@@ -236,11 +263,6 @@ TSet<std::pair<float, AActor*>> APicker::PickActorByRay(FVector MousePos)
 
         //정점데이터에 월드매트릭스 곱해서 x,y,z minX minY minZ maxX maxY maxZ 구하기
         FMatrix CompWorldMatrix = Component->GetComponentTransformMatrix(); //GetWorldMatrix 부모들 다 적용시키는 걸로 바꿔줘야함
-        //이제 정점 돌면서 월드매트릭스 곱하기
-        URenderer* Renderer = UEngine::Get().GetRenderer();
-        VertexBufferInfo Info = Renderer->GetVertexBufferInfo(Component->GetOwner()->GetUUID());
-        // TArray<FVertexSimple> Vertices = Info.GetVertices();
-        // int Size = Info.GetCount();
 
         TArray<FVertexSimple> Vertices = OriginVertices[Component->GetType()];
         int Size = Vertices.Num();
@@ -263,11 +285,11 @@ TSet<std::pair<float, AActor*>> APicker::PickActorByRay(FVector MousePos)
         float Distance = FVector::Distance(RayOrigin, Component->GetComponentTransform().GetPosition());
         if (IntersectsRay(RayOrigin, RayDir, Distance, MinBound, MaxBound))
         {
-            PickedActors.Add({Distance,Component->GetOwner()}); //Priority Queue 구현
+            PickedPrimitive.Add(Component, Distance); //Priority Queue 구현
         }
         
     }
-    return PickedActors;
+    return PickedPrimitive;
 }
 
 AActor* APicker::PickActorByPixel(FVector MousePos)

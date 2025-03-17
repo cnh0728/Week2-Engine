@@ -23,7 +23,7 @@ public:
 	FMatrix GetRelativeTransformMatrix() const;
 	/* 월드 트랜스폼을 반환, 이걸로 렌더링한다*/
 	const FTransform GetComponentTransform(); // !!! 사용금지 !!!
-	const FMatrix GetComponentTransformMatrix();
+	virtual const FMatrix GetComponentTransformMatrix();
 
 	void SetRelativeTransform(const FTransform& InTransform);
 
@@ -32,7 +32,7 @@ public:
 	bool IsPicked() const { return bIsPicked; }
 
 public:
-	void SetupAttachment(USceneComponent* InParent, bool bUpdateChildTransform = false);
+	void SetupAttachment(USceneComponent* InParent);
 
 //protected:
 // 추후 Getter Setter 추가 예정

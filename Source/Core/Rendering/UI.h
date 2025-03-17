@@ -2,7 +2,8 @@
 #define _TCHAR_DEFINED
 #include <Windows.h>
 #include "ImGui/imgui.h"
-
+#include "Core/Container/Array.h"
+#include "Core/Container/Name.h"
 
 class AActor;
 class URenderer;
@@ -41,4 +42,5 @@ private:
     float ActorColor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
     
     void SetWindowLayout(float widthRatio, float heightRatio, float posXRatio, float posYRatio);
+    TArray<FName> Unselectables;
 };

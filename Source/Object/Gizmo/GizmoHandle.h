@@ -29,6 +29,7 @@ public:
 	void SetSelectedAxis(ESelectedAxis NewAxis) { SelectedAxis = NewAxis; }
 	ESelectedAxis GetSelectedAxis() const { return SelectedAxis; }
 	EGizmoType GetGizmoType() const { return GizmoType; }
+	void DoTransform(FTransform& AT, FVector Result, AActor* Actor);
 
 private:
 	bool bIsActive = false;
@@ -40,6 +41,5 @@ private:
 	virtual const char* GetTypeName() override;
 
 private:
-	void DoTransform(FTransform& AT, FVector Result, AActor* Actor);
 };
 

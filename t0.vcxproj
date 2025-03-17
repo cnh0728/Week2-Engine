@@ -171,6 +171,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Core\Math\Box.cpp" />
     <ClCompile Include="Source\Core\Container\Name.cpp" />
     <ClCompile Include="Source\Core\Math\Plane.cpp" />
     <ClCompile Include="Source\Object\Actor\WorldGrid.cpp" />
@@ -203,6 +204,7 @@
     <ClCompile Include="Source\Core\Math\Matrix.cpp" />
     <ClCompile Include="Source\Core\Math\Vector.cpp" />
     <ClCompile Include="Source\Object\ObjectFactory.cpp" />
+    <ClCompile Include="Source\Object\PrimitiveComponent\UBoundingBox.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui_demo.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui_draw.cpp" />
@@ -217,6 +219,7 @@
     <ClCompile Include="Source\Object\Actor\Sphere.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Core\Math\Box.h" />
     <ClInclude Include="Source\Core\Container\Name.h" />
     <ClInclude Include="Source\Core\Rendering\Texture.h" />
     <ClInclude Include="Source\Core\Rendering\Text\Font.h" />
@@ -254,6 +257,7 @@
     <ClInclude Include="Source\Core\Math\Transform.h" />
     <ClInclude Include="Source\Object\Actor\Cylinder.h" />
     <ClInclude Include="Source\Object\ObjectFactory.h" />
+    <ClInclude Include="Source\Object\PrimitiveComponent\UBoundingBox.h" />
     <ClInclude Include="Source\ThirdParty\DirectXTex\Include\DirectXTex.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imconfig.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imgui.h" />

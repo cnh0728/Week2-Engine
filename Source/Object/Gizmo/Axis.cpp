@@ -2,9 +2,10 @@
 
 AAxis::AAxis()
 {
-	bIsGizmo = true;
-
-	RootComponent = AddComponent<USceneComponent>();
+	// 수정필요.
+	// 중심이 되는 invisible한 uscenecomponent를 추가하고
+	// 거기에 ULineComp를 붙여야합니다.
+	bCanPick = false;
 	
 	ULineComp* LineX = AddComponent<ULineComp>();
 	FTransform XTransform = LineX->GetRelativeTransform();

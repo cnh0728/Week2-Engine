@@ -1,6 +1,6 @@
 ﻿#include "Sphere.h"
 #include <Object/PrimitiveComponent/UPrimitiveComponent.h>
-
+#include <Object/PrimitiveComponent/UBoundingBox.h>
 ASphere::ASphere()
 {
 	bCanEverTick = true;
@@ -8,7 +8,10 @@ ASphere::ASphere()
 	USphereComp* SphereComponent = AddComponent<USphereComp>();
 	RootComponent = SphereComponent;
 	
-	SetActorTransform(FTransform());
+	UBoundingBox* BBox = AddComponent<UBoundingBox>();
+	BBox->SetupAttachment(SphereComponent);
+
+	SetActorRelatvieTransform(FTransform());
 }
 
 void ASphere::BeginPlay()

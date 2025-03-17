@@ -45,6 +45,8 @@ void UI::Initialize(HWND hWnd, URenderer& Renderer, UINT ScreenWidth, UINT Scree
     
     io.DisplaySize = ScreenSize;
     this->Renderer = &Renderer;
+
+    //Unselectables.Add(FName("Camera"));
 }
 
 void UI::Update()
@@ -273,26 +275,26 @@ void UI::RenderCameraSettings()
         }
     }
     
-    FVector CameraPosition = Camera->GetActorTransform().GetPosition();
+    FVector CameraPosition = Camera->GetActorRelativeTransform().GetPosition();
     if (ImGui::DragFloat3("Camera Location", reinterpret_cast<float*>(&CameraPosition), 0.1f))
     {
-        FTransform Trans = Camera->GetActorTransform();
+        FTransform Trans = Camera->GetActorRelativeTransform();
         Trans.SetPosition(CameraPosition);
-        Camera->SetActorTransform(Trans);
+        Camera->SetActorRelatvieTransform(Trans);
     }
 
-    FVector PrevEulerAngle = Camera->GetActorTransform().GetRotation().GetEuler();
+    FVector PrevEulerAngle = Camera->GetActorRelativeTransform().GetRotation().GetEuler();
     FVector UIEulerAngle = { PrevEulerAngle.X, PrevEulerAngle.Y, PrevEulerAngle.Z };
     if (ImGui::DragFloat3("Camera Rotation", reinterpret_cast<float*>(&UIEulerAngle), 0.1f))
     {
-        FTransform Transform = Camera->GetActorTransform();
+        FTransform Transform = Camera->GetActorRelativeTransform();
 
         //FVector DeltaEulerAngle = UIEulerAngle - PrevEulerAngle;
         //Transform.Rotate(DeltaEulerAngle);
         
         UIEulerAngle.Y = FMath::Clamp(UIEulerAngle.Y, -Camera->MaxYDegree, Camera->MaxYDegree);
         Transform.SetRotation(UIEulerAngle);
-        Camera->SetActorTransform(Transform);
+        Camera->SetActorRelatvieTransform(Transform);
     }
     if (ImGui::DragFloat("Camera Speed", &Camera->CameraSpeed, 0.1f))
     {
@@ -305,9 +307,9 @@ void UI::RenderCameraSettings()
         Camera->SetCameraSensitivity(CameraSensitivity);
     }
 
-    FVector Forward = Camera->GetActorTransform().GetForward();
-    FVector Up = Camera->GetActorTransform().GetUp();
-    FVector Right = Camera->GetActorTransform().GetRight();
+    FVector Forward = Camera->GetActorRelativeTransform().GetForward();
+    FVector Up = Camera->GetActorRelativeTransform().GetUp();
+    FVector Right = Camera->GetActorRelativeTransform().GetRight();
 
     ImGui::Text("Camera GetForward(): (%.2f %.2f %.2f)", Forward.X, Forward.Y, Forward.Z);
     ImGui::Text("Camera GetUp(): (%.2f %.2f %.2f)", Up.X, Up.Y, Up.Z);
@@ -340,14 +342,14 @@ void UI::RenderPropertyWindow()
     AActor* selectedActor = FEditorManager::Get().GetSelectedActor();
     if (selectedActor != nullptr)
     {
-        FTransform selectedTransform = selectedActor->GetActorTransform();
+        FTransform selectedTransform = selectedActor->GetActorRelativeTransform();
         float position[] = { selectedTransform.GetPosition().X, selectedTransform.GetPosition().Y, selectedTransform.GetPosition().Z };
         float scale[] = { selectedTransform.GetScale().X, selectedTransform.GetScale().Y, selectedTransform.GetScale().Z };
 
         if (ImGui::DragFloat3("Translation", position, 0.1f))
         {
             selectedTransform.SetPosition(position[0], position[1], position[2]);
-            selectedActor->SetActorTransform(selectedTransform);
+            selectedActor->SetActorRelatvieTransform(selectedTransform);
         }
 
         FVector PrevEulerAngle = selectedTransform.GetRotation().GetEuler();
@@ -358,12 +360,12 @@ void UI::RenderPropertyWindow()
 
             selectedTransform.Rotate(DeltaEulerAngle);
 			UE_LOG("Rotation: %.2f, %.2f, %.2f", DeltaEulerAngle.X, DeltaEulerAngle.Y, DeltaEulerAngle.Z);
-            selectedActor->SetActorTransform(selectedTransform);
+            selectedActor->SetActorRelatvieTransform(selectedTransform);
         }
         if (ImGui::DragFloat3("Scale", scale, 0.1f))
         {
             selectedTransform.SetScale(scale[0], scale[1], scale[2]);
-            selectedActor->SetActorTransform(selectedTransform);
+            selectedActor->SetActorRelatvieTransform(selectedTransform);
         }
 		if (FEditorManager::Get().GetGizmoHandle() != nullptr)
 		{
