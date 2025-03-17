@@ -6,7 +6,7 @@
 #include "Core/Container/Set.h"
 #include "Object/ObjectFactory.h"
 #include "Object/USceneComponent.h"
-#include "Object/ActorComponent/TextComponent.h"
+#include "Object/PrimitiveComponent/UUIDTextComponent.h"
 
 class UWorld;
 

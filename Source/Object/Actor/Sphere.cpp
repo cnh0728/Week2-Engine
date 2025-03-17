@@ -18,7 +18,7 @@ ASphere::ASphere()
 void ASphere::BeginPlay()
 {
 	Super::BeginPlay();
-	UUIDTextComponent->SetUUIDText(GetUUID());
+	UUIDTextComponent->SetText(FString::FromInt(GetUUID()));
 }
 
 void ASphere::Tick(float DeltaTime)

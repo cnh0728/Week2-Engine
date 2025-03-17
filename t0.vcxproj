@@ -173,7 +173,6 @@
   <ItemGroup>
     <ClCompile Include="Source\Core\Container\Name.cpp" />
     <ClCompile Include="Source\Core\Math\Plane.cpp" />
-    <ClCompile Include="Source\Object\ActorComponent\TextComponent.cpp" />
     <ClCompile Include="Source\Object\Actor\WorldGrid.cpp" />
     <ClCompile Include="Source\Core\Rendering\Texture.cpp" />
     <ClCompile Include="Source\Core\Rendering\Text\Font.cpp" />
@@ -204,6 +203,8 @@
     <ClCompile Include="Source\Core\Math\Matrix.cpp" />
     <ClCompile Include="Source\Core\Math\Vector.cpp" />
     <ClCompile Include="Source\Object\ObjectFactory.cpp" />
+    <ClCompile Include="Source\Object\PrimitiveComponent\TextComponent.cpp" />
+    <ClCompile Include="Source\Object\PrimitiveComponent\UUIDTextComponent.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui_demo.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui_draw.cpp" />
@@ -225,7 +226,6 @@
     <ClInclude Include="Source\Core\Rendering\Text\Text.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\Object\ActorComponent\TextComponent.h" />
     <ClInclude Include="Source\Object\Actor\WorldGrid.h" />
     <ClInclude Include="FEngineShowFlags.h" />
     <ClInclude Include="Source\Data\ConfigManager.h" />
@@ -257,6 +257,8 @@
     <ClInclude Include="Source\Object\Actor\Cylinder.h" />
     <ClInclude Include="Source\Object\Gizmo\Axis.h" />
     <ClInclude Include="Source\Object\ObjectFactory.h" />
+    <ClInclude Include="Source\Object\PrimitiveComponent\TextComponent.h" />
+    <ClInclude Include="Source\Object\PrimitiveComponent\UUIDTextComponent.h" />
     <ClInclude Include="Source\ThirdParty\DirectXTex\Include\DirectXTex.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imconfig.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imgui.h" />

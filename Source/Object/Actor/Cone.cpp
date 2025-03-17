@@ -19,7 +19,7 @@ ACone::ACone()
 void ACone::BeginPlay()
 {
     Super::BeginPlay();
-    UUIDTextComponent->SetUUIDText(GetUUID());
+    UUIDTextComponent->SetText(FString::FromInt(GetUUID()));
 }
 
 void ACone::Tick(float DeltaTime)

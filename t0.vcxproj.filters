@@ -154,7 +154,10 @@
     <ClCompile Include="Source\Object\USceneComponent.cpp">
       <Filter>Object</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Object\ActorComponent\TextComponent.cpp">
+    <ClCompile Include="Source\Object\PrimitiveComponent\UUIDTextComponent.cpp">
+      <Filter>Object\PrimitiveComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Object\PrimitiveComponent\TextComponent.cpp">
       <Filter>Object\PrimitiveComponent</Filter>
     </ClCompile>
   </ItemGroup>
@@ -348,7 +351,10 @@
     <ClInclude Include="Source\Object\USceneComponent.h">
       <Filter>Object</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Object\ActorComponent\TextComponent.h">
+    <ClInclude Include="Source\Object\PrimitiveComponent\UUIDTextComponent.h">
+      <Filter>Object\PrimitiveComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Object\PrimitiveComponent\TextComponent.h">
       <Filter>Object\PrimitiveComponent</Filter>
     </ClInclude>
   </ItemGroup>

@@ -69,11 +69,11 @@ void UText::Release()
 	}
 }
 
-bool UText::Render(ID3D11DeviceContext* DeviceContext, FMatrix WorldMatrix, FMatrix ViewMatrix, FMatrix OrthoMatrix, FString Text, FVector TextPos)
+bool UText::Render(ID3D11DeviceContext* DeviceContext, FMatrix WorldMatrix, FMatrix ViewMatrix, FMatrix OrthoMatrix, FString Text, FVector TextPos, uint32 TextSize)
 {
 	bool Result;
 
-	Result = UpdateSentence(Sentence1, Text, TextPos.Y, TextPos.Z, 1.0f, 1.0f, 1.0f, DeviceContext);
+	Result = UpdateSentence(Sentence1, Text, TextPos.Y, TextPos.Z, TextPos.X, TextSize, 1.0f, 1.0f, 1.0f, DeviceContext);
 	if (!Result)
 	{
 		return false;
@@ -159,7 +159,7 @@ bool UText::InitializeSentence(SentenceType** Sentence, int MaxLength, ID3D11Dev
 	return true;
 }
 
-bool UText::UpdateSentence(SentenceType* Sentence, FString Text, float DrawX, float DrawY, float Red, float Green, float Blue, ID3D11DeviceContext* DeviceContext)
+bool UText::UpdateSentence(SentenceType* Sentence, FString Text, float DrawX, float DrawY, float DrawZ, uint32 TextSize, float Red, float Green, float Blue, ID3D11DeviceContext* DeviceContext)
 {
 	int NumLetters;
 	VertexType* Vertices;
@@ -187,7 +187,7 @@ bool UText::UpdateSentence(SentenceType* Sentence, FString Text, float DrawX, fl
 
 	memset(Vertices, 0, (sizeof(VertexType) * Sentence->VertexCount));
 
-	Font->BuildVertexArray((void*)Vertices, Text, DrawX, DrawY, ScreenWidth, ScreenHeight);
+	Font->BuildVertexArray((void*)Vertices, Text, DrawX, DrawY, DrawZ, TextSize, ScreenWidth, ScreenHeight);
 
 	Result = DeviceContext->Map(Sentence->VertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
 	if (FAILED(Result))

@@ -1,12 +1,21 @@
 ﻿#include "TextComponent.h"
 
-
-
-void UTextComponent::SetText(const char* text)
+UTextComponent::UTextComponent()
 {
+	Text = FString();
 }
 
-const char* UTextComponent::GetText() const
+void UTextComponent::SetText(const FString& InText)
 {
-	return nullptr;
+	Text = InText;
+}
+
+FString UTextComponent::GetText() const
+{
+	return Text;
+}
+
+void UTextComponent::RenderText(URenderer& Renderer, const FString& InText, const FVector& InTextPos, uint32 InTextSize)
+{
+	Renderer.RenderText(InText, InTextPos, InTextSize);
 }

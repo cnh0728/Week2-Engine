@@ -13,7 +13,7 @@
 #include "Object/Actor/Sphere.h"
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Static/FEditorManager.h"
-#include "Object/ActorComponent/TextComponent.h"
+#include "Object/PrimitiveComponent/TextComponent.h"
 
 
 void UWorld::BeginPlay()
@@ -148,7 +148,10 @@ void UWorld::RenderMainTexture(URenderer& Renderer)
 	{
 		if (UTextComponent* TextComponent = dynamic_cast<UTextComponent*>(RenderComponent))
 		{
-			TextComponent->RenderText(Renderer, TextComponent->GetText());
+			if (UUUIDTextComponent* UUIDTextComponent = dynamic_cast<UUUIDTextComponent*>(TextComponent))
+			{
+				UUIDTextComponent->RenderText(Renderer, UUIDTextComponent->GetText(), UUIDTextComponent->GetComponentTransformMatrix().GetTranslation(), UUIDTextComponent->GetUUIDTextSize());
+			}
 		}
 	}
 

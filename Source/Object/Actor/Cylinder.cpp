@@ -18,7 +18,7 @@ ACylinder::ACylinder()
 void ACylinder::BeginPlay()
 {
     Super::BeginPlay();
-    UUIDTextComponent->SetUUIDText(GetUUID());
+    UUIDTextComponent->SetText(FString::FromInt(GetUUID()));
 }
 
 void ACylinder::Tick(float DeltaTime)

@@ -102,7 +102,7 @@ void UFont::ReleaseTexture()
 	}
 }	
 
-void UFont::BuildVertexArray(void* Vertices, const FString Sentence, float DrawX, float DrawY, int ScreenWidth, int ScreenHeight) 
+void UFont::BuildVertexArray(void* Vertices, const FString Sentence, float DrawX, float DrawY, float DrawZ, uint32 TextSize, int ScreenWidth, int ScreenHeight) 
 {
 	VertexType* VertexPtr;
 	int numLetters, index, i, letter;
@@ -123,25 +123,25 @@ void UFont::BuildVertexArray(void* Vertices, const FString Sentence, float DrawX
 			DrawX = DrawX + 3.0f / (float)ScreenWidth;
 		}
 		else {
-			float NDC_Size = Font[letter].size / (float)ScreenWidth;
-			float NDC_Height = 32.0f / (float)ScreenHeight;
+			float NDC_Size = Font[letter].size * TextSize / (float)ScreenWidth;
+			float NDC_Height = 32.0f * TextSize / (float)ScreenHeight;
 
-			VertexPtr[index].position = FVector(0, DrawX, DrawY);  // Top left.
+			VertexPtr[index].position = FVector(DrawZ, DrawX, DrawY);  // Top left.
 			VertexPtr[index].texture = FVector(Font[letter].left, 0.0f, 0.0f);
 			index++;
-			VertexPtr[index].position = FVector(0.0f, DrawX + NDC_Size, DrawY - NDC_Height);  // Bottom right.
+			VertexPtr[index].position = FVector(DrawZ, DrawX + NDC_Size, DrawY - NDC_Height);  // Bottom right.
 			VertexPtr[index].texture = FVector(Font[letter].right, 1.0f, 0.0f);
 			index++;
-			VertexPtr[index].position = FVector(0.0f, DrawX, DrawY - NDC_Height);  // Bottom left.
+			VertexPtr[index].position = FVector(DrawZ, DrawX, DrawY - NDC_Height);  // Bottom left.
 			VertexPtr[index].texture = FVector(Font[letter].left, 1.0f, 0.0f);
 			index++;
-			VertexPtr[index].position = FVector(0.0f, DrawX, DrawY);  // Top left.
+			VertexPtr[index].position = FVector(DrawZ, DrawX, DrawY);  // Top left.
 			VertexPtr[index].texture = FVector(Font[letter].left, 0.0f, 0.0f);
 			index++;
-			VertexPtr[index].position = FVector(0.0f, DrawX + NDC_Size, DrawY);  // Top right.
+			VertexPtr[index].position = FVector(DrawZ, DrawX + NDC_Size, DrawY);  // Top right.
 			VertexPtr[index].texture = FVector(Font[letter].right, 0.0f, 0.0f);
 			index++;
-			VertexPtr[index].position = FVector(0.0f, DrawX + NDC_Size, DrawY - NDC_Height);  // Bottom right.
+			VertexPtr[index].position = FVector(DrawZ, DrawX + NDC_Size, DrawY - NDC_Height);  // Bottom right.
 			VertexPtr[index].texture = FVector(Font[letter].right, 1.0f, 0.0f);
 			index++;
 			DrawX = DrawX + NDC_Size + 1.0f / (float)ScreenWidth;

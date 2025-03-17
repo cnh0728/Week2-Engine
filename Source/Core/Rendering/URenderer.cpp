@@ -1014,17 +1014,19 @@ void URenderer::CreateText(HWND hWindow)
     Text->Create(Device, DeviceContext, hWindow, UEngine::Get().GetScreenWidth(), UEngine::Get().GetScreenHeight());
 }
 
-void URenderer::RenderText(const FString& InText, const FVector& InTextPos) 
+void URenderer::RenderText(const FString& InText, const FVector& InTextPos, uint32 InTextSize) 
 {
 	ACamera* Camera = FEditorManager::Get().GetCamera();
-	FMatrix OrthoMatrix = FMatrix::OrthoLH(1, 1, Camera->GetNear(), Camera->GetFar());
-    
+    FMatrix WorldMatrix = FMatrix::GetScaleMatrix(FVector::One()) 
+        * FMatrix::GetRotateMatrix(FQuat(Camera->GetActorTransform().GetRotation())).Inverse() 
+        * FMatrix::GetTranslateMatrix(InTextPos);
+
     DeviceContext->ClearDepthStencilView(DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
     TurnZBufferOff();
     TurnOnAlphaBlending();
 
-	Text->Render(DeviceContext, WorldMatrix, ViewMatrix, OrthoMatrix, InText, InTextPos);
+	Text->Render(DeviceContext, WorldMatrix, ViewMatrix, ProjectionMatrix, InText, InTextPos, InTextSize);
 
 	TurnOffAlphaBlending();
 	TurnZBufferOn();

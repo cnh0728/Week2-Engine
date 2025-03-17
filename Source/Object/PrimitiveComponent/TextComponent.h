@@ -1,11 +1,24 @@
 ﻿#pragma once
-#include "Object/USceneComponent.h"
+#include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 
-class UTextComponent : public USceneComponent {
-	using Super = USceneComponent;
+class URenderer;
+class UText;
+
+class UTextComponent : public UPrimitiveComponent {
+	using Super = UPrimitiveComponent;
+
 public:
 	UTextComponent();
 	virtual ~UTextComponent() = default;
-	void SetText(const char* text);
-	const char* GetText() const;
+	virtual void SetText(const FString& InText);
+	virtual FString GetText() const;
+	virtual void RenderText(URenderer& Renderer, const FString& InText, const FVector& InTextPos, uint32 InTextSize);
+	EPrimitiveType GetType() override
+	{
+		return EPrimitiveType::EPT_Text;
+	}
+
+protected:
+	FString Text;
+	UText* TextRenderClass;
 };

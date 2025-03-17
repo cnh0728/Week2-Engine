@@ -18,7 +18,7 @@ ACube::ACube()
 void ACube::BeginPlay()
 {
 	Super::BeginPlay();
-	UUIDTextComponent->SetUUIDText(GetUUID());
+	UUIDTextComponent->SetText(FString::FromInt(GetUUID()));
 }
 
 void ACube::Tick(float DeltaTime)
