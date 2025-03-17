@@ -6,9 +6,7 @@ ASphere::ASphere()
 	bCanEverTick = true;
 
 	USphereComp* SphereComponent = AddComponent<USphereComp>();
-	SphereComponent -> SetupAttachment(RootComponent);
 
-	USphereComp* SphereComponent = AddComponent<USphereComp>();
 	RootComponent = SphereComponent;
 
 	SetActorRelatvieTransform(FTransform());
