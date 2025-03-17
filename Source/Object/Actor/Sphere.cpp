@@ -8,6 +8,10 @@ ASphere::ASphere()
 	USphereComp* SphereComponent = AddComponent<USphereComp>();
 	RootComponent = SphereComponent;
 
+	UCubeComp* cube = AddComponent<UCubeComp>();
+	cube->SetupAttachment(RootComponent);
+	cube->SetRelativeTransform(FTransform(FVector(3, 3, 3), FQuat(), FVector(0.4, 1, 2)));
+
 	SetActorRelatvieTransform(FTransform());
 
 	UUIDTextComponent = AddComponent<UUUIDTextComponent>();

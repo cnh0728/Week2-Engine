@@ -42,6 +42,6 @@ private:
 
 	virtual const char* GetTypeName() override;
 private:
-	UBoundingBoxComponent* SelectedActorBoundingBox;
+	TSet<UBoundingBoxComponent*> SelectedActorBoundingBox;
 };
 

@@ -53,8 +53,22 @@ struct FName
 	FName(FString str);
 	FName();
 
-	FORCEINLINE int32 Compare(const FName& Other) const;
-	FORCEINLINE bool operator==(const FName& Other) const;
+	FORCEINLINE int32 Compare(const FName& Other) const
+	{
+		if (ComparisonIndex == Other.ComparisonIndex)
+		{
+			return Number - Other.Number;
+		}
+		else
+		{
+			return -2147483648;
+		}
+	}
+
+	FORCEINLINE bool operator==(const FName& Other) const
+	{
+		return ComparisonIndex == Other.ComparisonIndex;
+	}
 
 	//  "Player13"이면,
 	// ComparisonIndex = ("Player" 문자열의 EntryId == hash value)

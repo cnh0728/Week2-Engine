@@ -36,8 +36,6 @@ AGizmoHandle::AGizmoHandle()
 	UEngine::Get().GetWorld()->AddZIgnoreComponent(XArrow);
 	UEngine::Get().GetWorld()->AddZIgnoreComponent(YArrow);
 
-	SelectedActorBoundingBox = AddComponent<UBoundingBoxComponent>();
-	SelectedActorBoundingBox->SetupAttachment(RootComponent);
 	SetActive(false); 
 }
 
@@ -73,11 +71,17 @@ void AGizmoHandle::Tick(float DeltaTime)
 
 	if (SelectedActor)
 	{
-		SelectedActorBoundingBox->SetCanBeRendered(true);
+		for (auto BoundingBox : SelectedActorBoundingBox)
+		{
+			BoundingBox->SetCanBeRendered(true);
+		}
 	}
 	else
 	{
-		SelectedActorBoundingBox->SetCanBeRendered(false);
+		for (auto BoundingBox : SelectedActorBoundingBox)
+		{
+			BoundingBox->SetCanBeRendered(false);
+		}
 	}
 }
 
@@ -117,22 +121,43 @@ void AGizmoHandle::SetActive(bool bActive)
 		}
 	}
 
+	for (auto BoundingBox : SelectedActorBoundingBox)
+	{
+		RemoveComponent(BoundingBox);
+	}
 	if (bIsActive)
 	{
 		if (AActor* SelectedActor = FEditorManager::Get().GetSelectedActor())
 		{
-			if (UPrimitiveComponent* RootComponentPrimitive = dynamic_cast<UPrimitiveComponent*>(SelectedActor->GetRootComponent()))
+			for (auto SelectedActorComponent : SelectedActor->GetComponents())
 			{
-				SelectedActorBoundingBox->SetTargetPrimitive(RootComponentPrimitive);
+				if (auto SelectedActorPrimitive = dynamic_cast<UPrimitiveComponent*>(SelectedActorComponent))
+				{
+					auto BoundingBox = AddComponent<UBoundingBoxComponent>();
+					SelectedActorBoundingBox.Add(BoundingBox);
+					BoundingBox->SetupAttachment(RootComponent);
+					BoundingBox->SetTargetPrimitive(SelectedActorPrimitive);
+					BoundingBox->RegisterComponentWithWorld(GetWorld());
+
+				}
 			}
 		}
 		else
 		{
+			return;
 		}
 	}
 	else
 	{
+		for (auto BoundingBox : SelectedActorBoundingBox)
+		{
+			BoundingBox->DetachFromComponent();
+			GetWorld()->RemoveRenderComponent(BoundingBox);
+			RemoveComponent(BoundingBox);
 
+			UEngine::Get().GObjects.Remove(BoundingBox->GetUUID());
+		}
+		SelectedActorBoundingBox.Empty();
 	}
 
 }

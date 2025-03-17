@@ -2,9 +2,10 @@
 #define _TCHAR_DEFINED
 #include <Windows.h>
 #include "ImGui/imgui.h"
-#include "Core/Container/Array.h"
+#include "Core/Container/Set.h"
 #include "Core/Container/Name.h"
 
+class FName;
 class AActor;
 class URenderer;
 

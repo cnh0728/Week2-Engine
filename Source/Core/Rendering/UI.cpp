@@ -46,7 +46,13 @@ void UI::Initialize(HWND hWnd, URenderer& Renderer, UINT ScreenWidth, UINT Scree
     io.DisplaySize = ScreenSize;
     this->Renderer = &Renderer;
 
-    //Unselectables.Add(FName("Camera"));
+    Unselectables.Add(FName("Camera"));
+    Unselectables.Add(FName("WorldGrid"));
+    Unselectables.Add(FName("Axis"));
+    Unselectables.Add(FName("Picker"));
+    Unselectables.Add(FName("GizmoHandle"));
+
+
 }
 
 void UI::Update()
@@ -421,6 +427,9 @@ void UI::RenderSceneManager()
                 char buf[32];
 
                 sprintf_s(buf, "%s", *ActorArray[n]->Name.GetString());
+
+                if (Unselectables.Find((ActorArray[n]->Name))>-1)
+                    continue;
                 if (ImGui::Selectable(buf, selected == n))
                     selected = n;
             }
