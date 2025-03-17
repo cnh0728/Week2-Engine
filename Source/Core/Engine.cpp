@@ -237,7 +237,7 @@ void UEngine::InitWorld()
     ConfigManager::Get().LoadAllConfigs();
 
     //// Test
-    // AArrow* Arrow = World->SpawnActor<AArrow>();
+    // World->SpawnActor<AArrow>();
     // World->SpawnActor<ASphere>();
     
     World->SpawnActor<AAxis>();

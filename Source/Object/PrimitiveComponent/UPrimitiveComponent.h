@@ -55,8 +55,10 @@ public:
 	
 	void SetIsOrthoGraphic(bool IsOrtho) { bIsOrthoGraphic = IsOrtho; }
 	bool GetIsOrthoGraphic() { return bIsOrthoGraphic;}
-	
+	bool IsCanPick() const { return bCanPick; }
+
 protected:
+	bool bCanPick = false;
 	bool bCanBeRendered = false;
 	bool bUseVertexColor = true;
 	bool bIsOrthoGraphic = false;
@@ -74,6 +76,7 @@ public:
 	UCubeComp()
 	{
 		bCanBeRendered = true;
+		bCanPick = true;
 	}
 	virtual ~UCubeComp() = default;
 	EPrimitiveType GetType() override
@@ -89,6 +92,7 @@ public:
 	USphereComp()
 	{
 		bCanBeRendered = true;
+		bCanPick = true;
 	}
 	virtual ~USphereComp() = default;
 	EPrimitiveType GetType() override
@@ -104,6 +108,8 @@ public:
 	UTriangleComp()
 	{
 		bCanBeRendered = true;
+		bCanPick = true;
+
 	}
 	virtual ~UTriangleComp() = default;
 	EPrimitiveType GetType() override
@@ -120,6 +126,7 @@ public:
 	ULineComp()
 	{
 		bCanBeRendered = true;
+		bCanPick = true;
 	}
 	virtual ~ULineComp() = default;
 	EPrimitiveType GetType() override
@@ -136,6 +143,8 @@ public:
 	UCylinderComp()
 	{
 		bCanBeRendered = true;
+		bCanPick = true;
+
 	}
 	virtual ~UCylinderComp() = default;
 	EPrimitiveType GetType() override
@@ -151,6 +160,7 @@ public:
 	UConeComp()
 	{
 		bCanBeRendered = true;
+		bCanPick = true;
 	}
 	virtual ~UConeComp() = default;
 	EPrimitiveType GetType() override
