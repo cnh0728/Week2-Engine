@@ -195,7 +195,6 @@
     <ClCompile Include="Source\Object\ActorComponent\ActorComponent.cpp" />
     <ClCompile Include="Source\Debug\DebugConsole.cpp" />
     <ClCompile Include="Source\Object\Actor\Actor.cpp" />
-    <ClCompile Include="Source\Core\Rendering\BufferCache.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Source\Core\Engine.cpp" />
     <ClCompile Include="Source\Core\Container\String.cpp" />
@@ -205,7 +204,6 @@
     <ClCompile Include="Source\Core\Math\Vector.cpp" />
     <ClCompile Include="Source\Object\ObjectFactory.cpp" />
     <ClCompile Include="Source\Object\PrimitiveComponent\TextComponent.cpp" />
-    <ClCompile Include="Source\Object\PrimitiveComponent\UUIDTextComponent.cpp" />
     <ClCompile Include="Source\Object\PrimitiveComponent\UBoundingBox.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui_demo.cpp" />
@@ -244,7 +242,6 @@
     <ClInclude Include="Source\Core\Container\Pair.h" />
     <ClInclude Include="Source\Debug\DebugConsole.h" />
     <ClInclude Include="Source\Core\Container\Set.h" />
-    <ClInclude Include="Source\Core\Rendering\BufferCache.h" />
     <ClInclude Include="Source\Core\AbstractClass\Singleton.h" />
     <ClInclude Include="Source\Core\Container\Array.h" />
     <ClInclude Include="Source\Core\Container\ContainerAllocator.h" />
@@ -261,7 +258,6 @@
     <ClInclude Include="Source\Object\Gizmo\Axis.h" />
     <ClInclude Include="Source\Object\ObjectFactory.h" />
     <ClInclude Include="Source\Object\PrimitiveComponent\TextComponent.h" />
-    <ClInclude Include="Source\Object\PrimitiveComponent\UUIDTextComponent.h" />
     <ClInclude Include="Source\Object\PrimitiveComponent\UBoundingBox.h" />
     <ClInclude Include="Source\ThirdParty\DirectXTex\Include\DirectXTex.h" />
     <ClInclude Include="Source\ThirdParty\ImGui\imconfig.h" />

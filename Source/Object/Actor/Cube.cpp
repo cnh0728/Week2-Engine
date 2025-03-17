@@ -1,6 +1,5 @@
 ﻿#include "Cube.h"
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
-
 ACube::ACube()
 {
 	bCanEverTick = true;
@@ -9,16 +8,14 @@ ACube::ACube()
 	RootComponent = CubeComponent;
 
 	CubeComponent->SetRelativeTransform(FTransform());
-
-	UUIDTextComponent = AddComponent<UUUIDTextComponent>();
-	UUIDTextComponent->SetupAttachment(RootComponent);
-	UUIDTextComponent->SetRelativeTransform(FTransform(FVector(0.0f, 0.7f, 0.7f), FVector(), FVector().One()));
 }
 
 void ACube::BeginPlay()
 {
+	SetUUIDTag();
+	
 	Super::BeginPlay();
-	UUIDTextComponent->SetText(FString::FromInt(GetUUID()));
+	
 }
 
 void ACube::Tick(float DeltaTime)

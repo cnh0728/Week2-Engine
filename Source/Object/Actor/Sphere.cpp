@@ -4,7 +4,7 @@
 ASphere::ASphere()
 {
 	bCanEverTick = true;
-;
+
 	USphereComp* SphereComponent = AddComponent<USphereComp>();
 	SphereComponent -> SetupAttachment(RootComponent);
 
@@ -12,16 +12,13 @@ ASphere::ASphere()
 	BBox->SetupAttachment(SphereComponent);
 
 	SetActorRelatvieTransform(FTransform());
-
-	UUIDTextComponent = AddComponent<UUUIDTextComponent>();
-	UUIDTextComponent->SetupAttachment(RootComponent);
-	UUIDTextComponent->SetRelativeTransform(FTransform(FVector(0.0f, 0.9f, 0.9f), FVector(), FVector().One()));
 }
 
 void ASphere::BeginPlay()
 {
+	SetUUIDTag();
+
 	Super::BeginPlay();
-	UUIDTextComponent->SetText(FString::FromInt(GetUUID()));
 }
 
 void ASphere::Tick(float DeltaTime)

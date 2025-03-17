@@ -2,6 +2,7 @@
 
 UTextComponent::UTextComponent()
 {
+	bCanPick = false;
 	Text = FString();
 }
 
