@@ -128,10 +128,9 @@ public:
 
     /** 스왑 체인의 백 버퍼와 프론트 버퍼를 교체하여 화면에 출력 */
     void SwapBuffer() const;
-    void Prepare();
 
     /** 렌더링 파이프라인을 준비 합니다. */
-    void Prepare() const;
+    void Prepare();
 
     /** 셰이더를 준비 합니다. */
     void PrepareShader() const;

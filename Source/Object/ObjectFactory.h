@@ -35,7 +35,7 @@ public:
         // NewObject->InternalIndex = UEngine::Get().GObjects.Add(NewObject);
         UEngine::Get().GObjects.Add(NewObject->GetUUID(), NewObject);
         FString Name(typeid(T).name());
-        Name = Name.SubStr(6);
+        Name = Name.SubStr(7);
         uint32 UUID = NewObject->UUID;
 
         NewObject->Name = FName(*Name, UUID);

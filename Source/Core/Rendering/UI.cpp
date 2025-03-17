@@ -45,6 +45,8 @@ void UI::Initialize(HWND hWnd, URenderer& Renderer, UINT ScreenWidth, UINT Scree
     
     io.DisplaySize = ScreenSize;
     this->Renderer = &Renderer;
+
+    //Unselectables.Add(FName("Camera"));
 }
 
 void UI::Update()

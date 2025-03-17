@@ -19,6 +19,7 @@ enum class EPrimitiveType : uint8
 	EPT_Cylinder,
 	EPT_Cone,
 	EPT_Max,
+	EPT_Bounding_Box,
 };
 
 extern TMap<EPrimitiveType, TArray<FVertexSimple>> OriginVertices;
