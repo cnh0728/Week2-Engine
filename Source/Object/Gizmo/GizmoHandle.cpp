@@ -53,6 +53,14 @@ void AGizmoHandle::Tick(float DeltaTime)
 		SetActorRelatvieTransform(GizmoTr);
 	}
 
+	// Gizmo가 생성하는 bounding box를 업데이트합니다
+	//for (auto& SelectedActorBoundingBox : SelectedActorBoundingBoxes)
+	//{
+	//	SelectedActorBoundingBox->Tick();
+	//}
+
+
+
 	SetScaleByDistance();
 	
 	AActor::Tick(DeltaTime);
@@ -100,6 +108,28 @@ void AGizmoHandle::SetActive(bool bActive)
 		{
 			PrimitiveComponent->SetCanBeRendered(bActive);
 		}
+	}
+
+	// gizmo가 새로운 액터를 선택 -> 선택된 액터가 가진 컴포넌트의 bounding box를 시각화할 수 있도록,
+	// 선택된 액터의 컴포넌트 개수에 따른 bounding box array 생성
+	// 초기화
+	if (!bActive) return;
+	for (auto& SelectedActorBoundingBox : SelectedActorBoundingBoxes)
+	{
+		RemoveComponent(SelectedActorBoundingBox);
+	}
+	SelectedActorBoundingBoxes.Empty();
+
+	// 새로 추가
+	AActor* SelectedActor = FEditorManager::Get().GetSelectedActor();
+	TSet<UPrimitiveComponent*> SelectedActorPrimitives = UPrimitiveComponent::FilterPrimitiveComponents(SelectedActor->GetComponents());
+	//uint8 NumPrimitives = SelectedActorPrimitives.Num();
+	//for (int i = 0; i < NumPrimitives; i++)
+	for(const auto& SelectedActorPrimitive : SelectedActorPrimitives)
+	{
+		UBoundingBoxComponent* NewBoundingBox = AddComponent<UBoundingBoxComponent>();
+		NewBoundingBox->SetTargetPrimitive(SelectedActorPrimitive);
+        SelectedActorBoundingBoxes.Add(NewBoundingBox);
 	}
 }
 

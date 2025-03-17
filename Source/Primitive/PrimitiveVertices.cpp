@@ -2469,7 +2469,7 @@ TMap<EPrimitiveType, TArray<FVertexSimple>> OriginVertices = {
 		}
 	},
 	{
-		EPrimitiveType::EPT_Bounding_Box,{
+		EPrimitiveType::EPT_BoundingBox,{
 			// 앞면 사각형 (XY Plane)
 			{-1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 1.0f}, // v0 → v1
 			{ 1.0f, -1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 1.0f},

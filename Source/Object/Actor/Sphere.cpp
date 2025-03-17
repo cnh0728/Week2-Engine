@@ -7,9 +7,6 @@ ASphere::ASphere()
 
 	USphereComp* SphereComponent = AddComponent<USphereComp>();
 	RootComponent = SphereComponent;
-	
-	UBoundingBox* BBox = AddComponent<UBoundingBox>();
-	BBox->SetupAttachment(SphereComponent);
 
 	SetActorRelatvieTransform(FTransform());
 }
