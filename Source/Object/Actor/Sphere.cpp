@@ -4,10 +4,10 @@
 ASphere::ASphere()
 {
 	bCanEverTick = true;
-
+;
 	USphereComp* SphereComponent = AddComponent<USphereComp>();
-	RootComponent = SphereComponent;
-	
+	SphereComponent -> SetupAttachment(RootComponent);
+
 	UBoundingBox* BBox = AddComponent<UBoundingBox>();
 	BBox->SetupAttachment(SphereComponent);
 
@@ -15,8 +15,10 @@ ASphere::ASphere()
 
 	UUIDTextComponent = AddComponent<UUUIDTextComponent>();
 	UUIDTextComponent->SetupAttachment(RootComponent);
-	UUIDTextComponent->SetRelativeTransform(FTransform());
 
+	FTransform UUIDTextTransform;
+	UUIDTextTransform.SetPosition(0.0f, 0.9f, 0.9f);
+	UUIDTextComponent->SetRelativeTransform(UUIDTextTransform);
 }
 
 void ASphere::BeginPlay()

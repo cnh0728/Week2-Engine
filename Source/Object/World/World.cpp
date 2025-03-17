@@ -147,7 +147,9 @@ void UWorld::RenderMainTexture(URenderer& Renderer)
 		{
 			if (UUUIDTextComponent* UUIDTextComponent = dynamic_cast<UUUIDTextComponent*>(TextComponent))
 			{
-				UUIDTextComponent->RenderText(Renderer, UUIDTextComponent->GetText(), UUIDTextComponent->GetComponentTransformMatrix().GetTranslation(), UUIDTextComponent->GetUUIDTextSize());
+				UUIDTextComponent->RenderText(Renderer, UUIDTextComponent->GetText(),
+					UUIDTextComponent->GetComponentTransformMatrix().GetTranslation(),
+					UUIDTextComponent->GetComponentTransformMatrix().GetScale() * UUIDTextComponent->GetUUIDTextSize());
 			}
 		}
 	}

@@ -27,7 +27,7 @@ void URenderer::Create(HWND hWindow)
     CreateConeVertices();
     //vertexBuffer 어디서 다만들어줬지?
     
-    // CreateText(hWindow);
+    CreateText(hWindow);
 	CreateAlphaBlendingState();
 
     InitMatrix();
@@ -1016,19 +1016,24 @@ void URenderer::CreateText(HWND hWindow)
     Text->Create(Device, DeviceContext, hWindow, UEngine::Get().GetScreenWidth(), UEngine::Get().GetScreenHeight());
 }
 
-void URenderer::RenderText(const FString& InText, const FVector& InTextPos, uint32 InTextSize) 
+void URenderer::RenderText(const FString& InText, const FVector& InTextPos, const FVector& InTextSize)
 {
+    // 텍스트의 WorldMatrix 결정
 	ACamera* Camera = FEditorManager::Get().GetCamera();
-    FMatrix WorldMatrix = FMatrix::GetScaleMatrix(FVector::One()) 
-        * FMatrix::GetRotateMatrix(FQuat(Camera->GetActorTransform().GetRotation())).Inverse() 
-        * FMatrix::GetTranslateMatrix(InTextPos);
+    // 스케일 * 회전
+    FMatrix WorldMatrix = FMatrix::GetScaleMatrix(InTextSize) *
+        FMatrix::GetRotateMatrix(FQuat(Camera->GetActorRelativeTransform().GetRotation())).Inverse();
+    // 이동은 스케일의 영향을 받지 않게 따로
+	WorldMatrix.SetTranslateMatrix(InTextPos);
 
+
+    // 텍스트 렌더링
     DeviceContext->ClearDepthStencilView(DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
     TurnZBufferOff();
     TurnOnAlphaBlending();
 
-	Text->Render(DeviceContext, WorldMatrix, ViewMatrix, ProjectionMatrix, InText, InTextPos, InTextSize);
+	Text->Render(DeviceContext, WorldMatrix, ViewMatrix, ProjectionMatrix, InText);
 
 	TurnOffAlphaBlending();
 	TurnZBufferOn();

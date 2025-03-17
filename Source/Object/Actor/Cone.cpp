@@ -12,8 +12,10 @@ ACone::ACone()
 
     UUIDTextComponent = AddComponent<UUUIDTextComponent>();
     UUIDTextComponent->SetupAttachment(RootComponent);
-    UUIDTextComponent->SetRelativeTransform(FTransform());
 
+    FTransform UUIDTextTransform;
+    UUIDTextTransform.SetPosition(0.0f, 0.7f, 1.2f);
+    UUIDTextComponent->SetRelativeTransform(UUIDTextTransform);
 
 }
 

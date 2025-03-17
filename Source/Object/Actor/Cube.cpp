@@ -12,7 +12,10 @@ ACube::ACube()
 
 	UUIDTextComponent = AddComponent<UUUIDTextComponent>();
 	UUIDTextComponent->SetupAttachment(RootComponent);
-	UUIDTextComponent->SetRelativeTransform(FTransform());
+
+	FTransform UUIDTextTransform;
+	UUIDTextTransform.SetPosition(0.0f, 0.7f, 0.7f);
+	UUIDTextComponent->SetRelativeTransform(UUIDTextTransform);
 }
 
 void ACube::BeginPlay()

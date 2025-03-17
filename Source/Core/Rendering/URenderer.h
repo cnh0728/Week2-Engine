@@ -180,7 +180,7 @@ public:
 
     void CreateText(HWND hWindow);
 
-    void RenderText(const FString& InText, const FVector& InTextPos, uint32 InTextSize);
+    void RenderText(const FString& InText, const FVector& InTextPos, const FVector& InTextSize);
 
     void CreateAlphaBlendingState();
 	void ReleaseAlphaBlendingState();

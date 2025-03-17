@@ -29,12 +29,12 @@ public:
 	~UText();
 	bool Create(ID3D11Device* Device, ID3D11DeviceContext* DeviceContext, HWND Hwnd, int ScreenWdith, int ScreenHeight);
 	void Release();
-	bool Render(ID3D11DeviceContext* DeviceContext, FMatrix WorldMatrix, FMatrix ViewMatrix, FMatrix OrthoMatrix, FString Text, FVector TextPos, uint32 TextSize);
+	bool Render(ID3D11DeviceContext* DeviceContext, const FMatrix& WorldMatrix, const FMatrix& ViewMatrix, const FMatrix& OrthoMatrix, const FString& Text);
 	UFont* GetFont() const { return Font; }
 
 private:
 	bool InitializeSentence(SentenceType** Sentence, int MaxLength, ID3D11Device* Device);
-	bool UpdateSentence(SentenceType* Sentence, const FString Text, float DrawX, float DrawY, float DrawZ, uint32 TextSize, float Red, float Green, float Blue, ID3D11DeviceContext* DeviceContext);
+	bool UpdateSentence(SentenceType* Sentence, const FString Text, float Red, float Green, float Blue, ID3D11DeviceContext* DeviceContext);
 	void ReleaseSentence(SentenceType** Sentence);
 	bool RenderSentence(ID3D11DeviceContext* DeviceContext, SentenceType* Sentence, FMatrix WorldMatrix, FMatrix ViewMatrix, FMatrix OrthoMatrix);
 

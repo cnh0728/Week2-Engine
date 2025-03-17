@@ -24,7 +24,7 @@ public:
 	~UFont();
 	bool Create(ID3D11Device* Device, const wchar_t* FontFileName, const wchar_t* TextureFileName);
 	void Release();
-	void BuildVertexArray(void* Vertices, const FString Sentence, float DrawX, float DrawY, float DrawZ, uint32 TextSize, int ScreenWidth, int ScreenHeight);
+	void BuildVertexArray(void* Vertices, const FString Sentence, int ScreenWidth, int ScreenHeight);
 	ID3D11ShaderResourceView* GetTexture() const { return Texture ? Texture->GetTexture() : nullptr; }
 
 private:

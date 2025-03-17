@@ -17,8 +17,8 @@ public:
 		return UUIDTextSize;
 	}
 
-	virtual void RenderText(URenderer& Renderer, const FString& InText, const FVector& InTextPos, uint32 InTextSize) override;
+	void RenderText(URenderer& Renderer, const FString& InText, const FVector& InTextPos, const FVector& InTextSize) override;
 
 private:
-	uint32 UUIDTextSize = 7;
+	uint32 UUIDTextSize = 10;
 };

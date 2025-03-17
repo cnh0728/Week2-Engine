@@ -102,9 +102,12 @@ void UFont::ReleaseTexture()
 	}
 }	
 
-void UFont::BuildVertexArray(void* Vertices, const FString Sentence, float DrawX, float DrawY, float DrawZ, uint32 TextSize, int ScreenWidth, int ScreenHeight) 
+void UFont::BuildVertexArray(void* Vertices, const FString Sentence, int ScreenWidth, int ScreenHeight) 
 {
 	VertexType* VertexPtr;
+	float DrawX = 0;
+	float DrawY = 0;
+	float DrawZ = 0;
 	int numLetters, index, i, letter;
 
 	// 버텍스 배열에 대한 포인터를 설정합니다.
@@ -123,8 +126,8 @@ void UFont::BuildVertexArray(void* Vertices, const FString Sentence, float DrawX
 			DrawX = DrawX + 3.0f / (float)ScreenWidth;
 		}
 		else {
-			float NDC_Size = Font[letter].size * TextSize / (float)ScreenWidth;
-			float NDC_Height = 32.0f * TextSize / (float)ScreenHeight;
+			float NDC_Size = Font[letter].size / (float)ScreenWidth;
+			float NDC_Height = 32.0f / (float)ScreenHeight;
 
 			VertexPtr[index].position = FVector(DrawZ, DrawX, DrawY);  // Top left.
 			VertexPtr[index].texture = FVector(Font[letter].left, 0.0f, 0.0f);

@@ -12,7 +12,7 @@ public:
 	virtual ~UTextComponent() = default;
 	virtual void SetText(const FString& InText);
 	virtual FString GetText() const;
-	virtual void RenderText(URenderer& Renderer, const FString& InText, const FVector& InTextPos, uint32 InTextSize);
+	virtual void RenderText(URenderer& Renderer, const FString& InText, const FVector& InTextPos, const FVector& InTextSize);
 	EPrimitiveType GetType() override
 	{
 		return EPrimitiveType::EPT_Text;

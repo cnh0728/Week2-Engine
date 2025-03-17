@@ -15,7 +15,7 @@ FString UTextComponent::GetText() const
 	return Text;
 }
 
-void UTextComponent::RenderText(URenderer& Renderer, const FString& InText, const FVector& InTextPos, uint32 InTextSize)
+void UTextComponent::RenderText(URenderer& Renderer, const FString& InText, const FVector& InTextPos, const FVector& InTextSize)
 {
 	Renderer.RenderText(InText, InTextPos, InTextSize);
 }

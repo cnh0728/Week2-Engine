@@ -8,7 +8,7 @@ FString UUUIDTextComponent::GetText() const {
 	return Super::GetText();
 }
 
-void UUUIDTextComponent::RenderText(URenderer& Renderer, const FString& InText, const FVector& InTextPos, uint32 InTextSize)
+void UUUIDTextComponent::RenderText(URenderer& Renderer, const FString& InText, const FVector& InTextPos, const FVector& InTextSize)
 {
 	Renderer.RenderText(InText, InTextPos, InTextSize);
 }
