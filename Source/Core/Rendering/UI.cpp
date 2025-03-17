@@ -95,7 +95,7 @@ void UI::OnUpdateWindowSize(UINT InScreenWidth, UINT InScreenHeight)
 
 void UI::RenderControlPanel()
 {
-    SetWindowLayout(0.4f, 0.5f, 0.f, 0.f);
+    SetWindowLayout(0.4f, 0.3f, 0.f, 0.f);
     ImGui::Begin("Jungle Control Panel");
     ImGui::Text("Hello, Jungle World!");
     ImGui::Text("FPS: %.3f (what is that ms)", ImGui::GetIO().Framerate);
@@ -335,10 +335,8 @@ void UI::RenderShowFlag() {
 
 void UI::RenderPropertyWindow()
 {
-    SetWindowLayout(0.3f, 0.1f, 0.f, 0.6f);
-    
+    SetWindowLayout(0.3f, 0.4f, 0.f, 0.6f);
     ImGui::Begin("Properties");
-    
     AActor* selectedActor = FEditorManager::Get().GetSelectedActor();
     if (selectedActor != nullptr)
     {
@@ -383,6 +381,12 @@ void UI::RenderPropertyWindow()
 				ImGui::Text("GizmoType: Scale");
 			}
 		}
+        
+        if (ImGui::ColorEdit4("Color", ActorColor))
+        {
+            //FVector4 NewColor(ActorColor[0], ActorColor[1], ActorColor[2], ActorColor[3]);
+            //selectedActor->GetComponents()
+        }
     }
     ImGui::End();
 }
@@ -398,7 +402,6 @@ void UI::RenderSceneManager()
         ImGui::Begin("Scene Manager");
         if (ImGui::TreeNode("Primtives"))
         {
-
             for (int n = 0; n < NumActors; n++)
             {
                 char buf[32];

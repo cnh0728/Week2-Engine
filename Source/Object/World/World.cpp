@@ -14,7 +14,6 @@
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Static/FEditorManager.h"
 
-
 void UWorld::BeginPlay()
 {
 	for (const auto& Actor : Actors)
@@ -127,11 +126,6 @@ void UWorld::RenderMainTexture(URenderer& Renderer)
 	Renderer.ClearVertex();
 	for (auto& RenderComponent  : RenderComponents)
 	{
-		// if (RenderComponent->GetCanBeRendered() == false)
-		// {
-		// 	continue;
-		// }
-		
 		if (!FEditorManager::Get().IsShowFlagSet(EEngineShowFlags::SF_Primitives))
 			continue;
 

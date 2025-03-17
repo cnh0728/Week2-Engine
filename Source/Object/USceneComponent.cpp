@@ -80,3 +80,8 @@ void USceneComponent::SetupAttachment(USceneComponent* InParent, bool bUpdateChi
 		UE_LOG("Parent is nullptr");
 	}
 }
+
+void USceneComponent::SetColor(FVector4 Color)
+{
+	this->Color = Color;
+}

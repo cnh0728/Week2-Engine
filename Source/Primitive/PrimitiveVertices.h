@@ -2,11 +2,27 @@
 #include "Core/Container/Array.h"
 #include "Core/Container/Map.h"
 #include "Core/HAL/PlatformType.h"
+#include "Core/Math/Vector.h"
+#include "Core/Math/Matrix.h"
 
 struct FVertexSimple
 {
-    float X, Y, Z;    // Position
-    float R, G, B, A; // Color
+	float X, Y, Z;    // Position
+	float R, G, B, A; // Color
+
+	void Set(const FMatrix WorldMatrix, const FVector4 Color)
+	{
+		FVector4 Position(X, Y, Z, 1.0f);
+		Position = Position * WorldMatrix;
+		X = Position.X / Position.W;
+		Y = Position.Y / Position.W;
+		Z = Position.Z / Position.W;
+		
+		R = Color.X;
+		G = Color.Y;
+		B = Color.Z;
+		A = Color.W;
+	}
 };
 
 enum class EPrimitiveType : uint8

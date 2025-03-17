@@ -45,4 +45,9 @@ public:
 	// debug
 protected:
 	bool bIsPicked = false;
+	FVector4 Color = FVector4::One();
+
+public:
+	void SetColor(FVector4 Color);
+	FVector4 GetColor() const { return Color; }
 };

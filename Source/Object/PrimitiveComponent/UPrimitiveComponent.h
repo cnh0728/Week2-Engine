@@ -22,20 +22,6 @@ public:
 
 	virtual EPrimitiveType GetType() { return EPrimitiveType::EPT_None; }
 
-	bool IsUseVertexColor() const { return bUseVertexColor; }
-
-	void SetCustomColor(const FVector4& InColor)
-	{
-		CustomColor = InColor; 
-		bUseVertexColor = false;
-	}
-
-	void SetUseVertexColor(bool bUse)
-	{
-		bUseVertexColor = bUse;
-	}
-	const FVector4& GetCustomColor() const { return CustomColor; }
-
 public:
 	virtual void RegisterComponentWithWorld(class UWorld* World);
 
@@ -45,12 +31,13 @@ public:
 	
 	void SetIsOrthoGraphic(bool IsOrtho) { bIsOrthoGraphic = IsOrtho; }
 	bool GetIsOrthoGraphic() { return bIsOrthoGraphic;}
+
+	AActor* GetOwner() { return Owner; }
 	
 protected:
 	bool bCanBeRendered = false;
 	bool bUseVertexColor = true;
 	bool bIsOrthoGraphic = false;
-	FVector4 CustomColor = FVector4(1.0f, 1.0f, 1.0f, 1.0f);
 };
 
 class UCubeComp : public UPrimitiveComponent

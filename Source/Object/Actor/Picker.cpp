@@ -119,19 +119,20 @@ void APicker::LateTick(float DeltaTime)
             {
                 if (Gizmo->GetSelectedAxis() != ESelectedAxis::None) return;
                 UCylinderComp* CylinderComp = static_cast<UCylinderComp*>(PickedComponent);
-                FVector4 CompColor = CylinderComp->GetCustomColor();
-                if (1.0f - FMath::Abs(CompColor.X) < KINDA_SMALL_NUMBER) // Red - X축
-                {
-                    Gizmo->SetSelectedAxis(ESelectedAxis::X);
-                }
-                else if (1.0f - FMath::Abs(CompColor.Y) < KINDA_SMALL_NUMBER) // Green - Y축
-                {
-                    Gizmo->SetSelectedAxis(ESelectedAxis::Y);
-                }
-                else  // Blue - Z축
-                {
-                    Gizmo->SetSelectedAxis(ESelectedAxis::Z);
-                }
+                // todo : axis 색 지정
+                //FVector4 CompColor = CylinderComp->GetCustomColor();
+                //if (1.0f - FMath::Abs(CompColor.X) < KINDA_SMALL_NUMBER) // Red - X축
+                //{
+                //    Gizmo->SetSelectedAxis(ESelectedAxis::X);
+                //}
+                //else if (1.0f - FMath::Abs(CompColor.Y) < KINDA_SMALL_NUMBER) // Green - Y축
+                //{
+                //    Gizmo->SetSelectedAxis(ESelectedAxis::Y);
+                //}
+                //else  // Blue - Z축
+                //{
+                //    Gizmo->SetSelectedAxis(ESelectedAxis::Z);
+                //}
             }
         }
     }

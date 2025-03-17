@@ -38,6 +38,7 @@ private:
 	URenderer* Renderer;
     float windowWidth;
     float windowHeight;
+    float ActorColor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
     
     void SetWindowLayout(float widthRatio, float heightRatio, float posXRatio, float posYRatio);
 };
