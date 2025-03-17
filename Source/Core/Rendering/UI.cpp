@@ -359,7 +359,7 @@ void UI::RenderPropertyWindow()
             FVector DeltaEulerAngle = UIEulerAngle - PrevEulerAngle;
 
             selectedTransform.Rotate(DeltaEulerAngle);
-			UE_LOG("Rotation: %.2f, %.2f, %.2f", DeltaEulerAngle.X, DeltaEulerAngle.Y, DeltaEulerAngle.Z);
+            UE_LOG("Rotation: %.2f, %.2f, %.2f", DeltaEulerAngle.X, DeltaEulerAngle.Y, DeltaEulerAngle.Z);
             selectedActor->SetActorRelatvieTransform(selectedTransform);
         }
         if (ImGui::DragFloat3("Scale", scale, 0.1f))
@@ -367,28 +367,39 @@ void UI::RenderPropertyWindow()
             selectedTransform.SetScale(scale[0], scale[1], scale[2]);
             selectedActor->SetActorRelatvieTransform(selectedTransform);
         }
-		if (FEditorManager::Get().GetGizmoHandle() != nullptr)
-		{
-			AGizmoHandle* Gizmo = FEditorManager::Get().GetGizmoHandle();
-            if(Gizmo->GetGizmoType() == EGizmoType::Translate)
-			{
-				ImGui::Text("GizmoType: Translate");
-			}
-			else if (Gizmo->GetGizmoType() == EGizmoType::Rotate)
-			{
-				ImGui::Text("GizmoType: Rotate");
-			}
-			else if (Gizmo->GetGizmoType() == EGizmoType::Scale)
-			{
-				ImGui::Text("GizmoType: Scale");
-			}
-		}
-        
-        if (ImGui::ColorEdit4("Color", ActorColor))
+        if (FEditorManager::Get().GetGizmoHandle() != nullptr)
         {
-			FVector4 NewColor(ActorColor[0], ActorColor[1], ActorColor[2], ActorColor[3]);
-			selectedActor-
+            AGizmoHandle* Gizmo = FEditorManager::Get().GetGizmoHandle();
+            if (Gizmo->GetGizmoType() == EGizmoType::Translate)
+            {
+                ImGui::Text("GizmoType: Translate");
+            }
+            else if (Gizmo->GetGizmoType() == EGizmoType::Rotate)
+            {
+                ImGui::Text("GizmoType: Rotate");
+            }
+            else if (Gizmo->GetGizmoType() == EGizmoType::Scale)
+            {
+                ImGui::Text("GizmoType: Scale");
+            }
         }
+
+        UPrimitiveComponent* selectedComponent = FEditorManager::Get().GetSelectedComponent();
+        if (selectedComponent != nullptr)
+        {
+            if (ImGui::ColorEdit4("Color", ActorColor))
+            {
+                FVector4 NewColor(ActorColor[0], ActorColor[1], ActorColor[2], ActorColor[3]);
+                selectedComponent->SetColor(NewColor);
+            }
+        }
+
+        bool bRender = selectedComponent->GetCanBeRendered();
+        if (ImGui::Checkbox("Show Primitive", &bRender))
+        {
+            selectedComponent->SetCanBeRendered(bRender);
+        }
+        
     }
     ImGui::End();
 }
