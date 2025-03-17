@@ -28,7 +28,11 @@ public:
     /**
      * Application을 초기화 합니다.
      * @param hInstance 창 인스턴스
-     * @param InWindowTitle 윈도우 창 이름
+     * @param InWindowTit
+     
+     
+     
+     le 윈도우 창 이름
      * @param InWindowClassName 윈도우 클래스 이름
      * @param InScreenWidth 화면 너비
      * @param InScreenHeight 화면 높이

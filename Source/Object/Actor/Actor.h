@@ -49,7 +49,7 @@ public:
 	bool IsCanPick() const { return bCanPick; }
 
 	virtual void SetUUIDTextCanBeRendered(bool bRender);
-
+	
 private:
 	virtual void Pick();
 	virtual void UnPick();
@@ -109,9 +109,8 @@ public:
 	void SetupAttachment(AActor* InParent);
 	AActor* GetParent() const { return Parent; }
 	
-public:
-	void SetColor(FVector4 InColor);
-	void SetUseVertexColor(bool bUseVertexColor);
+//public:
+//	void SetColor(FVector4 InColor);
 
 protected:
 	bool bCanEverTick = true;
@@ -120,6 +119,7 @@ protected:
 	bool bIsGizmo = false;
 	UUUIDTextComponent* UUIDTextComponent = nullptr;
 	
+
 	AActor* Parent = nullptr;
 	TSet<AActor*> Children;
 	TSet<UActorComponent*> Components;

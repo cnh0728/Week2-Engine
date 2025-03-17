@@ -15,7 +15,6 @@
 #include "Static/FEditorManager.h"
 #include "Object/PrimitiveComponent/TextComponent.h"
 
-
 void UWorld::BeginPlay()
 {
 	for (const auto& Actor : Actors)
@@ -129,7 +128,6 @@ void UWorld::RenderMainTexture(URenderer& Renderer)
 		{
 			continue;
 		}
-		
 		if (!FEditorManager::Get().IsShowFlagSet(EEngineShowFlags::SF_Primitives))
 			continue;
 

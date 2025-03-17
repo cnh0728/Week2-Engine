@@ -97,7 +97,7 @@ void UI::OnUpdateWindowSize(UINT InScreenWidth, UINT InScreenHeight)
 
 void UI::RenderControlPanel()
 {
-    SetWindowLayout(0.4f, 0.5f, 0.f, 0.f);
+    SetWindowLayout(0.4f, 0.3f, 0.f, 0.f);
     ImGui::Begin("Jungle Control Panel");
     ImGui::Text("Hello, Jungle World!");
     ImGui::Text("FPS: %.3f (what is that ms)", ImGui::GetIO().Framerate);
@@ -337,10 +337,8 @@ void UI::RenderShowFlag() {
 
 void UI::RenderPropertyWindow()
 {
-    SetWindowLayout(0.3f, 0.1f, 0.f, 0.6f);
-    
+    SetWindowLayout(0.3f, 0.4f, 0.f, 0.6f);
     ImGui::Begin("Properties");
-    
     AActor* selectedActor = FEditorManager::Get().GetSelectedActor();
     if (selectedActor != nullptr)
     {
@@ -361,7 +359,7 @@ void UI::RenderPropertyWindow()
             FVector DeltaEulerAngle = UIEulerAngle - PrevEulerAngle;
 
             selectedTransform.Rotate(DeltaEulerAngle);
-			UE_LOG("Rotation: %.2f, %.2f, %.2f", DeltaEulerAngle.X, DeltaEulerAngle.Y, DeltaEulerAngle.Z);
+            UE_LOG("Rotation: %.2f, %.2f, %.2f", DeltaEulerAngle.X, DeltaEulerAngle.Y, DeltaEulerAngle.Z);
             selectedActor->SetActorRelatvieTransform(selectedTransform);
         }
         if (ImGui::DragFloat3("Scale", scale, 0.1f))
@@ -369,22 +367,40 @@ void UI::RenderPropertyWindow()
             selectedTransform.SetScale(scale[0], scale[1], scale[2]);
             selectedActor->SetActorRelatvieTransform(selectedTransform);
         }
-		if (FEditorManager::Get().GetGizmoHandle() != nullptr)
-		{
-			AGizmoHandle* Gizmo = FEditorManager::Get().GetGizmoHandle();
-            if(Gizmo->GetGizmoType() == EGizmoType::Translate)
-			{
-				ImGui::Text("GizmoType: Translate");
-			}
-			else if (Gizmo->GetGizmoType() == EGizmoType::Rotate)
-			{
-				ImGui::Text("GizmoType: Rotate");
-			}
-			else if (Gizmo->GetGizmoType() == EGizmoType::Scale)
-			{
-				ImGui::Text("GizmoType: Scale");
-			}
-		}
+        if (FEditorManager::Get().GetGizmoHandle() != nullptr)
+        {
+            AGizmoHandle* Gizmo = FEditorManager::Get().GetGizmoHandle();
+            if (Gizmo->GetGizmoType() == EGizmoType::Translate)
+            {
+                ImGui::Text("GizmoType: Translate");
+            }
+            else if (Gizmo->GetGizmoType() == EGizmoType::Rotate)
+            {
+                ImGui::Text("GizmoType: Rotate");
+            }
+            else if (Gizmo->GetGizmoType() == EGizmoType::Scale)
+            {
+                ImGui::Text("GizmoType: Scale");
+            }
+        }
+
+        UPrimitiveComponent* selectedComponent = FEditorManager::Get().GetSelectedComponent();
+        if (selectedComponent != nullptr)
+        {
+            FVector4 ActorColor = selectedComponent->GetColor();
+            float* ColorArray = reinterpret_cast<float*>(&ActorColor);
+            if (ImGui::ColorEdit4("Color", ColorArray))
+            {
+                selectedComponent->SetColor(ActorColor);
+            }
+        }
+
+        bool bRender = selectedComponent->GetCanBeRendered();
+        if (ImGui::Checkbox("Show Primitive", &bRender))
+        {
+            selectedComponent->SetCanBeRendered(bRender);
+        }
+        
     }
     ImGui::End();
 }
@@ -400,7 +416,6 @@ void UI::RenderSceneManager()
         ImGui::Begin("Scene Manager");
         if (ImGui::TreeNode("Primtives"))
         {
-
             for (int n = 0; n < NumActors; n++)
             {
                 char buf[32];
