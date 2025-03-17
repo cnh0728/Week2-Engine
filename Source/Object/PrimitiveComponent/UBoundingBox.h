@@ -11,6 +11,7 @@ public:
 	UBoundingBoxComponent()
 	{
 		bCanBeRendered = false;
+		bCanPick = false;
 	}
 	virtual ~UBoundingBoxComponent() = default;
 	virtual void Tick(float DeltaTime) override;

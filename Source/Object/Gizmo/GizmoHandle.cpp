@@ -36,6 +36,8 @@ AGizmoHandle::AGizmoHandle()
 	UEngine::Get().GetWorld()->AddZIgnoreComponent(XArrow);
 	UEngine::Get().GetWorld()->AddZIgnoreComponent(YArrow);
 
+	SelectedActorBoundingBox = AddComponent<UBoundingBoxComponent>();
+	SelectedActorBoundingBox->SetupAttachment(RootComponent);
 	SetActive(false); 
 }
 
@@ -58,14 +60,6 @@ void AGizmoHandle::Tick(float DeltaTime)
 		SetActorRelatvieTransform(GizmoTr);
 	}
 
-	// Gizmo가 생성하는 bounding box를 업데이트합니다
-	//for (auto& SelectedActorBoundingBox : SelectedActorBoundingBoxes)
-	//{
-	//	SelectedActorBoundingBox->Tick();
-	//}
-
-
-
 	SetScaleByDistance();
 	
 	AActor::Tick(DeltaTime);
@@ -77,6 +71,14 @@ void AGizmoHandle::Tick(float DeltaTime)
 		GizmoType = static_cast<EGizmoType>(type);
 	}
 
+	if (SelectedActor)
+	{
+		SelectedActorBoundingBox->SetCanBeRendered(true);
+	}
+	else
+	{
+		SelectedActorBoundingBox->SetCanBeRendered(false);
+	}
 }
 
 void AGizmoHandle::SetScaleByDistance()
@@ -115,27 +117,24 @@ void AGizmoHandle::SetActive(bool bActive)
 		}
 	}
 
-	// gizmo가 새로운 액터를 선택 -> 선택된 액터가 가진 컴포넌트의 bounding box를 시각화할 수 있도록,
-	// 선택된 액터의 컴포넌트 개수에 따른 bounding box array 생성
-	// 초기화
-	if (!bActive) return;
-	for (auto& SelectedActorBoundingBox : SelectedActorBoundingBoxes)
+	if (bIsActive)
 	{
-		RemoveComponent(SelectedActorBoundingBox);
+		if (AActor* SelectedActor = FEditorManager::Get().GetSelectedActor())
+		{
+			if (UPrimitiveComponent* RootComponentPrimitive = dynamic_cast<UPrimitiveComponent*>(SelectedActor->GetRootComponent()))
+			{
+				SelectedActorBoundingBox->SetTargetPrimitive(RootComponentPrimitive);
+			}
+		}
+		else
+		{
+		}
 	}
-	SelectedActorBoundingBoxes.Empty();
+	else
+	{
 
-	// 새로 추가
-	AActor* SelectedActor = FEditorManager::Get().GetSelectedActor();
-	TSet<UPrimitiveComponent*> SelectedActorPrimitives = UPrimitiveComponent::FilterPrimitiveComponents(SelectedActor->GetComponents());
-	//uint8 NumPrimitives = SelectedActorPrimitives.Num();
-	//for (int i = 0; i < NumPrimitives; i++)
-	for(const auto& SelectedActorPrimitive : SelectedActorPrimitives)
-	{
-		UBoundingBoxComponent* NewBoundingBox = AddComponent<UBoundingBoxComponent>();
-		NewBoundingBox->SetTargetPrimitive(SelectedActorPrimitive);
-        SelectedActorBoundingBoxes.Add(NewBoundingBox);
 	}
+
 }
 
 const char* AGizmoHandle::GetTypeName()
