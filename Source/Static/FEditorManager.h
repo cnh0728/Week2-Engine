@@ -10,7 +10,11 @@ class FEditorManager : public TSingleton<FEditorManager>
 public:
     
     inline AActor* GetSelectedActor() const {return SelectedActor;}
+
+    inline UPrimitiveComponent* GetSelectedComponent() const {if (SelectedComponent)    {return SelectedComponent;}
+                                                            else                        {return nullptr;}}
     
+    void SelectPrimitive(UPrimitiveComponent* NewPrimitive);
     void SelectActor(AActor* NewActor);
 
     inline ACamera* GetCamera() const {return Camera;}
@@ -31,6 +35,8 @@ public:
 private:
     ACamera* Camera = nullptr;
     AActor* SelectedActor = nullptr;
+    UPrimitiveComponent* SelectedComponent = nullptr;
+    
     AGizmoHandle* GizmoHandle = nullptr;
     AWorldGrid* WorldGrid = nullptr;
     FEngineShowFlags EngineShowFlags;
