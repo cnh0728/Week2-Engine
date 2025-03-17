@@ -6,10 +6,8 @@ ASphere::ASphere()
 	bCanEverTick = true;
 
 	USphereComp* SphereComponent = AddComponent<USphereComp>();
-	SphereComponent -> SetupAttachment(RootComponent);
 
-	UBoundingBox* BBox = AddComponent<UBoundingBox>();
-	BBox->SetupAttachment(SphereComponent);
+	RootComponent = SphereComponent;
 
 	SetActorRelatvieTransform(FTransform());
 }

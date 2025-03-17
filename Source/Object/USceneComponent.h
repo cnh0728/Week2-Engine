@@ -32,9 +32,22 @@ public:
 	bool IsPicked() const { return bIsPicked; }
 
 public:
-	void SetupAttachment(USceneComponent* InParent);
+	bool SetupAttachment(USceneComponent* InParent);
+	bool DetachFromComponent();
 
-//protected:
+	FORCEINLINE USceneComponent* GetAttachParent() const { return Parent; }
+	void GetParentComponents(TArray<USceneComponent*>& Parents) const;
+	const USceneComponent* GetAttachmentRoot() const;
+	AActor* GetAttachmentRootActor() const;
+
+	const TSet<USceneComponent*> GetAttachChildren() const;
+	void GetChildrenComponents(TSet<USceneComponent*>& Children) const;
+
+	bool IsAttachedTo(const USceneComponent* TestComp) const;
+
+
+
+protected:
 // 추후 Getter Setter 추가 예정
 	USceneComponent* Parent = nullptr;
 	TSet<USceneComponent*> Children;

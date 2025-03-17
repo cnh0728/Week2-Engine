@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Object/Actor/Actor.h"
+#include "Object/PrimitiveComponent/UBoundingBox.h"
 
 enum class ESelectedAxis : uint8
 {
@@ -41,5 +42,6 @@ private:
 
 	virtual const char* GetTypeName() override;
 private:
+	TSet<UBoundingBoxComponent*> SelectedActorBoundingBox;
 };
 

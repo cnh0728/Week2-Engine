@@ -2,7 +2,7 @@
 
 FBox::FBox()
 {
-	IsValid = false;
+	bIsValid = false;
 	Min = Max = FVector(0, 0, 0);
 }
 
@@ -20,7 +20,7 @@ FBox::FBox(const TArray<FVertexSimple>& Vertices)
 		Max.Y = max(Max.Y, Vertex.Y);
 		Max.Z = max(Max.Z, Vertex.Z);
 	}
-	UpdateValid();
+	//UpdateValid();
 }
 
 FBox::FBox(const TArray<FVertexSimple>& Vertices, const FMatrix& TransformMatrix)
@@ -34,14 +34,14 @@ FBox::FBox(const TArray<FVertexSimple>& Vertices, const FMatrix& TransformMatrix
 		Vertex4 = Vertex4 * TransformMatrix;
 		
 		// Affine transform에서는 w가 변하지 않음 -> w 나누기 생략
-		Min.X = min(Min.X, Vertex.X);
-		Min.Y = min(Min.Y, Vertex.Y);
-		Min.Z = min(Min.Z, Vertex.Z);
-		Max.X = max(Max.X, Vertex.X);
-		Max.Y = max(Max.Y, Vertex.Y);
-		Max.Z = max(Max.Z, Vertex.Z);
+		Min.X = min(Min.X, Vertex4.X);
+		Min.Y = min(Min.Y, Vertex4.Y);
+		Min.Z = min(Min.Z, Vertex4.Z);
+		Max.X = max(Max.X, Vertex4.X);
+		Max.Y = max(Max.Y, Vertex4.Y);
+		Max.Z = max(Max.Z, Vertex4.Z);
 	}
-	UpdateValid();
+	//UpdateValid();
 }
 
 FBox::FBox(const TArray<FVertexSimple>& Vertices, const FTransform& Transform)
@@ -62,7 +62,7 @@ FBox::FBox(const TArray<FVertexSimple>& Vertices, const FTransform& Transform)
 		Max.Y = max(Max.Y, Vertex.Y);
 		Max.Z = max(Max.Z, Vertex.Z);
 	}
-	UpdateValid();
+	//UpdateValid();
 }
 
 FBox::FBox(const TArray<FVector>& Vertices)
@@ -79,7 +79,7 @@ FBox::FBox(const TArray<FVector>& Vertices)
 		Max.Y = max(Max.Y, Vertex.Y);
 		Max.Z = max(Max.Z, Vertex.Z);
 	}
-	UpdateValid();
+	//UpdateValid();
 }
 
 FBox::FBox(const TArray<FVector>& Vertices, const FMatrix& TransformMatrix)
@@ -100,7 +100,7 @@ FBox::FBox(const TArray<FVector>& Vertices, const FMatrix& TransformMatrix)
 		Max.Y = max(Max.Y, Vertex.Y);
 		Max.Z = max(Max.Z, Vertex.Z);
 	}
-	UpdateValid();
+	//UpdateValid();
 }
 
 FBox::FBox(const TArray<FVector>& Vertices, const FTransform& Transform)
@@ -121,14 +121,14 @@ FBox::FBox(const TArray<FVector>& Vertices, const FTransform& Transform)
 		Max.Y = max(Max.Y, Vertex.Y);
 		Max.Z = max(Max.Z, Vertex.Z);
 	}
-	UpdateValid();
+	//UpdateValid();
 }
 
 FBox::FBox(const FVector InMin, const FVector InMax)
 {
 	Min = InMin;
 	Max = InMax;
-	UpdateValid();
+	//UpdateValid();
 }
 
 FBox FBox::BuildAABB(const FVector Origin, const FVector Extent)
@@ -136,9 +136,8 @@ FBox FBox::BuildAABB(const FVector Origin, const FVector Extent)
 	return FBox(Origin - Extent, Origin + Extent);
 }
 
-bool FBox::Intersects(const FVector RayOrigin, const FVector RayDir, float& Distance)
+bool FBox::Intersects(const FVector RayOrigin, const FVector RayDir, float& Distance) const
 {
-	//MinBound 와 MaxBound에 Offset을 더해주거나 빼면 그만큼 더 넓거나 좁은 범위의 큐브를 만든다 (Min에는 Offset을 빼고 Max에는 Offset을 더하기)
 	double tMin = -FLT_MAX;
 	double tMax = FLT_MAX;
 	if (fabs(RayDir.X) < FLT_EPSILON) {
@@ -178,8 +177,7 @@ bool FBox::Intersects(const FVector RayOrigin, const FVector RayDir, float& Dist
 		tMax = (tMax < t2) ? tMax : t2;
 	}
 	if (tMax >= tMin && tMax >= 0) {
-		Distance = tMin; // 거리 비교할땐 이걸로 충분
-		//Distance = tMin * RayDir.Length(); // world 기준 거리 : 실제거리 필요할때 이용
+		Distance = tMin; // world상의 거리는 밖에서 계산하기
 		return true;
 	}
 	return false;

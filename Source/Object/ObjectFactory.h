@@ -36,9 +36,9 @@ public:
         UEngine::Get().GObjects.Add(NewObject->GetUUID(), NewObject);
         FString Name(typeid(T).name());
         Name = Name.SubStr(7);
-        uint32 UUID = NewObject->UUID;
+        static uint8 ObjectContructionCount = 0;
 
-        NewObject->Name = FName(*Name, UUID);
+        NewObject->Name = FName(*Name, ObjectContructionCount++);
         return NewObject.get();
     }
 };

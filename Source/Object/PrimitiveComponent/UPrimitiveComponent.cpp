@@ -61,3 +61,15 @@ void UPrimitiveComponent::RegisterComponentWithWorld(UWorld* World)
 	
 	Renderer->CreateVertexBuffer(Topology, BufferInfo);
 }
+
+TSet<UPrimitiveComponent*> UPrimitiveComponent::FilterPrimitiveComponents(TSet<UActorComponent*>& Components)
+{
+	TSet<UPrimitiveComponent*> NewSet;
+
+	for (auto Comp : Components)
+	{
+		if (UPrimitiveComponent* Prim = dynamic_cast<UPrimitiveComponent*>(Comp))
+			NewSet.Add(Prim);
+	}
+	return NewSet;
+}

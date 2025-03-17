@@ -25,7 +25,7 @@ public:
 		switch (GetType())
 		{
 		case EPrimitiveType::EPT_Line:
-		case EPrimitiveType::EPT_Bounding_Box:
+		case EPrimitiveType::EPT_BoundingBox:
 			return D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
 		default:
 			return D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
@@ -47,6 +47,11 @@ protected:
 	bool bCanBeRendered = false;
 	bool bUseVertexColor = true;
 	bool bIsOrthoGraphic = false;
+	FVector4 CustomColor = FVector4(1.0f, 1.0f, 1.0f, 1.0f);
+
+public:
+	// UScenecomponent중에 PrimitiveComponent만 추출
+	static TSet<UPrimitiveComponent*> FilterPrimitiveComponents(TSet<UActorComponent*>& Components);
 };
 
 class UCubeComp : public UPrimitiveComponent

@@ -25,4 +25,6 @@ struct alignas(16) FQuat : public FVector4{
 
     static FQuat MakeFromRotationMatrix(const struct FMatrix& M);
     FVector GetEuler() const { return QuaternionToEuler(*this); }
+
+    static FQuat FindBetween(const FVector A, const FVector B);
 };

@@ -8,7 +8,7 @@
 class FBox
 {
 private:
-	bool IsValid;
+	bool bIsValid;
 	FVector Min;
 	FVector Max;
 
@@ -24,15 +24,17 @@ public:
 	FBox(const FVector InMin, const FVector InMax);
 
 	static FBox BuildAABB(const FVector Origin, const FVector Extent);
-	bool Intersects(const FVector RayOrigin, const FVector RayDir, float& Distance);
+	bool Intersects(const FVector RayOrigin, const FVector RayDir, float& Distance) const;
 
 	FVector GetCenter() const;
 	FVector GetExtent() const;
 
+	bool IsValid() const { return bIsValid; }
+
 private:
 	FORCEINLINE void UpdateValid()
 	{
-		IsValid = (Min.X < Max.X && Min.Y < Max.Y && Min.Z < Max.Z);
+		bIsValid = (Min.X < Max.X && Min.Y < Max.Y && Min.Z < Max.Z);
 	}
 };
 

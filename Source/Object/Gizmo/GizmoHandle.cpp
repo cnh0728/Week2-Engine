@@ -69,6 +69,20 @@ void AGizmoHandle::Tick(float DeltaTime)
 		GizmoType = static_cast<EGizmoType>(type);
 	}
 
+	if (SelectedActor)
+	{
+		for (auto BoundingBox : SelectedActorBoundingBox)
+		{
+			BoundingBox->SetCanBeRendered(true);
+		}
+	}
+	else
+	{
+		for (auto BoundingBox : SelectedActorBoundingBox)
+		{
+			BoundingBox->SetCanBeRendered(false);
+		}
+	}
 }
 
 void AGizmoHandle::SetScaleByDistance()
@@ -106,6 +120,50 @@ void AGizmoHandle::SetActive(bool bActive)
 			PrimitiveComponent->SetCanBeRendered(bActive);
 		}
 	}
+
+	for (auto BoundingBox : SelectedActorBoundingBox)
+	{
+		RemoveComponent(BoundingBox);
+	}
+	if (bIsActive)
+	{
+		if (AActor* SelectedActor = FEditorManager::Get().GetSelectedActor())
+		{
+			for (auto SelectedActorComponent : SelectedActor->GetComponents())
+			{
+				if (auto SelectedActorPrimitive = dynamic_cast<UPrimitiveComponent*>(SelectedActorComponent))
+				{
+					if (dynamic_cast<UTextComponent*>(SelectedActorComponent))
+					{
+						continue;
+					}
+					auto BoundingBox = AddComponent<UBoundingBoxComponent>();
+					SelectedActorBoundingBox.Add(BoundingBox);
+					BoundingBox->SetupAttachment(RootComponent);
+					BoundingBox->SetTargetPrimitive(SelectedActorPrimitive);
+					BoundingBox->RegisterComponentWithWorld(GetWorld());
+
+				}
+			}
+		}
+		else
+		{
+			return;
+		}
+	}
+	else
+	{
+		for (auto BoundingBox : SelectedActorBoundingBox)
+		{
+			BoundingBox->DetachFromComponent();
+			GetWorld()->RemoveRenderComponent(BoundingBox);
+			RemoveComponent(BoundingBox);
+
+			UEngine::Get().GObjects.Remove(BoundingBox->GetUUID());
+		}
+		SelectedActorBoundingBox.Empty();
+	}
+
 }
 
 const char* AGizmoHandle::GetTypeName()
