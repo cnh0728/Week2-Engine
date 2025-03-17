@@ -21,6 +21,16 @@ public:
 	virtual void Render();
 
 	virtual EPrimitiveType GetType() { return EPrimitiveType::EPT_None; }
+	D3D11_PRIMITIVE_TOPOLOGY GetTopology() {
+		switch (GetType())
+		{
+		case EPrimitiveType::EPT_Line:
+		case EPrimitiveType::EPT_Bounding_Box:
+			return D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
+		default:
+			return D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+		}
+	}
 
 	bool IsUseVertexColor() const { return bUseVertexColor; }
 

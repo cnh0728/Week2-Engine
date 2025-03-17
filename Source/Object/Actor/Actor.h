@@ -125,6 +125,8 @@ protected:
 private:
 	UWorld* World = nullptr;
 
+public:
+	
 };
 
 
