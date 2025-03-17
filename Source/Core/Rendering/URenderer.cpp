@@ -325,8 +325,7 @@ void URenderer::AddVertices(UPrimitiveComponent* Component)
     
     //월드매트릭스만 해주고 V, P는 Constant로 넘기기 (Primitivie별로 곱해줄 필요없으니까
 
-    //Todo: 여기서 삼항으로 하는거아니고 Type별 정해주는 함수 가져오기
-    D3D11_PRIMITIVE_TOPOLOGY Topology = Component->GetType() == EPrimitiveType::EPT_Line ? D3D11_PRIMITIVE_TOPOLOGY_LINELIST : D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+    D3D11_PRIMITIVE_TOPOLOGY Topology = Component->GetTopology();
     
     // uint32_t UUID = Component->GetOwner()->GetUUID();
 
