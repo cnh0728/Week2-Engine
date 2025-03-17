@@ -10,13 +10,8 @@ public:
 	virtual ~UUUIDTextComponent() = default;
 	void SetText(const FString& InText) override;
 	FString GetText() const override;
-	void SetUUIDTextSize(const uint32& InTextSize) {
-		UUIDTextSize = InTextSize;
-	}
-	uint32 GetUUIDTextSize() const {
-		return UUIDTextSize;
-	}
-
+	void SetTextSize(const uint32& InTextSize) override;
+	uint32 GetTextSize() const override;
 	void RenderText(URenderer& Renderer, const FString& InText, const FVector& InTextPos, const FVector& InTextSize) override;
 
 private:

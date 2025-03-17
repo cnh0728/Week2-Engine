@@ -19,3 +19,13 @@ void UTextComponent::RenderText(URenderer& Renderer, const FString& InText, cons
 {
 	Renderer.RenderText(InText, InTextPos, InTextSize);
 }
+
+void UTextComponent::SetTextSize(const uint32& InTextSize)
+{
+	TextSize = InTextSize;
+}
+
+uint32 UTextComponent::GetTextSize() const
+{
+	return TextSize;
+}

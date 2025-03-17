@@ -39,6 +39,11 @@ AGizmoHandle::AGizmoHandle()
 	SetActive(false); 
 }
 
+void AGizmoHandle::BeginPlay()
+{
+	AActor::BeginPlay();
+}
+
 void AGizmoHandle::Tick(float DeltaTime)
 {
 	AActor* SelectedActor  = FEditorManager::Get().GetSelectedActor();

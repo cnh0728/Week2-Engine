@@ -15,10 +15,7 @@ ASphere::ASphere()
 
 	UUIDTextComponent = AddComponent<UUUIDTextComponent>();
 	UUIDTextComponent->SetupAttachment(RootComponent);
-
-	FTransform UUIDTextTransform;
-	UUIDTextTransform.SetPosition(0.0f, 0.9f, 0.9f);
-	UUIDTextComponent->SetRelativeTransform(UUIDTextTransform);
+	UUIDTextComponent->SetRelativeTransform(FTransform(FVector(0.0f, 0.9f, 0.9f), FVector(), FVector().One()));
 }
 
 void ASphere::BeginPlay()

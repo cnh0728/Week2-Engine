@@ -12,11 +12,7 @@ ACone::ACone()
 
     UUIDTextComponent = AddComponent<UUUIDTextComponent>();
     UUIDTextComponent->SetupAttachment(RootComponent);
-
-    FTransform UUIDTextTransform;
-    UUIDTextTransform.SetPosition(0.0f, 0.7f, 1.2f);
-    UUIDTextComponent->SetRelativeTransform(UUIDTextTransform);
-
+    UUIDTextComponent->SetRelativeTransform(FTransform(FVector(0.0f, 0.7f, 1.2f), FVector(), FVector().One()));
 }
 
 void ACone::BeginPlay()

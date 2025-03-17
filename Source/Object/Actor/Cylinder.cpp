@@ -12,10 +12,7 @@ ACylinder::ACylinder()
 
 	UUIDTextComponent = AddComponent<UUUIDTextComponent>();
 	UUIDTextComponent->SetupAttachment(RootComponent);
-
-    FTransform UUIDTextTransform;
-    UUIDTextTransform.SetPosition(0.0f, 0.3f, 0.6f);
-    UUIDTextComponent->SetRelativeTransform(UUIDTextTransform);
+    UUIDTextComponent->SetRelativeTransform(FTransform(FVector(0.0f, 0.3f, 0.6f), FVector(), FVector().One()));
 
 }
 

@@ -17,8 +17,11 @@ public:
 	{
 		return EPrimitiveType::EPT_Text;
 	}
+	virtual void SetTextSize(const uint32& InTextSize);
+	virtual uint32 GetTextSize() const;
 
 protected:
 	FString Text;
+	uint32 TextSize = 10;
 	UText* TextRenderClass;
 };
