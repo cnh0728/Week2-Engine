@@ -108,7 +108,7 @@ public:
 	
 public:
 	void SetColor(FVector4 InColor);
-	void SetUseVertexColor(bool bUseVertexColor);
+	//void SetUseVertexColor(bool bUseVertexColor);
 
 protected:
 	bool bCanEverTick = true;

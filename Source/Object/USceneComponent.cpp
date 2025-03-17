@@ -98,3 +98,4 @@ void USceneComponent::SetColor(FVector4 Color)
 {
 	this->Color = Color;
 }
+

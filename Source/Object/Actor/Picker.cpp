@@ -112,8 +112,8 @@ void APicker::Tick(float DeltaTime)
                 return;
             }
                 
-            UCylinderComp* CylinderComp = dynamic_cast<UCylinderComp*>(PickedComponent);
-            FVector4 CompColor = CylinderComp->GetCustomColor();
+			UCylinderComp* CylinderComp = dynamic_cast<UCylinderComp*>(PickedComponent);
+			FVector4 CompColor = CylinderComp->GetColor();
             if (1.0f - FMath::Abs(CompColor.X) < KINDA_SMALL_NUMBER) // Red - X축
             {
                 Gizmo->SetSelectedAxis(ESelectedAxis::X);

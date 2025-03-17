@@ -386,8 +386,8 @@ void UI::RenderPropertyWindow()
         
         if (ImGui::ColorEdit4("Color", ActorColor))
         {
-            //FVector4 NewColor(ActorColor[0], ActorColor[1], ActorColor[2], ActorColor[3]);
-            //selectedActor->GetComponents()
+			FVector4 NewColor(ActorColor[0], ActorColor[1], ActorColor[2], ActorColor[3]);
+			selectedActor-
         }
     }
     ImGui::End();
