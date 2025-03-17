@@ -202,6 +202,9 @@ struct alignas(16) FVector4 : public FVector
     using FVector::Z;
 
     float W;
+    static const FVector4 OneVector;
+	static FVector4 One() { return FVector4(FVector::One(), 1.0f); }
+
     FVector4()
         : FVector(0, 0, 0), W(0)
     {

@@ -20,12 +20,12 @@ AWorldGrid::AWorldGrid()
         // ULineComp* YLineComponent = AddComponent<ULineComp>();
     }
 
-    // UConeComp* ConeComp1 = AddComponent<UConeComp>();
-    // ConeComp1->SetRelativeTransform(FTransform(FVector(0.0f,2.0f, 1.0f), FQuat(0, 0.3, 0.7, 1), FVector(1.f, 1.f, 1.f)));
+     //UConeComp* ConeComp1 = AddComponent<UConeComp>();
+     //ConeComp1->SetRelativeTransform(FTransform(FVector(0.0f,2.0f, 1.0f), FQuat(0, 0.3, 0.7, 1), FVector(1.f, 1.f, 1.f)));
 	   
-    // RootComponent = CylinderComp;
-    // ConeComp->SetupAttachment(CylinderComp);
-    // ConeComp1->SetupAttachment(ConeComp);
+     //RootComponent = CylinderComp;
+     //ConeComp->SetupAttachment(CylinderComp);
+     //ConeComp1->SetupAttachment(ConeComp);
     
 }
 

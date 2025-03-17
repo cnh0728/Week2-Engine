@@ -38,7 +38,8 @@ private:
 	ImVec2 InitialScreenSize;
 	URenderer* Renderer;
     float windowWidth;
-    float windowHeight;
+	float windowHeight;
+	
     
     void SetWindowLayout(float widthRatio, float heightRatio, float posXRatio, float posYRatio);
     TArray<FName> Unselectables;
