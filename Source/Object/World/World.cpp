@@ -71,7 +71,7 @@ void UWorld::Render()
 	}
 
 	ACamera* cam = FEditorManager::Get().GetCamera();
-	Renderer->UpdateViewMatrix(cam->GetActorTransform());
+	Renderer->UpdateViewMatrix(cam->GetActorRelativeTransform());
 	Renderer->UpdateProjectionMatrix(cam);
 
 	Renderer->UpdateConstant();
@@ -81,10 +81,7 @@ void UWorld::Render()
 	// }
 	
 	RenderMainTexture(*Renderer);
-  
-  	// 텍스트 렌더링 테스트
-	//Renderer->RenderText();
-
+	
 	// DisplayPickingTexture(*Renderer);
 
 }
@@ -128,10 +125,10 @@ void UWorld::RenderMainTexture(URenderer& Renderer)
 	Renderer.ClearVertex();
 	for (auto& RenderComponent  : RenderComponents)
 	{
-		// if (RenderComponent->GetCanBeRendered() == false)
-		// {
-		// 	continue;
-		// }
+		if (RenderComponent->GetCanBeRendered() == false)
+		{
+			continue;
+		}
 		
 		if (!FEditorManager::Get().IsShowFlagSet(EEngineShowFlags::SF_Primitives))
 			continue;
@@ -175,7 +172,7 @@ void UWorld::ClearWorld()
 	TArray CopyActors = Actors;
 	for (AActor* Actor : CopyActors)
 	{
-		if (!Actor->IsGizmoActor())
+		if (!Actor->IsCanPick())
 		{
 			DestroyActor(Actor);
 		}
@@ -202,7 +199,7 @@ bool UWorld::DestroyActor(AActor* InActor)
 	Actors.Remove(InActor);
 
 	//Render할 목록에서 제거
-	UEngine::Get().GetRenderer()->ReleaseVertexBuffer(InActor->GetUUID());
+	// UEngine::Get().GetRenderer()->ReleaseVertexBuffer(InActor->GetUUID());
 	
 	// 제거 대기열에 추가
 	PendingDestroyActors.Add(InActor);
@@ -270,7 +267,7 @@ void UWorld::LoadWorld(const char* SceneName)
 			Actor = SpawnActor<ACone>();
 		}
 		
-		Actor->SetActorTransform(Transform);
+		Actor->SetActorRelatvieTransform(Transform);
 	}
 }
 
@@ -284,13 +281,13 @@ UWorldInfo UWorld::GetWorldInfo() const
 	uint32 i = 0;
 	for (auto& actor : Actors)
 	{
-		if (actor->IsGizmoActor())
+		if (actor->IsCanPick())
 		{
 			WorldInfo.ActorCount--;
 			continue;
 		}
 		WorldInfo.ObjctInfos[i] = new UObjectInfo();
-		const FTransform& Transform = actor->GetActorTransform();
+		const FTransform& Transform = actor->GetActorRelativeTransform();
 		WorldInfo.ObjctInfos[i]->Location = Transform.GetPosition();
 		WorldInfo.ObjctInfos[i]->Rotation = Transform.GetRotation();
 		WorldInfo.ObjctInfos[i]->Scale = Transform.GetScale();

@@ -128,15 +128,14 @@ public:
 
     /** 스왑 체인의 백 버퍼와 프론트 버퍼를 교체하여 화면에 출력 */
     void SwapBuffer() const;
-    void Prepare();
 
     /** 렌더링 파이프라인을 준비 합니다. */
-    void Prepare() const;
+    void Prepare();
 
     /** 셰이더를 준비 합니다. */
     void PrepareShader() const;
     void Render();
-    void CreateVertexBuffer(uint32_t UUID, VertexBufferInfo BufferInfo);
+    void CreateVertexBuffer(D3D11_PRIMITIVE_TOPOLOGY Topology, VertexBufferInfo BufferInfo);
 
     /**
      * 정점 데이터로 Vertex Buffer를 생성합니다.
@@ -146,20 +145,20 @@ public:
      */
     void ClearVertex();
 	void AddVertices(UPrimitiveComponent* Component);
-    void ResizeVertexBuffer(uint32_t UUID);
-    void InsertNewVerticesIntoVertexBuffer(uint32_t UUID);
+    void ResizeVertexBuffer(D3D11_PRIMITIVE_TOPOLOGY Topology);
+    void InsertNewVerticesIntoVertexBuffer(D3D11_PRIMITIVE_TOPOLOGY Topology);
     void UpdateVertexBuffer();
-    TMap<uint32_t, bool> CheckChangedVertexCountUUID();
+    TMap<D3D11_PRIMITIVE_TOPOLOGY, bool> CheckChangedVertexCountUUID();
 
-	VertexBufferInfo GetVertexBufferInfo(uint32_t UUID) { return VertexBuffers[UUID];}
-	void SetVertexBufferInfo(uint32_t UUID, VertexBufferInfo BufferInfo)
+	VertexBufferInfo GetVertexBufferInfo(D3D11_PRIMITIVE_TOPOLOGY Topology) { return BatchVertexBuffers[Topology];}
+	void SetVertexBufferInfo(D3D11_PRIMITIVE_TOPOLOGY Topology, VertexBufferInfo BufferInfo)
 	{
-		if (VertexBuffers.Contains(UUID)){ VertexBuffers[UUID] = BufferInfo;}
-		else							{    VertexBuffers.Add(UUID, BufferInfo);}
+		if (BatchVertexBuffers.Contains(Topology)){ BatchVertexBuffers[Topology] = BufferInfo;}
+		else							{    BatchVertexBuffers.Add(Topology, BufferInfo);}
 	}
 	
     /** Buffer를 해제합니다. */
-	void ReleaseVertexBuffer(uint32_t UUID);
+	void ReleaseVertexBuffer(D3D11_PRIMITIVE_TOPOLOGY Topology);
     void ReleaseAllVertexBuffer();
     /** Constant Data를 업데이트 합니다. */
     void UpdateConstant() const;
@@ -236,7 +235,7 @@ protected:
     ID3D11RenderTargetView* FrameBufferRTV = nullptr;       // 텍스처를 렌더 타겟으로 사용하는 뷰
     ID3D11RasterizerState* RasterizerState = nullptr;       // 래스터라이저 상태(컬링, 채우기 모드 등 정의)
     ID3D11Buffer* ConstantBuffer = nullptr;                 // 쉐이더에 데이터를 전달하기 위한 상수 버퍼
-	TMap<uint32_t, VertexBufferInfo> VertexBuffers;
+	TMap<D3D11_PRIMITIVE_TOPOLOGY, VertexBufferInfo> BatchVertexBuffers;
 	
     FLOAT ClearColor[4] = { 0.025f, 0.025f, 0.025f, 1.0f }; // 화면을 초기화(clear)할 때 사용할 색상 (RGBA)
     D3D11_VIEWPORT ViewportInfo = {};                       // 렌더링 영역을 정의하는 뷰포트 정보

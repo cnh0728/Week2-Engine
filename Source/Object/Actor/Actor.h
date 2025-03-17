@@ -10,6 +10,13 @@
 
 class UWorld;
 
+enum class RenderType
+{
+	DefaultType,
+	BatchType,
+	InstancedType,
+};
+
 class AActor : public UObject
 {
 	friend class FEditorManager;
@@ -39,6 +46,7 @@ public:
 	void SetWorld(UWorld* InWorld) { World = InWorld; }
 
 	bool IsGizmoActor() const { return bIsGizmo; }
+	bool IsCanPick() const { return bCanPick; }
 
 	virtual void SetUUIDTextCanBeRendered(bool bRender);
 
@@ -85,8 +93,11 @@ public:
 		Components.Remove(Object);
 	}
 
-	FTransform GetActorTransform() const;
-	void SetActorTransform(const FTransform& InTransform);
+	FMatrix GetActorTransformMatrix();
+	FTransform GetActorRelativeTransform() const;
+	FMatrix GetActorRelativeTransformMatrix() const;
+
+	void SetActorRelatvieTransform(const FTransform& InTransform);
 	bool CanEverTick() const { return bCanEverTick; }
 	virtual const char* GetTypeName();
 
@@ -95,7 +106,9 @@ public:
 public:
 	USceneComponent* GetRootComponent() const { return RootComponent; }
 	void SetRootComponent(USceneComponent* InRootComponent) { RootComponent = InRootComponent; }
-
+	void SetupAttachment(AActor* InParent);
+	AActor* GetParent() const { return Parent; }
+	
 public:
 	void SetColor(FVector4 InColor);
 	void SetUseVertexColor(bool bUseVertexColor);
@@ -103,11 +116,21 @@ public:
 protected:
 	bool bCanEverTick = true;
 	USceneComponent* RootComponent = nullptr;
+	bool bCanPick = true;
 	bool bIsGizmo = false;
 	UUUIDTextComponent* UUIDTextComponent = nullptr;
+	
+	AActor* Parent = nullptr;
+	TSet<AActor*> Children;
+	TSet<UActorComponent*> Components;
 
+	RenderType RenderType = RenderType::BatchType; //원래 DefaultType으로 해야하는데 임시방편으로 전부 배치로 하겠음
+	
 private:
 	UWorld* World = nullptr;
-	TSet<UActorComponent*> Components;
+
+public:
+	
 };
+
 

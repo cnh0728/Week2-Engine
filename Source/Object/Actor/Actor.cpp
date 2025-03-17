@@ -8,6 +8,7 @@
 
 AActor::AActor() : Depth{ 0 }
 {
+	RootComponent = AddComponent<USceneComponent>();
 }
 
 void AActor::BeginPlay()
@@ -85,15 +86,35 @@ void AActor::UnPick()
 	}	
 }
 
+FMatrix AActor::GetActorTransformMatrix()
+{
+	if (Parent)
+	{
+		// 부모가 있을 경우 부모 월드 * 내 로컬
+		FMatrix ParentWorld = Parent->GetActorTransformMatrix();
+		FMatrix MyLocal = GetActorRelativeTransform().GetMatrix();
+
+		FMatrix NewMatrix = MyLocal * ParentWorld;
+		return NewMatrix;
+	}
+
+	return GetActorRelativeTransformMatrix();
+}
+
 // actor의 root component는 actor의 (아직은) 월드상 좌표입니다.
 // @TODO : actor가 parent를 갖게되면 actor의 parent의 transform을 따라가야합니다.
-FTransform AActor::GetActorTransform() const
+FTransform AActor::GetActorRelativeTransform() const
 {
 	return RootComponent != nullptr ? RootComponent->GetRelativeTransform() : FTransform();
 }
 
+FMatrix AActor::GetActorRelativeTransformMatrix() const
+{
+	return this->GetActorRelativeTransform().GetMatrix();
+}
+
 // actor의 root component는 actor의 (아직은) 월드상 좌표입니다.
-void AActor::SetActorTransform(const FTransform& InTransform)
+void AActor::SetActorRelatvieTransform(const FTransform& InTransform)
 {
 	// InTransform은 월드 기준임
 	if (RootComponent)
@@ -167,5 +188,18 @@ void AActor::SetUUIDTextCanBeRendered(bool bRender) {
 	if (UUIDTextComponent)
 	{
 		UUIDTextComponent->SetCanBeRendered(bRender);
+	}
+}
+
+void AActor::SetupAttachment(AActor* InParent)
+{
+	if (InParent)
+	{
+		Parent = InParent;
+		InParent->Children.Add(this);
+	}
+	else
+	{
+		UE_LOG("Parent is nullptr");
 	}
 }

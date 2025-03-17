@@ -52,21 +52,21 @@ public:
         
     FVector GetForward() const
     {
-        return GetActorTransform().GetForward();
+        return GetActorRelativeTransform().GetForward();
     }
     
     FVector GetRight() const
     {
-        return GetActorTransform().GetRight();
+        return GetActorRelativeTransform().GetRight();
     }
     
     FVector GetUp() const
     {
-        return GetActorTransform().GetUp();
+        return GetActorRelativeTransform().GetUp();
     }
 
     FMatrix GetViewMatrix() const
     {
-        return GetActorTransform().GetViewMatrix();
+        return GetActorRelativeTransform().GetViewMatrix();
     }
 };

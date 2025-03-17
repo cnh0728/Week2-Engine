@@ -30,7 +30,7 @@ void UPrimitiveComponent::Render()
 	{
 		return;
 	}
-	if (GetOwner()->IsGizmoActor() == false)
+	if (GetOwner()->IsCanPick() == false)
 	{
 		if (bIsPicked)
 		{
@@ -51,7 +51,7 @@ void UPrimitiveComponent::RegisterComponentWithWorld(UWorld* World)
 	
 	TArray<FVertexSimple> Vertices = OriginVertices[GetType()];
 	
-	D3D11_PRIMITIVE_TOPOLOGY Topology = GetType() == EPrimitiveType::EPT_Line ? D3D11_PRIMITIVE_TOPOLOGY_LINELIST : D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	D3D11_PRIMITIVE_TOPOLOGY Topology = GetTopology();
 
 	VertexBufferInfo BufferInfo = VertexBufferInfo(Vertices.Num(), Topology, Vertices);
 	
@@ -59,5 +59,5 @@ void UPrimitiveComponent::RegisterComponentWithWorld(UWorld* World)
 
 	uint32_t UUID = GetOwner()->GetUUID();
 	
-	Renderer->CreateVertexBuffer(UUID, BufferInfo);
+	Renderer->CreateVertexBuffer(Topology, BufferInfo);
 }

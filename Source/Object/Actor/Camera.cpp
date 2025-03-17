@@ -6,18 +6,16 @@
 
 ACamera::ACamera()
 {
-    bIsGizmo = true;
+    bCanPick = false;
     
     Near = 0.1f;
-    Far = 100.f;
+    Far = 1000.f;
     FieldOfView = 45.f;
     ProjectionMode = ECameraProjectionMode::Perspective;
-
-    RootComponent = AddComponent<USceneComponent>();
     
-    FTransform StartPos = GetActorTransform();
-    StartPos.SetPosition(FVector(-5, 0, 0));
-    SetActorTransform(StartPos);
+    FTransform StartPos = GetActorRelativeTransform();
+    StartPos.SetPosition(FVector(-5, 0, 1));
+    SetActorRelatvieTransform(StartPos);
 }
 
 void ACamera::SetFieldOfView(float Fov)

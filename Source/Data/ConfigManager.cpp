@@ -1,10 +1,10 @@
 ﻿#include "ConfigManager.h"
 #include <fstream>
-#include "Data/UCameraSettings.h"
+#include "Data/SettingsLoader.h"
 
 ConfigManager::ConfigManager()
 {
-    SettingsList.Add(new UCameraSettings(FString("CameraConfig.ini")));
+    SettingsList.Add(new USettingsLoader(FString("editor.ini")));
 }
 
 ConfigManager::~ConfigManager()

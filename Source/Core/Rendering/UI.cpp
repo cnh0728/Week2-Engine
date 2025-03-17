@@ -16,6 +16,7 @@
 #include "Object/Actor/Arrow.h"
 #include "Object/Actor/Cone.h"
 #include "Object/Actor/Cylinder.h"
+#include "Object/Actor/WorldGrid.h"
 #include "Static/FEditorManager.h"
 #include "Object/World/World.h"
 #include "Object/Gizmo/GizmoHandle.h"
@@ -43,11 +44,9 @@ void UI::Initialize(HWND hWnd, URenderer& Renderer, UINT ScreenWidth, UINT Scree
     bIsInitialized = true;
     
     io.DisplaySize = ScreenSize;
-
-    PreRatio = GetRatio();
-    CurRatio = GetRatio();
-
     this->Renderer = &Renderer;
+
+    //Unselectables.Add(FName("Camera"));
 }
 
 void UI::Update()
@@ -63,18 +62,13 @@ void UI::Update()
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
 
-    if (bWasWindowSizeUpdated)
-    {
-        PreRatio = CurRatio;
-        CurRatio = GetRatio();
-        UE_LOG("Current Ratio: %f, %f", CurRatio.x, CurRatio.y);
-    }
-    
+    windowWidth = UEngine::Get().GetScreenWidth();
+    windowHeight = UEngine::Get().GetScreenHeight();
+
     RenderControlPanel();
     RenderPropertyWindow();
     RenderSceneManager();
-
-    Debug::ShowConsole(bWasWindowSizeUpdated, PreRatio, CurRatio);
+    Debug::ShowConsole(bWasWindowSizeUpdated);
 
     // ImGui 렌더링
     ImGui::Render();
@@ -103,16 +97,7 @@ void UI::OnUpdateWindowSize(UINT InScreenWidth, UINT InScreenHeight)
 
 void UI::RenderControlPanel()
 {
-    float windowWidth = UEngine::Get().GetScreenWidth();
-    float windowHeight = UEngine::Get().GetScreenHeight();
-
-    float controllWindowWidth = static_cast<float>(windowWidth) * 0.3f;
-    float controllWindowHeight = static_cast<float>(windowHeight) * 0.25f;
-    float controllWindowPosX = (static_cast<float>(windowWidth) - controllWindowWidth) * 0.f;
-    float controllWindowPosY = (static_cast<float>(windowHeight) - controllWindowHeight) * 0.f;
-    ImGui::SetNextWindowPos(ImVec2(controllWindowPosX, controllWindowPosY));
-    ImGui::SetNextWindowSize(ImVec2(controllWindowWidth, 0.0f), ImGuiCond_Once);
-
+    SetWindowLayout(0.4f, 0.5f, 0.f, 0.f);
     ImGui::Begin("Jungle Control Panel");
     ImGui::Text("Hello, Jungle World!");
     ImGui::Text("FPS: %.3f (what is that ms)", ImGui::GetIO().Framerate);
@@ -120,10 +105,27 @@ void UI::RenderControlPanel()
     RenderMemoryUsage();
     RenderPrimitiveSelection();
     RenderCameraSettings();
+    RenderWorldGridSetting();
     RenderViewMode();
     RenderShowFlag();
     
     ImGui::End();
+}
+
+void UI::RenderWorldGridSetting()
+{
+    AWorldGrid* WorldGrid = FEditorManager::Get().GetWorldGrid();
+
+    float Spacing = WorldGrid->GetSpacing();
+    
+    if (ImGui::DragFloat("Grid Spacing", &Spacing, 0.1f))
+    {
+        Spacing = std::clamp(Spacing, 0.f, 10.f);
+
+        WorldGrid->SetSpacing(Spacing);
+    }
+    
+    ImGui::Separator();
 }
 
 void UI::RenderMemoryUsage()
@@ -273,26 +275,26 @@ void UI::RenderCameraSettings()
         }
     }
     
-    FVector CameraPosition = Camera->GetActorTransform().GetPosition();
+    FVector CameraPosition = Camera->GetActorRelativeTransform().GetPosition();
     if (ImGui::DragFloat3("Camera Location", reinterpret_cast<float*>(&CameraPosition), 0.1f))
     {
-        FTransform Trans = Camera->GetActorTransform();
+        FTransform Trans = Camera->GetActorRelativeTransform();
         Trans.SetPosition(CameraPosition);
-        Camera->SetActorTransform(Trans);
+        Camera->SetActorRelatvieTransform(Trans);
     }
 
-    FVector PrevEulerAngle = Camera->GetActorTransform().GetRotation().GetEuler();
+    FVector PrevEulerAngle = Camera->GetActorRelativeTransform().GetRotation().GetEuler();
     FVector UIEulerAngle = { PrevEulerAngle.X, PrevEulerAngle.Y, PrevEulerAngle.Z };
     if (ImGui::DragFloat3("Camera Rotation", reinterpret_cast<float*>(&UIEulerAngle), 0.1f))
     {
-        FTransform Transform = Camera->GetActorTransform();
+        FTransform Transform = Camera->GetActorRelativeTransform();
 
         //FVector DeltaEulerAngle = UIEulerAngle - PrevEulerAngle;
         //Transform.Rotate(DeltaEulerAngle);
         
         UIEulerAngle.Y = FMath::Clamp(UIEulerAngle.Y, -Camera->MaxYDegree, Camera->MaxYDegree);
         Transform.SetRotation(UIEulerAngle);
-        Camera->SetActorTransform(Transform);
+        Camera->SetActorRelatvieTransform(Transform);
     }
     if (ImGui::DragFloat("Camera Speed", &Camera->CameraSpeed, 0.1f))
     {
@@ -305,9 +307,9 @@ void UI::RenderCameraSettings()
         Camera->SetCameraSensitivity(CameraSensitivity);
     }
 
-    FVector Forward = Camera->GetActorTransform().GetForward();
-    FVector Up = Camera->GetActorTransform().GetUp();
-    FVector Right = Camera->GetActorTransform().GetRight();
+    FVector Forward = Camera->GetActorRelativeTransform().GetForward();
+    FVector Up = Camera->GetActorRelativeTransform().GetUp();
+    FVector Right = Camera->GetActorRelativeTransform().GetRight();
 
     ImGui::Text("Camera GetForward(): (%.2f %.2f %.2f)", Forward.X, Forward.Y, Forward.Z);
     ImGui::Text("Camera GetUp(): (%.2f %.2f %.2f)", Up.X, Up.Y, Up.Z);
@@ -335,29 +337,21 @@ void UI::RenderShowFlag() {
 
 void UI::RenderPropertyWindow()
 {
-    float windowWidth = UEngine::Get().GetScreenWidth();
-    float windowHeight = UEngine::Get().GetScreenHeight();
-
-    float propertyWindowWidth = static_cast<float>(windowWidth) * 0.3f;
-    float propertyWindowHeight = static_cast<float>(windowHeight) * 0.25f;
-    float propertyWindowPosX = (static_cast<float>(windowWidth) - propertyWindowWidth) * 1.f;
-    float propertyWindowPosY = (static_cast<float>(windowHeight) - propertyWindowHeight) * 0.f;
-    ImGui::SetNextWindowPos(ImVec2(propertyWindowPosX, propertyWindowPosY));
-
-    ImGui::SetNextWindowSize(ImVec2(propertyWindowWidth, 0.0f));
+    SetWindowLayout(0.3f, 0.1f, 0.f, 0.6f);
+    
     ImGui::Begin("Properties");
     
     AActor* selectedActor = FEditorManager::Get().GetSelectedActor();
     if (selectedActor != nullptr)
     {
-        FTransform selectedTransform = selectedActor->GetActorTransform();
+        FTransform selectedTransform = selectedActor->GetActorRelativeTransform();
         float position[] = { selectedTransform.GetPosition().X, selectedTransform.GetPosition().Y, selectedTransform.GetPosition().Z };
         float scale[] = { selectedTransform.GetScale().X, selectedTransform.GetScale().Y, selectedTransform.GetScale().Z };
 
         if (ImGui::DragFloat3("Translation", position, 0.1f))
         {
             selectedTransform.SetPosition(position[0], position[1], position[2]);
-            selectedActor->SetActorTransform(selectedTransform);
+            selectedActor->SetActorRelatvieTransform(selectedTransform);
         }
 
         FVector PrevEulerAngle = selectedTransform.GetRotation().GetEuler();
@@ -368,12 +362,12 @@ void UI::RenderPropertyWindow()
 
             selectedTransform.Rotate(DeltaEulerAngle);
 			UE_LOG("Rotation: %.2f, %.2f, %.2f", DeltaEulerAngle.X, DeltaEulerAngle.Y, DeltaEulerAngle.Z);
-            selectedActor->SetActorTransform(selectedTransform);
+            selectedActor->SetActorRelatvieTransform(selectedTransform);
         }
         if (ImGui::DragFloat3("Scale", scale, 0.1f))
         {
             selectedTransform.SetScale(scale[0], scale[1], scale[2]);
-            selectedActor->SetActorTransform(selectedTransform);
+            selectedActor->SetActorRelatvieTransform(selectedTransform);
         }
 		if (FEditorManager::Get().GetGizmoHandle() != nullptr)
 		{
@@ -395,12 +389,12 @@ void UI::RenderPropertyWindow()
     ImGui::End();
 }
 
-
 void UI::RenderSceneManager()
 {
     const TArray<AActor*>& ActorArray = UEngine::Get().GetWorld()->GetActors();
     uint32 NumActors = ActorArray.Num();
 
+    SetWindowLayout(0.3f, 0.3f, 1.f, 0.f);
     if (NumActors > 0) {
         static int selected = -1;
         ImGui::Begin("Scene Manager");
@@ -424,5 +418,16 @@ void UI::RenderSceneManager()
     }
 
     ImGui::End();
+}
+
+void UI::SetWindowLayout(float widthRatio, float heightRatio, float posXRatio, float posYRatio)
+{
+    float controllWindowWidth = static_cast<float>(windowWidth) * widthRatio;
+    float controllWindowHeight = static_cast<float>(windowHeight) * heightRatio;
+    float controllWindowPosX = (static_cast<float>(windowWidth) - controllWindowWidth) * posXRatio;
+    float controllWindowPosY = (static_cast<float>(windowHeight) - controllWindowHeight) * posYRatio;
+
+    ImGui::SetNextWindowPos(ImVec2(controllWindowPosX, controllWindowPosY));
+    ImGui::SetNextWindowSize(ImVec2(controllWindowWidth, controllWindowHeight), ImGuiCond_Once);
 }
 

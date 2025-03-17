@@ -10,4 +10,5 @@ class APlayerController : public TSingleton<APlayerController> {
 
     void HandleCameraMovement(float DeltaTime);
     void HandleGizmoMovement(float DeltaTime);
+    void ProcessKeyBind(float DeltaTime);
 };

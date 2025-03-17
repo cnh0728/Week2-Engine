@@ -8,11 +8,12 @@ ACylinder::ACylinder()
     UCylinderComp* CylinderComponent = AddComponent<UCylinderComp>();
     RootComponent = CylinderComponent;
 	
-    SetActorTransform(FTransform());
+    SetActorRelatvieTransform(FTransform());
 
 	UUIDTextComponent = AddComponent<UUUIDTextComponent>();
 	UUIDTextComponent->SetupAttachment(RootComponent);
 	UUIDTextComponent->SetRelativeTransform(FTransform());
+
 }
 
 void ACylinder::BeginPlay()

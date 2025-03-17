@@ -7,12 +7,13 @@ ACone::ACone()
 
     UConeComp* ConeComponent = AddComponent<UConeComp>();
     RootComponent = ConeComponent;
-	
-    SetActorTransform(FTransform());
+
+    SetActorRelatvieTransform(FTransform());
 
     UUIDTextComponent = AddComponent<UUUIDTextComponent>();
     UUIDTextComponent->SetupAttachment(RootComponent);
     UUIDTextComponent->SetRelativeTransform(FTransform());
+
 
 }
 

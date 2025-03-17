@@ -57,7 +57,7 @@ LRESULT UEngine::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         break;
     case WM_SIZE:
 		UEngine::Get().UpdateWindowSize(LOWORD(lParam), HIWORD(lParam));
-		break;
+		break;        
     default:
         return DefWindowProc(hWnd, uMsg, wParam, lParam);
     }
@@ -233,13 +233,12 @@ void UEngine::InitWorld()
     World = FObjectFactory::ConstructObject<UWorld>();
 
     FEditorManager::Get().SetCamera(World->SpawnActor<ACamera>());
+    FEditorManager::Get().SetWorldGrid(World->SpawnActor<AWorldGrid>());
     ConfigManager::Get().LoadAllConfigs();
 
     //// Test
     // AArrow* Arrow = World->SpawnActor<AArrow>();
     // World->SpawnActor<ASphere>();
-
-    World->SpawnActor<AWorldGrid>();
     
     World->SpawnActor<AAxis>();
     World->SpawnActor<APicker>();
