@@ -204,4 +204,8 @@ void USceneComponent::GetChildrenComponents(TSet<USceneComponent*>& Children) co
 bool USceneComponent::IsAttachedTo(const USceneComponent* TestComp) const
 {
 	return Parent == TestComp;
+void USceneComponent::SetColor(FVector4 Color)
+{
+	this->Color = Color;
+	bCustomColor = true;
 }

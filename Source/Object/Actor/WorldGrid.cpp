@@ -1,6 +1,8 @@
 ﻿#include "WorldGrid.h"
 
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
+#include "Object/Actor/Camera.h"
+#include "Static/FEditorManager.h"
 
 AWorldGrid::AWorldGrid()
 {
@@ -20,12 +22,12 @@ AWorldGrid::AWorldGrid()
         // ULineComp* YLineComponent = AddComponent<ULineComp>();
     }
 
-    // UConeComp* ConeComp1 = AddComponent<UConeComp>();
-    // ConeComp1->SetRelativeTransform(FTransform(FVector(0.0f,2.0f, 1.0f), FQuat(0, 0.3, 0.7, 1), FVector(1.f, 1.f, 1.f)));
+     //UConeComp* ConeComp1 = AddComponent<UConeComp>();
+     //ConeComp1->SetRelativeTransform(FTransform(FVector(0.0f,2.0f, 1.0f), FQuat(0, 0.3, 0.7, 1), FVector(1.f, 1.f, 1.f)));
 	   
-    // RootComponent = CylinderComp;
-    // ConeComp->SetupAttachment(CylinderComp);
-    // ConeComp1->SetupAttachment(ConeComp);
+     //RootComponent = CylinderComp;
+     //ConeComp->SetupAttachment(CylinderComp);
+     //ConeComp1->SetupAttachment(ConeComp);
     
 }
 
@@ -45,4 +47,32 @@ void AWorldGrid::BeginPlay()
 void AWorldGrid::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
+
+    int ThersholdLine = 30;
+    
+    FTransform GridTransform = GetActorRelativeTransform();
+
+    FVector CameraLocation = FEditorManager::Get().GetCamera()->GetActorRelativeTransform().GetPosition();
+    FVector GridLocation = GridTransform.GetPosition();
+    float GridScale = GridTransform.GetScale().X; //X,Y,Z 같으니까 임의로 한개
+    float Threshold = GridScale * ThersholdLine;
+    
+    if (GridLocation.X + Threshold < CameraLocation.X) //카메라가 그리드위치보다 30정도 더가면
+    {
+        GridLocation.X = GridLocation.X + Threshold;
+    }else if (GridLocation.X - Threshold > CameraLocation.X)
+    {
+        GridLocation.X = GridLocation.X - Threshold;
+    }
+    
+    if (GridLocation.Y + Threshold < CameraLocation.Y)
+    {
+        GridLocation.Y = GridLocation.Y + Threshold;
+    }else if (GridLocation.Y - Threshold > CameraLocation.Y)
+    {
+        GridLocation.Y = GridLocation.Y - Threshold;
+    }
+
+    GridTransform.SetPosition(GridLocation);
+    SetActorRelatvieTransform(GridTransform);
 }

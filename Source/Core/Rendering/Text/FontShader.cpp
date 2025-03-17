@@ -227,7 +227,8 @@ bool UFontShader::SetShaderParameters(ID3D11DeviceContext* DeviceContext, FMatri
 
 	DataPtr->MVP = FMatrix::Transpose(ProjectionMatrix) *
 		FMatrix::Transpose(ViewMatrix) *
-		FMatrix::Transpose(WorldMatrix); ;
+		FMatrix::Transpose(WorldMatrix);
+
 	DeviceContext->Unmap(ConstantBuffer, 0);
 	DeviceContext->VSSetConstantBuffers(3, 1, &ConstantBuffer);
 	DeviceContext->PSSetShaderResources(0, 1, &Texture);

@@ -24,6 +24,7 @@ public:
 	AGizmoHandle();
 
 public:
+	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	void SetScaleByDistance();
 	void SetActive(bool bActive);
@@ -40,7 +41,6 @@ private:
 	EGizmoType GizmoType = EGizmoType::Translate;
 
 	virtual const char* GetTypeName() override;
-
 private:
 	TSet<UBoundingBoxComponent*> SelectedActorBoundingBoxes;
 };

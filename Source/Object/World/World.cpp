@@ -13,7 +13,7 @@
 #include "Object/Actor/Sphere.h"
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Static/FEditorManager.h"
-
+#include "Object/PrimitiveComponent/TextComponent.h"
 
 void UWorld::BeginPlay()
 {
@@ -128,7 +128,6 @@ void UWorld::RenderMainTexture(URenderer& Renderer)
 		{
 			continue;
 		}
-		
 		if (!FEditorManager::Get().IsShowFlagSet(EEngineShowFlags::SF_Primitives))
 			continue;
 
@@ -139,6 +138,18 @@ void UWorld::RenderMainTexture(URenderer& Renderer)
 	}
 	
 	Renderer.Render();
+
+	for (auto& RenderComponent : RenderComponents)
+	{
+		if (UTextComponent* TextComponent = dynamic_cast<UTextComponent*>(RenderComponent))
+		{
+			TextComponent->RenderText(Renderer, TextComponent->GetText(),
+				TextComponent->GetComponentTransformMatrix().GetTranslation(),
+				TextComponent->GetComponentTransformMatrix().GetScale() * TextComponent->GetTextSize());
+		}
+	}
+
+	//Renderer.RenderText();
 	
 	// Renderer.PrepareZIgnore();
 	// for (auto& RenderComponent: ZIgnoreRenderComponents)

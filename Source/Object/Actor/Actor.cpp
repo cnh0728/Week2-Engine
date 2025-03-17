@@ -4,6 +4,7 @@
 #include "Object/World/World.h"
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Static/FEditorManager.h"
+#include "Object/PrimitiveComponent/TextComponent.h"
 
 AActor::AActor() : Depth{ 0 }
 {
@@ -136,49 +137,34 @@ bool AActor::Destroy()
 	return GetWorld()->DestroyActor(this);
 }
 
-void AActor::SetColor(FVector4 InColor)
-{
-	if (RootComponent == nullptr)
-	{
-		return;
-	}
+//void AActor::SetColor(FVector4 InColor)
+//{
+//	if (RootComponent == nullptr)
+//	{
+//		return;
+//	}
+//
+//	UPrimitiveComponent* RootPrimitive = dynamic_cast<UPrimitiveComponent*>(RootComponent);
+//	if (RootPrimitive)
+//	{
+//		RootPrimitive->SetColor(InColor);
+//	}
+//
+//	for (auto& Component : Components)
+//	{
+//		UPrimitiveComponent* PrimitiveComponent = dynamic_cast<UPrimitiveComponent*>(Component);
+//		if (PrimitiveComponent)
+//		{
+//			PrimitiveComponent->SetColor(InColor);
+//		}
+//	}
+//}
 
-	UPrimitiveComponent* RootPrimitive = dynamic_cast<UPrimitiveComponent*>(RootComponent);
-	if (RootPrimitive)
-	{
-		RootPrimitive->SetCustomColor(InColor);
-	}
 
-	for (auto& Component : Components)
+void AActor::SetUUIDTextCanBeRendered(bool bRender) {
+	if (UUIDTextComponent)
 	{
-		UPrimitiveComponent* PrimitiveComponent = dynamic_cast<UPrimitiveComponent*>(Component);
-		if (PrimitiveComponent)
-		{
-			PrimitiveComponent->SetCustomColor(InColor);
-		}
-	}
-}
-
-void AActor::SetUseVertexColor(bool bUseVertexColor)
-{
-	if (RootComponent == nullptr)
-	{
-		return;
-	}
-
-	UPrimitiveComponent* RootPrimitive = dynamic_cast<UPrimitiveComponent*>(RootComponent);
-	if (RootPrimitive)
-	{
-		RootPrimitive->SetUseVertexColor(bUseVertexColor);
-	}
-
-	for (auto& Component : Components)
-	{
-		UPrimitiveComponent* PrimitiveComponent = dynamic_cast<UPrimitiveComponent*>(Component);
-		if (PrimitiveComponent)
-		{
-			PrimitiveComponent->SetUseVertexColor(bUseVertexColor);
-		}
+		UUIDTextComponent->SetCanBeRendered(bRender);
 	}
 }
 

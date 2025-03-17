@@ -27,7 +27,7 @@ void URenderer::Create(HWND hWindow)
     CreateConeVertices();
     //vertexBuffer 어디서 다만들어줬지?
     
-    // CreateText(hWindow);
+    CreateText(hWindow);
 	CreateAlphaBlendingState();
 
     InitMatrix();
@@ -68,6 +68,7 @@ void URenderer::CreateShader()
 	ID3DBlob* ErrorMsg = nullptr;
     // 셰이더 컴파일 및 생성
     D3DCompileFromFile(L"Shaders/ShaderW0.hlsl", nullptr, nullptr, "mainVS", "vs_5_0", 0, 0, &VertexShaderCSO, &ErrorMsg);
+
     Device->CreateVertexShader(VertexShaderCSO->GetBufferPointer(), VertexShaderCSO->GetBufferSize(), nullptr, &SimpleVertexShader);
 
     D3DCompileFromFile(L"Shaders/ShaderW0.hlsl", nullptr, nullptr, "mainPS", "ps_5_0", 0, 0, &PixelShaderCSO, &ErrorMsg);
@@ -86,7 +87,7 @@ void URenderer::CreateShader()
     D3D11_INPUT_ELEMENT_DESC Layout[] =
     {
         { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 
 	    // 인스턴스 데이터 (Per-Instance)
         // { "WORLD", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1 },
@@ -269,7 +270,6 @@ void URenderer::Render()
         DeviceContext->IASetVertexBuffers(0, 1, &VertexBuffer, &Stride, &Offset);
         
         DeviceContext->Draw(Value.GetCount(), 0);
-        
     }
 }
 
@@ -320,7 +320,7 @@ void URenderer::ClearVertex()
 void URenderer::AddVertices(UPrimitiveComponent* Component)
 {
     //자기 컴포넌트 매트릭스 곱해서 버텍스 ADD하기
-
+    //월드매트릭스만 해주고 V, P는 Constant로 넘기기 (Primitivie별로 곱해줄 필요없으니까)
     FMatrix WorldMatrix = Component->GetComponentTransformMatrix();
     
     //월드매트릭스만 해주고 V, P는 Constant로 넘기기 (Primitivie별로 곱해줄 필요없으니까
@@ -328,18 +328,18 @@ void URenderer::AddVertices(UPrimitiveComponent* Component)
     D3D11_PRIMITIVE_TOPOLOGY Topology = Component->GetTopology();
     
     // uint32_t UUID = Component->GetOwner()->GetUUID();
-
     TArray<FVertexSimple> Vertices = OriginVertices[Component->GetType()];
-    
-    for (FVertexSimple &Vertex : Vertices )
+
+    for (FVertexSimple& Vertex : Vertices)
     {
-        FVector4 VertexPos(Vertex.X, Vertex.Y, Vertex.Z, 1.0f);
-        VertexPos = VertexPos * WorldMatrix;
-        Vertex.X = VertexPos.X / VertexPos.W;
-        Vertex.Y = VertexPos.Y / VertexPos.W;
-        Vertex.Z = VertexPos.Z / VertexPos.W;
+        Vertex.SetPos(WorldMatrix);
+        if (Component->bCustomColor)
+        {
+            FVector4 Color = Component->GetColor();
+            Vertex.SetColor(Color);
+        }
+        
     }
-    
     VertexBufferInfo& BufferInfo = BatchVertexBuffers[Topology];
     BufferInfo.AddVertices(Vertices);
 }
@@ -1017,17 +1017,24 @@ void URenderer::CreateText(HWND hWindow)
     Text->Create(Device, DeviceContext, hWindow, UEngine::Get().GetScreenWidth(), UEngine::Get().GetScreenHeight());
 }
 
-void URenderer::RenderText() 
+void URenderer::RenderText(const FString& InText, const FVector& InTextPos, const FVector& InTextSize)
 {
+    // 텍스트의 WorldMatrix 결정
 	ACamera* Camera = FEditorManager::Get().GetCamera();
-	FMatrix OrthoMatrix = FMatrix::OrthoLH(UEngine::Get().GetScreenWidth(), UEngine::Get().GetScreenHeight(), Camera->GetNear(), Camera->GetFar());
-    
+    // 스케일 * 회전
+    FMatrix WorldMatrix = FMatrix::GetScaleMatrix(InTextSize) *
+        FMatrix::GetRotateMatrix(FQuat(Camera->GetActorRelativeTransform().GetRotation())).Inverse();
+    // 이동은 스케일의 영향을 받지 않게 따로
+	WorldMatrix.SetTranslateMatrix(InTextPos);
+
+
+    // 텍스트 렌더링
     DeviceContext->ClearDepthStencilView(DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
     TurnZBufferOff();
     TurnOnAlphaBlending();
 
-	Text->Render(DeviceContext, WorldMatrix, ViewMatrix, OrthoMatrix);
+	Text->Render(DeviceContext, WorldMatrix, ViewMatrix, ProjectionMatrix, InText);
 
 	TurnOffAlphaBlending();
 	TurnZBufferOn();

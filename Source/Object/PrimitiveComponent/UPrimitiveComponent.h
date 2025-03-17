@@ -32,20 +32,6 @@ public:
 		}
 	}
 
-	bool IsUseVertexColor() const { return bUseVertexColor; }
-
-	void SetCustomColor(const FVector4& InColor)
-	{
-		CustomColor = InColor; 
-		bUseVertexColor = false;
-	}
-
-	void SetUseVertexColor(bool bUse)
-	{
-		bUseVertexColor = bUse;
-	}
-	const FVector4& GetCustomColor() const { return CustomColor; }
-
 public:
 	virtual void RegisterComponentWithWorld(class UWorld* World);
 
@@ -56,7 +42,6 @@ public:
 	void SetIsOrthoGraphic(bool IsOrtho) { bIsOrthoGraphic = IsOrtho; }
 	bool GetIsOrthoGraphic() { return bIsOrthoGraphic;}
 	bool IsCanPick() const { return bCanPick; }
-
 protected:
 	bool bCanPick = false;
 	bool bCanBeRendered = false;
