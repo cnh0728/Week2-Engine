@@ -59,5 +59,5 @@ void UPrimitiveComponent::RegisterComponentWithWorld(UWorld* World)
 
 	uint32_t UUID = GetOwner()->GetUUID();
 	
-	Renderer->CreateVertexBuffer(UUID, BufferInfo);
+	Renderer->CreateVertexBuffer(Topology, BufferInfo);
 }
