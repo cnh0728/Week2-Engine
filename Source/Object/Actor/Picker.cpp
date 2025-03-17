@@ -51,6 +51,10 @@ void APicker::Tick(float DeltaTime)
         for (auto& [Primitive, Distance] : PickedPrimitives)
         {
             //프리미티브 돌면서 가장 가까운 액터 찾는 포문. 기즈모면 젤 우선해서 
+            if (Primitive->IsCanPick() == false)
+            {
+                continue;
+            }
             
             AActor* ValueActor = Primitive->GetOwner();
             

@@ -7,10 +7,10 @@ AArrow::AArrow()
 	
 	// test
 	UCylinderComp* CylinderComp = AddComponent<UCylinderComp>();
-	CylinderComp->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.5f), FQuat(0, 0, 0, 1), FVector(1.f, 1.f, 1.f)));
+	CylinderComp->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.f), FQuat(0, 0, 0, 1), FVector(1.f, 1.f, 1.f)));
 
 	UConeComp* ConeComp = AddComponent<UConeComp>();
-	ConeComp->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 1.0f), FQuat(0, 0, 0, 1), FVector(1.f, 1.f, 1.f)));
+	ConeComp->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.5f), FQuat(0, 0, 0, 1), FVector(1.f, 1.f, 1.f)));
 
   	CylinderComp->SetupAttachment(RootComponent);	
 	ConeComp->SetupAttachment(CylinderComp);

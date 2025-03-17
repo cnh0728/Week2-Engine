@@ -46,7 +46,7 @@ public:
 
 	bool IsGizmoActor() const { return bIsGizmo; }
 	bool IsCanPick() const { return bCanPick; }
-
+	
 private:
 	virtual void Pick();
 	virtual void UnPick();
