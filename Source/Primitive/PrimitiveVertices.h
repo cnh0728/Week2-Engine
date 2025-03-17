@@ -10,14 +10,17 @@ struct FVertexSimple
 	float X, Y, Z;    // Position
 	float R, G, B, A; // Color
 
-	void Set(const FMatrix WorldMatrix, const FVector4 Color)
+	void SetPos(const FMatrix WorldMatrix)
 	{
 		FVector4 Position(X, Y, Z, 1.0f);
 		Position = Position * WorldMatrix;
 		X = Position.X / Position.W;
 		Y = Position.Y / Position.W;
 		Z = Position.Z / Position.W;
-		
+	}
+
+	void SetColor(const FVector4 Color)
+	{
 		R = Color.X;
 		G = Color.Y;
 		B = Color.Z;

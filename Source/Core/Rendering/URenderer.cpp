@@ -330,10 +330,16 @@ void URenderer::AddVertices(UPrimitiveComponent* Component)
     
     // uint32_t UUID = Component->GetOwner()->GetUUID();
     TArray<FVertexSimple> Vertices = OriginVertices[Component->GetType()];
-    FVector4 Color = Component->GetColor();
+
     for (FVertexSimple& Vertex : Vertices)
     {
-        Vertex.Set(WorldMatrix, Color);
+        Vertex.SetPos(WorldMatrix);
+        if (Component->bCustomColor)
+        {
+            FVector4 Color = Component->GetColor();
+            Vertex.SetColor(Color);
+        }
+        
     }
     VertexBufferInfo& BufferInfo = BatchVertexBuffers[Topology];
     BufferInfo.AddVertices(Vertices);

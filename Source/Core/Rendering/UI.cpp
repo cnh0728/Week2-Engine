@@ -387,10 +387,11 @@ void UI::RenderPropertyWindow()
         UPrimitiveComponent* selectedComponent = FEditorManager::Get().GetSelectedComponent();
         if (selectedComponent != nullptr)
         {
-            if (ImGui::ColorEdit4("Color", ActorColor))
+            FVector4 ActorColor = selectedComponent->GetColor();
+            float* ColorArray = reinterpret_cast<float*>(&ActorColor);
+            if (ImGui::ColorEdit4("Color", ColorArray))
             {
-                FVector4 NewColor(ActorColor[0], ActorColor[1], ActorColor[2], ActorColor[3]);
-                selectedComponent->SetColor(NewColor);
+                selectedComponent->SetColor(ActorColor);
             }
         }
 

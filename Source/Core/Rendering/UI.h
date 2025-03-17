@@ -38,8 +38,8 @@ private:
 	ImVec2 InitialScreenSize;
 	URenderer* Renderer;
     float windowWidth;
-    float windowHeight;
-    float ActorColor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	float windowHeight;
+	
     
     void SetWindowLayout(float widthRatio, float heightRatio, float posXRatio, float posYRatio);
     TArray<FName> Unselectables;

@@ -136,30 +136,7 @@ bool AActor::Destroy()
 	return GetWorld()->DestroyActor(this);
 }
 
-void AActor::SetColor(FVector4 InColor)
-{
-	if (RootComponent == nullptr)
-	{
-		return;
-	}
-
-	UPrimitiveComponent* RootPrimitive = dynamic_cast<UPrimitiveComponent*>(RootComponent);
-	if (RootPrimitive)
-	{
-		RootPrimitive->SetColor(InColor);
-	}
-
-	for (auto& Component : Components)
-	{
-		UPrimitiveComponent* PrimitiveComponent = dynamic_cast<UPrimitiveComponent*>(Component);
-		if (PrimitiveComponent)
-		{
-			PrimitiveComponent->SetColor(InColor);
-		}
-	}
-}
-
-//void AActor::SetUseVertexColor(bool bUseVertexColor)
+//void AActor::SetColor(FVector4 InColor)
 //{
 //	if (RootComponent == nullptr)
 //	{
@@ -169,7 +146,7 @@ void AActor::SetColor(FVector4 InColor)
 //	UPrimitiveComponent* RootPrimitive = dynamic_cast<UPrimitiveComponent*>(RootComponent);
 //	if (RootPrimitive)
 //	{
-//		RootPrimitive->SetUseVertexColor(bUseVertexColor);
+//		RootPrimitive->SetColor(InColor);
 //	}
 //
 //	for (auto& Component : Components)
@@ -177,7 +154,7 @@ void AActor::SetColor(FVector4 InColor)
 //		UPrimitiveComponent* PrimitiveComponent = dynamic_cast<UPrimitiveComponent*>(Component);
 //		if (PrimitiveComponent)
 //		{
-//			PrimitiveComponent->SetUseVertexColor(bUseVertexColor);
+//			PrimitiveComponent->SetColor(InColor);
 //		}
 //	}
 //}

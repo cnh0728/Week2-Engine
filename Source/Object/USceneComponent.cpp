@@ -97,5 +97,5 @@ void USceneComponent::SetupAttachment(USceneComponent* InParent)
 void USceneComponent::SetColor(FVector4 Color)
 {
 	this->Color = Color;
+	bCustomColor = true;
 }
-

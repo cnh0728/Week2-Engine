@@ -48,6 +48,7 @@ protected:
 	FVector4 Color = FVector4::One();
 
 public:
+	bool bCustomColor = false;
 	void SetColor(FVector4 Color);
 	FVector4 GetColor() const { return Color; }
 };

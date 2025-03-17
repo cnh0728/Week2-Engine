@@ -106,9 +106,8 @@ public:
 	void SetupAttachment(AActor* InParent);
 	AActor* GetParent() const { return Parent; }
 	
-public:
-	void SetColor(FVector4 InColor);
-	//void SetUseVertexColor(bool bUseVertexColor);
+//public:
+//	void SetColor(FVector4 InColor);
 
 protected:
 	bool bCanEverTick = true;
