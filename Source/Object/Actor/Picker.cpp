@@ -98,11 +98,11 @@ void APicker::Tick(float DeltaTime)
             if (PickedComponent->GetOwner() == FEditorManager::Get().GetSelectedActor()) //이미 선택헀던 애면 선택 없애기
             {
                 PickedComponent = nullptr;
-                FEditorManager::Get().SelectActor(nullptr);
+                FEditorManager::Get().SelectPrimitive(nullptr);
                 return;
             }
             //아니면 최종 선택된애로 선정
-            FEditorManager::Get().SelectActor(PickedComponent->GetOwner());   
+            FEditorManager::Get().SelectPrimitive(PickedComponent);   
         }else //기즈모면
         {
             AGizmoHandle* Gizmo = dynamic_cast<AGizmoHandle*>(PickedComponent->GetOwner());
