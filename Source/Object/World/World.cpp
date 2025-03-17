@@ -185,7 +185,7 @@ bool UWorld::DestroyActor(AActor* InActor)
 	Actors.Remove(InActor);
 
 	//Render할 목록에서 제거
-	UEngine::Get().GetRenderer()->ReleaseVertexBuffer(InActor->GetUUID());
+	// UEngine::Get().GetRenderer()->ReleaseVertexBuffer(InActor->GetUUID());
 	
 	// 제거 대기열에 추가
 	PendingDestroyActors.Add(InActor);

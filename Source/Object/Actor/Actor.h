@@ -9,6 +9,13 @@
 
 class UWorld;
 
+enum class RenderType
+{
+	DefaultType,
+	BatchType,
+	InstancedType,
+};
+
 class AActor : public UObject
 {
 	friend class FEditorManager;
@@ -113,6 +120,8 @@ protected:
 	TSet<AActor*> Children;
 	TSet<UActorComponent*> Components;
 
+	RenderType RenderType = RenderType::BatchType; //원래 DefaultType으로 해야하는데 임시방편으로 전부 배치로 하겠음
+	
 private:
 	UWorld* World = nullptr;
 
