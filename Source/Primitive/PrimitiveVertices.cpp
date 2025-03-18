@@ -1,7 +1,18 @@
 ﻿#include "PrimitiveVertices.h"
 
-TMap<EPrimitiveType, TArray<FVertexSimple>> OriginVertices;
-TMap<EPrimitiveType, TArray<uint32_t>> OriginIndices;
+TMap<EPrimitiveType, TArray<FVertexSimple>> OriginVertices = {
+	{
+		EPrimitiveType::EPT_Line,{
+				{ -1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f , -1.0, 0.0f, 0.0f, 0.0f, 0.0f},
+				{  1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f , 1.0, 0.0f, 0.0f, 1.0f, 1.0f}
+		}
+	}
+};
+TMap<EPrimitiveType, TArray<uint32_t>> OriginIndices = {
+	{
+		EPrimitiveType::EPT_Line, {0, 1}
+	},
+};
 
 void FVertexSimple::CreateOriginVertices()
 {
