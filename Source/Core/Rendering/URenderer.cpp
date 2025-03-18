@@ -249,18 +249,18 @@ void URenderer::Render()
     { 
         auto& Key = Pair.Key;
         auto& Value = Pair.Value;
-
-        //그려야하느게 없으면 컨티뉴
-        if (Value.GetCount() == 0)
-        {
-            continue;
-        }
-
+        
         if (CurrentTopology != Value.GetTopology())
         {
             D3D11_PRIMITIVE_TOPOLOGY Topology = Value.GetTopology();
             DeviceContext->IASetPrimitiveTopology(Topology);
             CurrentTopology = Topology;
+        }
+
+        //그려야하느게 없으면 컨티뉴
+        if (Value.GetCount() == 0)
+        {
+            continue;
         }
         
         ID3D11Buffer* VertexBuffer = Value.GetBuffer();
