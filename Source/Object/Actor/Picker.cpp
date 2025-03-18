@@ -319,7 +319,7 @@ AActor* APicker::PickActorByPixel(FVector MousePos)
     return PickedActor;
 }
 
-const char* APicker::GetTypeName()
-{
-    return "Picker";
-}
+//const char* APicker::GetTypeName()
+//{
+//    return "Picker";
+//}

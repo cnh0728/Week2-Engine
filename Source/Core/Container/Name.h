@@ -121,23 +121,6 @@ public:
 
 
 
-#define DECLARE_CLASS(Class, Super) \
-    public: \
-    static UClass* StaticClass() { \
-        static UClass ClassPrivate(Super::StaticClass(), FName(#Class)); \
-        return &ClassPrivate; \
-    } \
-    virtual UClass* GetClass() const override { \
-        return StaticClass(); \
-    } \
-    virtual const char* GetTypeName() override { \
-        return #Class; \
-    } \
-    private:
-
-
-
-
 //
 //#define DECLARE_OBJECT(ClassName, SuperClass) \
 //private: \

@@ -20,6 +20,7 @@ enum class RenderType
 class AActor : public UObject
 {
 	friend class FEditorManager;
+	DECLARE_CLASS(AActor, UObject)
 public:
 	AActor();
 	virtual ~AActor() override = default;

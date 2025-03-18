@@ -19,7 +19,7 @@ class ACamera : public AActor
 {
 
     using Super = AActor;
-    
+	DECLARE_CLASS(ACamera, AActor)
 public:
     ACamera();
 

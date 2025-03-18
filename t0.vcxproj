@@ -295,6 +295,7 @@
     <ClInclude Include="Source\Object\Actor\Sphere.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ClassDiagram.cd" />
     <None Include="Source\ThirdParty\DirectXTex\Include\DirectXTex.inl" />
   </ItemGroup>
   <ItemGroup>

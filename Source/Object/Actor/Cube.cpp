@@ -23,7 +23,7 @@ void ACube::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-const char* ACube::GetTypeName()
-{
-	return "Cube";
-}
+//const char* ACube::GetTypeName()
+//{
+//	return "Cube";
+//}

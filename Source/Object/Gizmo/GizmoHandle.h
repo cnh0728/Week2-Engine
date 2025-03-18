@@ -20,6 +20,7 @@ enum class EGizmoType : uint8
 
 class AGizmoHandle : public AActor
 {
+	DECLARE_CLASS(AGizmoHandle, AActor)
 public:
 	AGizmoHandle();
 
@@ -40,7 +41,7 @@ private:
 	ESelectedAxis SelectedAxis = ESelectedAxis::None;
 	EGizmoType GizmoType = EGizmoType::Translate;
 
-	virtual const char* GetTypeName() override;
+	//virtual const char* GetTypeName() override;
 private:
 	TSet<UBoundingBoxComponent*> SelectedActorBoundingBox;
 };

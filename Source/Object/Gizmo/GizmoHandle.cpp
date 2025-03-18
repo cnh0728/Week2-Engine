@@ -210,10 +210,10 @@ void AGizmoHandle::SetActive(bool bActive)
 	}
 }
 
-const char* AGizmoHandle::GetTypeName()
-{
-	return "GizmoHandle";
-}
+//const char* AGizmoHandle::GetTypeName()
+//{
+//	return "GizmoHandle";
+//}
 
 void AGizmoHandle::DoTransform(FTransform& AT, FVector Result, AActor* Actor )
 {

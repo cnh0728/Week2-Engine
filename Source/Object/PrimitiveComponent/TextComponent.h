@@ -6,7 +6,7 @@ class UText;
 
 class UTextComponent : public UPrimitiveComponent {
 	using Super = UPrimitiveComponent;
-
+	DECLARE_CLASS(UTextComponent, UPrimitiveComponent)
 public:
 	UTextComponent();
 	virtual ~UTextComponent() = default;

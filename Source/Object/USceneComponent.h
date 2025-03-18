@@ -10,6 +10,7 @@ class USceneComponent : public UActorComponent
 {
 	friend class AActor;
 	using Super = UActorComponent;
+	DECLARE_CLASS(USceneComponent, UActorComponent)
 public:
 	USceneComponent() = default;
 

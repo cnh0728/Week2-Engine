@@ -25,7 +25,7 @@ void ACone::Tick(float DeltaTime)
     Super::Tick(DeltaTime);
 }
 
-const char* ACone::GetTypeName()
-{
-    return "Cone";
-}
+//const char* ACone::GetTypeName()
+//{
+//    return "Cone";
+//}

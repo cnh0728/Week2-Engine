@@ -7,6 +7,7 @@ class UBoundingBoxComponent :
     public UPrimitiveComponent
 {
 	using Super = USceneComponent;
+	DECLARE_CLASS(UBoundingBoxComponent, UPrimitiveComponent)
 public:
 	UBoundingBoxComponent()
 	{

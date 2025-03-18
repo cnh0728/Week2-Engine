@@ -64,9 +64,6 @@
     <ClCompile Include="Source\Core\Rendering\Text\Text.cpp">
       <Filter>Core\Rendering\Text</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Core\Rendering\BufferCache.cpp">
-      <Filter>Core\Rendering</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Core\Rendering\Texture.cpp">
       <Filter>Core\Rendering</Filter>
     </ClCompile>
@@ -80,9 +77,6 @@
       <Filter>Data</Filter>
     </ClCompile>
     <ClCompile Include="Source\Data\JsonSaveHelper.cpp">
-      <Filter>Data</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Data\UCameraSettings.cpp">
       <Filter>Data</Filter>
     </ClCompile>
     <ClCompile Include="Source\Data\UDeveloperSettings.cpp">
@@ -154,12 +148,13 @@
     <ClCompile Include="Source\Object\USceneComponent.cpp">
       <Filter>Object</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Object\PrimitiveComponent\UUIDTextComponent.cpp">
-      <Filter>Object\PrimitiveComponent</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Object\PrimitiveComponent\TextComponent.cpp">
       <Filter>Object\PrimitiveComponent</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Object\Class\Class.cpp" />
+    <ClCompile Include="Source\Core\Math\Box.cpp" />
+    <ClCompile Include="Source\Data\SettingsLoader.cpp" />
+    <ClCompile Include="Source\Object\PrimitiveComponent\UBoundingBox.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Core\AbstractClass\Singleton.h">
@@ -255,9 +250,6 @@
     <ClInclude Include="Source\Core\Rendering\Text\Text.h">
       <Filter>Core\Rendering\Text</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Core\Rendering\BufferCache.h">
-      <Filter>Core\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Core\Rendering\Texture.h">
       <Filter>Core\Rendering</Filter>
     </ClInclude>
@@ -274,9 +266,6 @@
       <Filter>Data</Filter>
     </ClInclude>
     <ClInclude Include="Source\Data\JsonSaveHelper.h">
-      <Filter>Data</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Data\UCameraSettings.h">
       <Filter>Data</Filter>
     </ClInclude>
     <ClInclude Include="Source\Data\UDeveloperSettings.h">
@@ -351,17 +340,19 @@
     <ClInclude Include="Source\Object\USceneComponent.h">
       <Filter>Object</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Object\PrimitiveComponent\UUIDTextComponent.h">
-      <Filter>Object\PrimitiveComponent</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Object\PrimitiveComponent\TextComponent.h">
       <Filter>Object\PrimitiveComponent</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Object\Class\Class.h" />
+    <ClInclude Include="Source\Core\Math\Box.h" />
+    <ClInclude Include="Source\Data\SettingsLoader.h" />
+    <ClInclude Include="Source\Object\PrimitiveComponent\UBoundingBox.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\ThirdParty\DirectXTex\Include\DirectXTex.inl">
       <Filter>ThirdParty\DirectXTex\Include</Filter>
     </None>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Core">
