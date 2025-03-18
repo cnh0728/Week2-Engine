@@ -16,6 +16,7 @@ public:
     
     void SelectPrimitive(UPrimitiveComponent* NewPrimitive);
     void SelectActor(AActor* NewActor);
+    void SetDeselectActor();
 
     inline ACamera* GetCamera() const {return Camera;}
 

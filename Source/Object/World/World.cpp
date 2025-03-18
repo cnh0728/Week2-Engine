@@ -124,12 +124,13 @@ void UWorld::RenderMainTexture(URenderer& Renderer)
 	Renderer.ClearVertex();
 	for (auto& RenderComponent  : RenderComponents)
 	{
-		if (RenderComponent->GetCanBeRendered() == false)
-		{
-			continue;
-		}
+		if (RenderComponent->GetCanBeRendered() == false) continue;
 		if (!FEditorManager::Get().IsShowFlagSet(EEngineShowFlags::SF_Primitives))
-			continue;
+		{
+			if (RenderComponent->IsCanPick()) continue;
+			if (FEditorManager::Get().GetSelectedActor() != nullptr)
+				FEditorManager::Get().SetDeselectActor();
+		}
 
 		// RenderComponent->UpdateConstantDepth(Renderer, depth);
 
@@ -141,6 +142,8 @@ void UWorld::RenderMainTexture(URenderer& Renderer)
 
 	for (auto& RenderComponent : RenderComponents)
 	{
+		if (!FEditorManager::Get().IsShowFlagSet(EEngineShowFlags::SF_BillboardText)) continue;
+
 		if (UTextComponent* TextComponent = dynamic_cast<UTextComponent*>(RenderComponent))
 		{
 			TextComponent->RenderText(Renderer, TextComponent->GetText(),

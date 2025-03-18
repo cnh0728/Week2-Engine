@@ -41,6 +41,7 @@ public:
 	
 	void SetIsOrthoGraphic(bool IsOrtho) { bIsOrthoGraphic = IsOrtho; }
 	bool GetIsOrthoGraphic() { return bIsOrthoGraphic;}
+	void SetCanPick(bool bCanPick) { this->bCanPick = bCanPick; }
 	bool IsCanPick() const { return bCanPick; }
 protected:
 	bool bCanPick = false;

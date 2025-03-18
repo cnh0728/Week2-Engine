@@ -65,7 +65,8 @@ void APicker::Tick(float DeltaTime)
                     MinDistance = Distance;
                     IsFindGizmo = true;
                     PickedComponent = Primitive;
-                }else
+                }
+                else
                 {
                     if (MinDistance > Distance)
                     {

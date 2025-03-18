@@ -10,7 +10,8 @@ enum class EEngineShowFlags : uint64
 
 class FEngineShowFlags {
 public:
-	FEngineShowFlags() : Flags(static_cast<uint64_t>(EEngineShowFlags::SF_Primitives)) {}
+	FEngineShowFlags() : Flags(static_cast<uint64_t>(EEngineShowFlags::SF_Primitives) |
+							   static_cast<uint64_t>(EEngineShowFlags::SF_BillboardText)) {}
 
 	bool IsSet(EEngineShowFlags Flag) const {
 		return (Flags & static_cast<uint64_t>(Flag)) != 0;
@@ -34,6 +35,6 @@ public:
 			IsSet(EEngineShowFlags::SF_BillboardText));
 	}
 private:
-	// flag를 비트 단위로 저장 & bitwise 연산으로 각각의 flag 확인 및 수정
+	// 각 플래그의 on/off상태를 Flags의 각 비트에 저장
 	uint64_t Flags;
 };

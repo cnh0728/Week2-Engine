@@ -109,9 +109,6 @@ public:
 	void SetRootComponent(USceneComponent* InRootComponent) { RootComponent = InRootComponent; }
 	void SetupAttachment(AActor* InParent);
 	AActor* GetParent() const { return Parent; }
-	
-//public:
-//	void SetColor(FVector4 InColor);
 
 protected:
 	bool bCanEverTick = true;
@@ -129,9 +126,6 @@ protected:
 	
 private:
 	UWorld* World = nullptr;
-
-public:
-	
 };
 
 

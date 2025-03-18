@@ -84,6 +84,12 @@ void FEditorManager::SelectActor(AActor* NewActor)
 	}
 }
 
+void FEditorManager::SetDeselectActor()
+{
+	SelectedActor->UnPick();
+	SelectedActor = nullptr;
+}
+
 void FEditorManager::SetCamera(ACamera* NewCamera)
 {
     Camera = NewCamera;

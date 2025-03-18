@@ -333,11 +333,18 @@ void UI::RenderViewMode() {
 }
 
 void UI::RenderShowFlag() {
+    ImGui::Text("Show Flag");
     bool bShowPrimitives = FEditorManager::Get().IsShowFlagSet(EEngineShowFlags::SF_Primitives);
     if (ImGui::Checkbox("Show Primtives", &bShowPrimitives))
     {
         FEditorManager::Get().SetShowFlag(EEngineShowFlags::SF_Primitives, bShowPrimitives);
     }
+
+	bool bShowText = FEditorManager::Get().IsShowFlagSet(EEngineShowFlags::SF_BillboardText);
+	if (ImGui::Checkbox("Show BillboardText", &bShowText))
+	{
+		FEditorManager::Get().SetShowFlag(EEngineShowFlags::SF_BillboardText, bShowText);
+	}
 }
 
 void UI::RenderPropertyWindow()
@@ -345,8 +352,12 @@ void UI::RenderPropertyWindow()
     SetWindowLayout(0.3f, 0.4f, 0.f, 0.6f);
     ImGui::Begin("Properties");
     AActor* selectedActor = FEditorManager::Get().GetSelectedActor();
+
     if (selectedActor != nullptr)
     {
+		// test
+		ImGui::Text("selected : %d", selectedActor->GetUUID());
+
         FTransform selectedTransform = selectedActor->GetActorRelativeTransform();
         float position[] = { selectedTransform.GetPosition().X, selectedTransform.GetPosition().Y, selectedTransform.GetPosition().Z };
         float scale[] = { selectedTransform.GetScale().X, selectedTransform.GetScale().Y, selectedTransform.GetScale().Z };
@@ -398,15 +409,13 @@ void UI::RenderPropertyWindow()
             {
                 selectedComponent->SetColor(ActorColor);
             }
-            bool bRender = selectedComponent->GetCanBeRendered();
-            if (ImGui::Checkbox("Show Primitive", &bRender))
-            {
-                selectedComponent->SetCanBeRendered(bRender);
-            }
-        
-        }
 
-        
+            bool bShowPrimitive = selectedComponent->GetCanBeRendered();
+            if (ImGui::Checkbox("Show Primitive", &bShowPrimitive))
+            {
+                selectedComponent->SetCanBeRendered(bShowPrimitive);
+            }
+        }
     }
     ImGui::End();
 }
