@@ -100,7 +100,7 @@ public:
 
 	void SetActorRelatvieTransform(const FTransform& InTransform);
 	bool CanEverTick() const { return bCanEverTick; }
-	virtual const char* GetTypeName();
+	//virtual const char* GetTypeName();
 
 	bool Destroy();
 

@@ -9,6 +9,56 @@
 AGizmoHandle::AGizmoHandle()
 {
 	bIsGizmo = true;
+	const float GizmoSize = 0.05;
+	const float GizmoSizeMultiplier = 1 / GizmoSize;
+
+	UCubeComp* GizmoCenter = AddComponent<UCubeComp>();
+	SetRootComponent(GizmoCenter);
+	GizmoCenter->SetColor(FVector4(0.2f, 0.2f, 0.2f, 1.f));
+	GizmoCenter->SetRelativeTransform(FTransform(FVector(0, 0, 0), FVector(0, 0, 0), FVector(GizmoSize, GizmoSize, GizmoSize)));
+
+	UCylinderComp* XArrowBody = AddComponent<UCylinderComp>();
+	UConeComp* XArrowHead = AddComponent<UConeComp>();
+	XArrowBody->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0, -90, 0), FVector(0.2f, 0.2f, 0.3f) * GizmoSizeMultiplier));
+	XArrowHead->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.4f), FQuat(0, 0, 0, 1), FVector(0.1f, 0.1f, 0.2f)));
+	XArrowBody->SetColor(FVector4(1.0f, 0.0f, 0.0f, 1.0f));
+	XArrowHead->SetColor(FVector4(1.0f, 0.0f, 0.0f, 1.0f));
+	XArrowHead->SetupAttachment(XArrowBody);
+
+	UCylinderComp* YArrowBody = AddComponent<UCylinderComp>();
+	UConeComp* YArrowHead = AddComponent<UConeComp>();
+	YArrowBody->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(90, 0, 0), FVector(0.2f, 0.2f, 0.3f) * GizmoSizeMultiplier));
+	YArrowHead->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.4f), FQuat(0, 0, 0, 1), FVector(0.1f, 0.1f, 0.2f)));
+	YArrowBody->SetColor(FVector4(0.0f, 1.0f, 0.0f, 1.0f));
+	YArrowHead->SetColor(FVector4(0.0f, 1.0f, 0.0f, 1.0f));
+	YArrowHead->SetupAttachment(YArrowBody);
+
+	UCylinderComp* ZArrowBody = AddComponent<UCylinderComp>();
+	UConeComp* ZArrowHead = AddComponent<UConeComp>();
+	ZArrowBody->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0, 0, 0), FVector(0.2f, 0.2f, 0.3f) * GizmoSizeMultiplier));
+	ZArrowHead->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.4f), FQuat(0, 0, 0, 1), FVector(0.1f, 0.1f, 0.2f)));
+	ZArrowBody->SetColor(FVector4(0.0f, 0.0f, 1.0f, 1.0f));
+	ZArrowHead->SetColor(FVector4(0.0f, 0.0f, 1.0f, 1.0f));
+	ZArrowHead->SetupAttachment(ZArrowBody);
+
+
+	XArrowBody->SetupAttachment(GizmoCenter);
+	YArrowBody->SetupAttachment(GizmoCenter);
+	ZArrowBody->SetupAttachment(GizmoCenter);
+
+	UEngine::Get().GetWorld()->AddZIgnoreComponent(XArrowBody);
+	UEngine::Get().GetWorld()->AddZIgnoreComponent(XArrowHead);
+	UEngine::Get().GetWorld()->AddZIgnoreComponent(YArrowBody);
+	UEngine::Get().GetWorld()->AddZIgnoreComponent(YArrowHead);
+	UEngine::Get().GetWorld()->AddZIgnoreComponent(ZArrowBody);
+	UEngine::Get().GetWorld()->AddZIgnoreComponent(ZArrowHead);
+	UEngine::Get().GetWorld()->AddZIgnoreComponent(GizmoCenter);
+
+	SetActive(false);
+
+	return;
+
+	bIsGizmo = true;
 	
 	// !NOTE : Z방향으로 서있음
 	// z

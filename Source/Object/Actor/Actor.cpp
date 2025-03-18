@@ -128,10 +128,10 @@ void AActor::SetActorRelatvieTransform(const FTransform& InTransform)
 	}
 }
 
-const char* AActor::GetTypeName()
-{
-	return "Actor";
-}
+//const char* AActor::GetTypeName()
+//{
+//	return "Actor";
+//}
 
 bool AActor::Destroy()
 {

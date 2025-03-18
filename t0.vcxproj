@@ -171,6 +171,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Object\Class\Class.cpp" />
     <ClCompile Include="Source\Core\Math\Box.cpp" />
     <ClCompile Include="Source\Core\Container\Name.cpp" />
     <ClCompile Include="Source\Core\Math\Plane.cpp" />
@@ -219,6 +220,7 @@
     <ClCompile Include="Source\Object\Actor\Sphere.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Object\Class\Class.h" />
     <ClInclude Include="Source\Core\Math\Box.h" />
     <ClInclude Include="Source\Core\Container\Name.h" />
     <ClInclude Include="Source\Core\Rendering\Texture.h" />

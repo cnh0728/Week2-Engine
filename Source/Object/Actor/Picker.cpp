@@ -116,7 +116,7 @@ void APicker::Tick(float DeltaTime)
                 return;
             }
                 
-			UCylinderComp* CylinderComp = dynamic_cast<UCylinderComp*>(PickedComponent);
+            UPrimitiveComponent* CylinderComp = dynamic_cast<UPrimitiveComponent*>(PickedComponent);
 			FVector4 CompColor = CylinderComp->GetColor();
             if (1.0f - FMath::Abs(CompColor.X) < KINDA_SMALL_NUMBER) // Red - X축
             {
