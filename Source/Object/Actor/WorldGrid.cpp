@@ -13,11 +13,11 @@ AWorldGrid::AWorldGrid()
     {
         ULineComp* XLineComponent = AddComponent<ULineComp>();
         XLineComponent->SetupAttachment(RootComponent);
-        XLineComponent->SetRelativeTransform(FTransform(FVector(0.f, static_cast<float>(i), 0.f), FVector(0.f, 0.f, 0.f), FVector(500.f, 1.f, 1.f)));
+        XLineComponent->SetRelativeTransform(FTransform(FVector(0.f, static_cast<float>(i), 0.0f), FVector(0.f, 0.f, 0.f), FVector(500.f, 1.f, 1.f)));
 
         ULineComp* YLineComponent = AddComponent<ULineComp>();
         YLineComponent->SetupAttachment(RootComponent);
-        YLineComponent->SetRelativeTransform(FTransform(FVector(static_cast<float>(i), 0.f, 0.f), FVector(0.f, 0.f, 90.f), FVector(500.f, 1.f, 1.f)));
+        YLineComponent->SetRelativeTransform(FTransform(FVector(static_cast<float>(i), 0.f, 0.0f), FVector(0.f, 0.f, 90.f), FVector(500.f, 1.f, 1.f)));
 
         // ULineComp* YLineComponent = AddComponent<ULineComp>();
     }
@@ -47,15 +47,13 @@ void AWorldGrid::BeginPlay()
 void AWorldGrid::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
-
-    int ThersholdLine = 30;
     
     FTransform GridTransform = GetActorRelativeTransform();
 
     FVector CameraLocation = FEditorManager::Get().GetCamera()->GetActorRelativeTransform().GetPosition();
     FVector GridLocation = GridTransform.GetPosition();
     float GridScale = GridTransform.GetScale().X; //X,Y,Z 같으니까 임의로 한개
-    float Threshold = GridScale * ThersholdLine;
+    float Threshold = 30.f;
     
     if (GridLocation.X + Threshold < CameraLocation.X) //카메라가 그리드위치보다 30정도 더가면
     {
