@@ -14,6 +14,8 @@ struct VS_INPUT
 {
     float4 position : POSITION; // Input position from vertex buffer
     float2 texCoord : TEXCOORD0;
+    float3 normal : NORMAL;
+    float2 uv : UV;
 };
 
 struct PS_INPUT

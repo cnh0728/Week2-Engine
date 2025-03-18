@@ -15,7 +15,7 @@ public:
 	virtual void RenderText(URenderer& Renderer, const FString& InText, const FVector& InTextPos, const FVector& InTextSize);
 	EPrimitiveType GetType() override
 	{
-		return EPrimitiveType::EPT_Text;
+		return EPrimitiveType::EPT_Texture;
 	}
 	virtual void SetTextSize(const uint32& InTextSize);
 	virtual uint32 GetTextSize() const;

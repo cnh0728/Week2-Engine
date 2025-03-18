@@ -21,7 +21,6 @@
 #include "Object/World/World.h"
 #include "Object/Gizmo/GizmoHandle.h"
 
-
 void UI::Initialize(HWND hWnd, URenderer& Renderer, UINT ScreenWidth, UINT ScreenHeight)
 {
     // ImGui 초기화
@@ -160,6 +159,8 @@ void UI::RenderMemoryUsage()
 
 void UI::RenderPrimitiveSelection()
 {
+    
+    
     const char* items[] = { "Sphere", "Cube", "Cylinder", "Cone" };
 
     ImGui::Combo("Primitive", &currentItem, items, IM_ARRAYSIZE(items));
