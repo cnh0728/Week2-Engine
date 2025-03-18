@@ -1,19 +1,13 @@
 ﻿#include "PrimitiveVertices.h"
 
-TMap<EPrimitiveType, std::tuple<TArray<int>, TArray<int>>> A = {
-	EPrimitiveType::EPT_Line,
-	{{1}, {1}}
-};
-
-
-TMap<EPrimitiveType, TPair<TArray<FVertexSimple>, TArray<uint32_t>> > OriginVertices = {
-	{ 
-			EPrimitiveType::EPT_Line,{{ 
-			{ -1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f },
-			{  1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f }
-			} , {0, 1}}
-	    },
-	{
+TMap<EPrimitiveType, TArray<FVertexSimple>> OriginVertices = {
+{ 
+		EPrimitiveType::EPT_Line,{ 
+		{ -1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f },
+		{  1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f }
+		} 
+    },
+{
 		EPrimitiveType::EPT_Triangle,{
 		{  0.0f,  1.0f, 0.0f,  1.0f, 0.0f, 0.0f, 1.0f }, // Top vertex (red)
 		{  1.0f, -1.0f, 0.0f,  0.0f, 1.0f, 0.0f, 1.0f }, // Bottom-right vertex (green)
