@@ -23,50 +23,70 @@ class ACamera;
 struct VertexBufferInfo
 {
 public:
-	VertexBufferInfo() = default;
-	VertexBufferInfo(ID3D11Buffer* InBuffer, uint32_t VerticeCount, D3D_PRIMITIVE_TOPOLOGY InTopology, TArray<FVertexSimple>& InVertices)
+
+	VertexBufferInfo(ID3D11Buffer* InVertexBuffer, ID3D11Buffer* InIndexBuffer, TArray<FVertexSimple>& InVertices, TArray<uint32_t>& InIndices, EPrimitiveType InVertexType, D3D11_PRIMITIVE_TOPOLOGY InTopology)
 	{
-		VertexBuffer = InBuffer;
-		// InstanceBuffer = InInstanceBuffer;
-		VertexCount = VerticeCount;
-		Topology = InTopology;
-		//orginVertex에서 가져올거라서 복사해와야함
+		VertexBuffer = InVertexBuffer;
+		IndexBuffer = InIndexBuffer;
 		Vertices = InVertices;
-		PreCount = VerticeCount;
+		Indices = InIndices;
+
+		VerticesCount = Vertices.Num();
+		IndicesCount = Indices.Num();
+		
+		PreVerticesCount = VerticesCount;
+		VertexType = InVertexType;
+
+		Topology = InTopology;
 	}
 
-	VertexBufferInfo(uint32_t VerticeCount, D3D_PRIMITIVE_TOPOLOGY InTopology, TArray<FVertexSimple>& InVertices)
+	VertexBufferInfo(TArray<FVertexSimple>& InVertices, TArray<uint32_t>& InIndices, EPrimitiveType InVertexType, D3D11_PRIMITIVE_TOPOLOGY InTopology)
 	{
-		// InstanceBuffer = InInstanceBuffer;
-		VertexCount = VerticeCount;
-		Topology = InTopology;
-		//orginVertex에서 가져올거라서 복사해와야함
 		Vertices = InVertices;
-		PreCount = VerticeCount;
+		Indices = InIndices;
+
+		VerticesCount = Vertices.Num();
+		IndicesCount = Indices.Num();
+		
+		PreVerticesCount = VerticesCount;
+		VertexType = InVertexType;
+
+		Topology = InTopology;
 	}
 	
 	~VertexBufferInfo()
 	{
 	}
 
-	ID3D11Buffer*& GetBuffer() { return VertexBuffer; }
-	uint32_t GetCount() const { return VertexCount; }
+	ID3D11Buffer*& GetVertexBuffer() { return VertexBuffer; }
+	ID3D11Buffer*& GetIndexBuffer() { return IndexBuffer; }
+	uint32_t GetVerticesCount() const { return VerticesCount; }
+	uint32_t GetIndicesCount() const { return IndicesCount; }
 	D3D_PRIMITIVE_TOPOLOGY GetTopology() const { return Topology; }
 	TArray<FVertexSimple> GetVertices() const { return Vertices; }
-	uint32_t GetPreCount() const { return PreCount; }
+	TArray<uint32_t> GetIndices() const { return Indices; }
+	uint32_t GetPreVerticesCount() const { return PreVerticesCount; }
+	EPrimitiveType GetVertexType() const { return VertexType; }
 
-	void AddVertices(TArray<FVertexSimple> InVertices){ Vertices.Insert(Vertices.end(), InVertices.begin(), InVertices.end()); VertexCount = Vertices.Num(); }
-	void ClearVertices(){ Vertices = {}; VertexCount = 0; }
+	void AddVertices(TArray<FVertexSimple> InVertices, TArray<uint32_t> InIndices);
+	void ClearVertices();
 	// ID3D11Buffer* GetInstanceBuffer() { return InstanceBuffer; }
 	// void SetInstanceBuffer(ID3D11Buffer* InInstanceBuffer) { InstanceBuffer = InInstanceBuffer; }
 	
 private:
-	ID3D11Buffer* VertexBuffer;
+	ID3D11Buffer* VertexBuffer;//버텍스는 생성할때 한번만 프리미티브따라서
+	ID3D11Buffer* IndexBuffer;
 	// ID3D11Buffer* InstanceBuffer;
-	D3D_PRIMITIVE_TOPOLOGY Topology;
-	uint32_t VertexCount;
+	uint32_t IndicesCount;
 	TArray<FVertexSimple> Vertices;
-	uint32_t PreCount;
+
+	uint32_t VerticesCount;
+	TArray<uint32_t> Indices;
+
+	uint32_t PreVerticesCount;
+
+	EPrimitiveType VertexType;
+	D3D_PRIMITIVE_TOPOLOGY Topology;
 };
 
 enum class EViewModeIndex : uint32
@@ -134,7 +154,7 @@ public:
     /** 셰이더를 준비 합니다. */
     void PrepareShader() const;
     void Render();
-    void CreateVertexBuffer(D3D11_PRIMITIVE_TOPOLOGY Topology, VertexBufferInfo BufferInfo);
+    void CreateVertexBuffer(EPrimitiveType VertexType, VertexBufferInfo BufferInfo);
 
     /**
      * 정점 데이터로 Vertex Buffer를 생성합니다.
@@ -144,20 +164,20 @@ public:
      */
     void ClearVertex();
 	void AddVertices(UPrimitiveComponent* Component);
-    void ResizeVertexBuffer(D3D11_PRIMITIVE_TOPOLOGY Topology);
-    void InsertNewVerticesIntoVertexBuffer(D3D11_PRIMITIVE_TOPOLOGY Topology);
+    void ResizeVertexBuffer(EPrimitiveType VertexType);
+    void InsertNewVerticesIntoVertexBuffer(EPrimitiveType VertexType);
     void UpdateVertexBuffer();
-    TMap<D3D11_PRIMITIVE_TOPOLOGY, bool> CheckChangedVertexCountUUID();
+    TMap<EPrimitiveType, bool> CheckChangedVertexCountUUID();
 
-	VertexBufferInfo GetVertexBufferInfo(D3D11_PRIMITIVE_TOPOLOGY Topology) { return BatchVertexBuffers[Topology];}
-	void SetVertexBufferInfo(D3D11_PRIMITIVE_TOPOLOGY Topology, VertexBufferInfo BufferInfo)
+	VertexBufferInfo GetVertexBufferInfo(EPrimitiveType VertexType) { return BatchVertexBuffers[VertexType];}
+	void SetVertexBufferInfo(EPrimitiveType VertexType, VertexBufferInfo BufferInfo)
 	{
-		if (BatchVertexBuffers.Contains(Topology)){ BatchVertexBuffers[Topology] = BufferInfo;}
-		else							{    BatchVertexBuffers.Add(Topology, BufferInfo);}
+		if (BatchVertexBuffers.Contains(VertexType)){ BatchVertexBuffers[VertexType] = BufferInfo;}
+		else							{    BatchVertexBuffers.Add(VertexType, BufferInfo);}
 	}
 	
     /** Buffer를 해제합니다. */
-	void ReleaseVertexBuffer(D3D11_PRIMITIVE_TOPOLOGY Topology);
+	void ReleaseVertexBuffer(EPrimitiveType VertexType);
     void ReleaseAllVertexBuffer();
     /** Constant Data를 업데이트 합니다. */
     void UpdateConstant() const;
@@ -234,7 +254,7 @@ protected:
     ID3D11RenderTargetView* FrameBufferRTV = nullptr;       // 텍스처를 렌더 타겟으로 사용하는 뷰
     ID3D11RasterizerState* RasterizerState = nullptr;       // 래스터라이저 상태(컬링, 채우기 모드 등 정의)
     ID3D11Buffer* ConstantBuffer = nullptr;                 // 쉐이더에 데이터를 전달하기 위한 상수 버퍼
-	TMap<D3D11_PRIMITIVE_TOPOLOGY, VertexBufferInfo> BatchVertexBuffers;
+	TMap<EPrimitiveType, VertexBufferInfo> BatchVertexBuffers;
 	
     FLOAT ClearColor[4] = { 0.025f, 0.025f, 0.025f, 1.0f }; // 화면을 초기화(clear)할 때 사용할 색상 (RGBA)
     D3D11_VIEWPORT ViewportInfo = {};                       // 렌더링 영역을 정의하는 뷰포트 정보

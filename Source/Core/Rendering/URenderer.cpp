@@ -5,6 +5,24 @@
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Static/FEditorManager.h"
 
+void VertexBufferInfo::AddVertices(TArray<FVertexSimple> InVertices, TArray<uint32_t> InIndices)
+{
+    Vertices.Insert(Vertices.end(), InVertices.begin(), InVertices.end());
+    
+    
+    Indices.Insert(Indices.end(), InVertices.begin(), InVertices.end());
+    IndicesCount = Indices.Num();
+}
+
+void VertexBufferInfo::ClearVertices()
+{
+    Vertices = {};
+    VerticesCount = 0;
+    
+    Indices = {};
+    IndicesCount = 0;
+}
+
 URenderer::~URenderer()
 {
     Release();
@@ -215,7 +233,7 @@ void URenderer::PrepareShader() const
     }
 }
 
-TMap<D3D11_PRIMITIVE_TOPOLOGY, bool> URenderer::CheckChangedVertexCountUUID()
+TMap<EPrimitiveType, bool> URenderer::CheckChangedVertexCountUUID()
 {
     TMap<D3D11_PRIMITIVE_TOPOLOGY, bool> Topologies;
 
@@ -225,9 +243,9 @@ TMap<D3D11_PRIMITIVE_TOPOLOGY, bool> URenderer::CheckChangedVertexCountUUID()
         
         VertexBufferInfo BufferInfo = BatchVertexBuffers[Key];
     
-        if (BufferInfo.GetCount() > 0)
+        if (BufferInfo.GetIndicesCount() > 0)
         {
-            if (BufferInfo.GetCount() != BufferInfo.GetPreCount())
+            if (BufferInfo.GetIndicesCount() != BufferInfo.GetPreVerticesCount())
             {
                 Topologies.Add(Key, true);
             }else
@@ -251,7 +269,7 @@ void URenderer::Render()
         auto& Value = Pair.Value;
 
         //그려야하느게 없으면 컨티뉴
-        if (Value.GetCount() == 0)
+        if (Value.GetIndicesCount() == 0)
         {
             continue;
         }
@@ -263,31 +281,31 @@ void URenderer::Render()
             CurrentTopology = Topology;
         }
         
-        ID3D11Buffer* VertexBuffer = Value.GetBuffer();
+        ID3D11Buffer* VertexBuffer = Value.GetVertexBuffer();
 
         UINT Offset = 0;
         DeviceContext->IASetVertexBuffers(0, 1, &VertexBuffer, &Stride, &Offset);
         
-        DeviceContext->Draw(Value.GetCount(), 0);
+        DeviceContext->Draw(Value.GetIndicesCount(), 0);
     }
 }
 
-void URenderer::CreateVertexBuffer(D3D11_PRIMITIVE_TOPOLOGY Topology, VertexBufferInfo BufferInfo)
+void URenderer::CreateVertexBuffer(EPrimitiveType VertexType, VertexBufferInfo BufferInfo)
 {
     TArray<FVertexSimple> Vertices = BufferInfo.GetVertices();
     FVertexSimple* RawVertices = Vertices.GetData();
-    // D3D11_PRIMITIVE_TOPOLOGY Topology = BufferInfo.GetTopology();
+    D3D11_PRIMITIVE_TOPOLOGY Topology = BufferInfo.GetTopology();
 
-    uint32_t ByteWidth = BufferInfo.GetCount() * sizeof(FVertexSimple);
+    uint32_t VertexByteWidth = BufferInfo.GetIndicesCount() * sizeof(FVertexSimple);
 
-    if (ByteWidth == 0)
+    if (VertexByteWidth == 0)
     {
         return;
     }
     
     D3D11_BUFFER_DESC VertexBufferDesc = {};
     VertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-    VertexBufferDesc.ByteWidth = ByteWidth;
+    VertexBufferDesc.ByteWidth = VertexByteWidth;
     VertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
     VertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
     
@@ -297,9 +315,26 @@ void URenderer::CreateVertexBuffer(D3D11_PRIMITIVE_TOPOLOGY Topology, VertexBuff
     //UUID받으면 설정이 빈 버퍼 만들어주기
     ID3D11Buffer* VertexBuffer;
     Device->CreateBuffer(&VertexBufferDesc, &VertexBufferSRD, &VertexBuffer);
+
+    uint32_t IndexByteWidth = BufferInfo.GetIndicesCount() * sizeof(uint32_t);
     
-    VertexBufferInfo NewBufferInfo = {VertexBuffer, static_cast<uint32_t>(ByteWidth/sizeof(FVertexSimple)), Topology, Vertices};
-    SetVertexBufferInfo(Topology, NewBufferInfo);
+    D3D11_BUFFER_DESC IndexBufferDesc = {};
+    IndexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+    IndexBufferDesc.ByteWidth = IndexByteWidth;
+    IndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+    IndexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+
+    TArray<uint32_t> Indices = BufferInfo.GetIndices();
+    uint32_t* RawIndices = Indices.GetData();
+    
+    D3D11_SUBRESOURCE_DATA IndexBufferSRD = {};
+    IndexBufferSRD.pSysMem = RawIndices;
+
+    ID3D11Buffer* IndexBuffer;
+    Device->CreateBuffer(&IndexBufferDesc, &IndexBufferSRD, &IndexBuffer);
+    
+    VertexBufferInfo NewBufferInfo = {VertexBuffer, IndexBuffer, Vertices, Indices, BufferInfo.GetVertexType(), Topology};
+    SetVertexBufferInfo(VertexType, NewBufferInfo);
     // VertexBuffers.Add(UUID, NewBufferInfo);
  }
 
@@ -309,7 +344,7 @@ void URenderer::ClearVertex()
     {
         auto& Value = Pair.Value;
         
-        if (Value.GetCount() > 0)
+        if (Value.GetVerticesCount() > 0)
         {
             Value.ClearVertices();
         }
@@ -324,11 +359,13 @@ void URenderer::AddVertices(UPrimitiveComponent* Component)
     
     //월드매트릭스만 해주고 V, P는 Constant로 넘기기 (Primitivie별로 곱해줄 필요없으니까
 
-    D3D11_PRIMITIVE_TOPOLOGY Topology = Component->GetTopology();
+    EPrimitiveType VertexType = Component->GetType();
     
     // uint32_t UUID = Component->GetOwner()->GetUUID();
     TArray<FVertexSimple> Vertices = OriginVertices[Component->GetType()];
 
+    TArray<uint32_t> Indices = Origin
+    
     for (FVertexSimple& Vertex : Vertices)
     {
         Vertex.SetPos(WorldMatrix);
@@ -339,38 +376,38 @@ void URenderer::AddVertices(UPrimitiveComponent* Component)
         }
         
     }
-    VertexBufferInfo& BufferInfo = BatchVertexBuffers[Topology];
-    BufferInfo.AddVertices(Vertices);
+    VertexBufferInfo& BufferInfo = BatchVertexBuffers[VertexType];
+    BufferInfo.AddVertices(Vertices, TODO);
 }
 
-void URenderer::ResizeVertexBuffer(D3D11_PRIMITIVE_TOPOLOGY Topology)
+void URenderer::ResizeVertexBuffer(EPrimitiveType VertexType)
 {
-    if (BatchVertexBuffers.Contains(Topology) == false)
+    if (BatchVertexBuffers.Contains(VertexType) == false)
     {
         return;
     }
 
-    VertexBufferInfo BufferInfo = BatchVertexBuffers[Topology]; //버텍스버퍼를 제외한 이전 정보 저장용
+    VertexBufferInfo BufferInfo = BatchVertexBuffers[VertexType]; //버텍스버퍼를 제외한 이전 정보 저장용
     
-    ReleaseVertexBuffer(Topology);
+    ReleaseVertexBuffer(VertexType);
 
-    CreateVertexBuffer(Topology, BufferInfo);
+    CreateVertexBuffer(VertexType, BufferInfo);
 }
 
-void URenderer::InsertNewVerticesIntoVertexBuffer(D3D11_PRIMITIVE_TOPOLOGY Topology)
+void URenderer::InsertNewVerticesIntoVertexBuffer(EPrimitiveType VertexType)
 {
-    if (BatchVertexBuffers.Contains(Topology) == false)
+    if (BatchVertexBuffers.Contains(VertexType) == false)
     {
         return;
     }
 
-    VertexBufferInfo BufferInfo = BatchVertexBuffers[Topology];
+    VertexBufferInfo BufferInfo = BatchVertexBuffers[VertexType];
     D3D11_MAPPED_SUBRESOURCE mappedResource;
-    ID3D11Buffer* VertexBuffer = BufferInfo.GetBuffer();
+    ID3D11Buffer* VertexBuffer = BufferInfo.GetVertexBuffer();
     
     DeviceContext->Map(VertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 
-    memcpy(mappedResource.pData, BufferInfo.GetVertices().GetData(), BufferInfo.GetCount() * sizeof(FVertexSimple));
+    memcpy(mappedResource.pData, BufferInfo.GetVertices().GetData(), BufferInfo.GetIndicesCount() * sizeof(FVertexSimple));
     DeviceContext->Unmap(VertexBuffer, 0);
     
 }
@@ -394,12 +431,12 @@ void URenderer::UpdateVertexBuffer()
     }
 }
 
-void URenderer::ReleaseVertexBuffer(D3D11_PRIMITIVE_TOPOLOGY Topology)
+void URenderer::ReleaseVertexBuffer(EPrimitiveType VertexType)
 {
-    if (BatchVertexBuffers[Topology].GetBuffer() != nullptr)
+    if (BatchVertexBuffers[VertexType].GetVertexBuffer() != nullptr)
     {
-        BatchVertexBuffers[Topology].GetBuffer()->Release();
-        BatchVertexBuffers.Remove(Topology);
+        BatchVertexBuffers[VertexType].GetVertexBuffer()->Release();
+        BatchVertexBuffers.Remove(VertexType);
     }
 }
 
@@ -410,9 +447,9 @@ void URenderer::ReleaseAllVertexBuffer()
         auto& Key = pair.Key;
         auto& Value = pair.Value;
         
-        if (Value.GetBuffer() != nullptr)
+        if (Value.GetVertexBuffer() != nullptr)
         {
-            BatchVertexBuffers[Key].GetBuffer()->Release();
+            BatchVertexBuffers[Key].GetVertexBuffer()->Release();
         }
     }
     BatchVertexBuffers.Empty();
