@@ -53,11 +53,9 @@ void UPrimitiveComponent::RegisterComponentWithWorld(UWorld* World)
 	
 	D3D11_PRIMITIVE_TOPOLOGY Topology = GetTopology();
 
-	VertexBufferInfo BufferInfo = VertexBufferInfo(Vertices.Num(), Topology, Vertices);
+	VertexBufferInfo BufferInfo = VertexBufferInfo(Topology, Vertices);
 	
 	URenderer* Renderer = UEngine::Get().GetRenderer();
-
-	uint32_t UUID = GetOwner()->GetUUID();
 	
 	Renderer->CreateVertexBuffer(Topology, BufferInfo);
 }

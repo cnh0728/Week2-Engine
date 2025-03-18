@@ -24,25 +24,25 @@ struct VertexBufferInfo
 {
 public:
 	VertexBufferInfo() = default;
-	VertexBufferInfo(ID3D11Buffer* InBuffer, uint32_t VerticeCount, D3D_PRIMITIVE_TOPOLOGY InTopology, TArray<FVertexSimple>& InVertices)
+	VertexBufferInfo(ID3D11Buffer* InBuffer, D3D_PRIMITIVE_TOPOLOGY InTopology, TArray<FVertexSimple>& InVertices)
 	{
 		VertexBuffer = InBuffer;
 		// InstanceBuffer = InInstanceBuffer;
-		VertexCount = VerticeCount;
+		VertexCount = InVertices.Num();
 		Topology = InTopology;
 		//orginVertex에서 가져올거라서 복사해와야함
 		Vertices = InVertices;
-		PreCount = VerticeCount;
+		PreCount = VertexCount;
 	}
 
-	VertexBufferInfo(uint32_t VerticeCount, D3D_PRIMITIVE_TOPOLOGY InTopology, TArray<FVertexSimple>& InVertices)
+	VertexBufferInfo(D3D_PRIMITIVE_TOPOLOGY InTopology, TArray<FVertexSimple>& InVertices)
 	{
 		// InstanceBuffer = InInstanceBuffer;
-		VertexCount = VerticeCount;
+		VertexCount = InVertices.Num();
 		Topology = InTopology;
 		//orginVertex에서 가져올거라서 복사해와야함
 		Vertices = InVertices;
-		PreCount = VerticeCount;
+		PreCount = VertexCount;
 	}
 	
 	~VertexBufferInfo()

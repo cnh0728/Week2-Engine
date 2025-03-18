@@ -20,11 +20,8 @@ void URenderer::Create(HWND hWindow)
     CreateDepthStencilState();
 
     CreatePickingTexture(hWindow);
-
-
-    CreateCylinderVertices();
-    CreateConeVertices();
-    //vertexBuffer 어디서 다만들어줬지?
+    
+    FVertexSimple::CreateOriginVertices();
     
     CreateText(hWindow);
 	CreateAlphaBlendingState();
@@ -298,7 +295,7 @@ void URenderer::CreateVertexBuffer(D3D11_PRIMITIVE_TOPOLOGY Topology, VertexBuff
     ID3D11Buffer* VertexBuffer;
     Device->CreateBuffer(&VertexBufferDesc, &VertexBufferSRD, &VertexBuffer);
     
-    VertexBufferInfo NewBufferInfo = {VertexBuffer, static_cast<uint32_t>(ByteWidth/sizeof(FVertexSimple)), Topology, Vertices};
+    VertexBufferInfo NewBufferInfo = {VertexBuffer, Topology, Vertices};
     SetVertexBufferInfo(Topology, NewBufferInfo);
     // VertexBuffers.Add(UUID, NewBufferInfo);
  }
