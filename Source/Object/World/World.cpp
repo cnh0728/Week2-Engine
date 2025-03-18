@@ -122,22 +122,19 @@ void UWorld::RenderMainTexture(URenderer& Renderer)
 
 	//여기서 새로운 버텍스정보 만들어주기 때문에 그전에 비워주기
 	Renderer.ClearVertex();
-	for (auto& RenderComponent  : RenderComponents)
+	for (auto& RenderComponent : RenderComponents)
 	{
 		if (RenderComponent->GetCanBeRendered() == false) continue;
 		if (!FEditorManager::Get().IsShowFlagSet(EEngineShowFlags::SF_Primitives))
 		{
 			if (RenderComponent->IsCanPick()) continue;
-			if (FEditorManager::Get().GetSelectedActor() != nullptr)
-				FEditorManager::Get().SetDeselectActor();
 		}
-
 		// RenderComponent->UpdateConstantDepth(Renderer, depth);
 
 		//여기서 위치정해줌 ㅇㅇ
 		Renderer.AddVertices(RenderComponent);
 	}
-	
+
 	Renderer.Render();
 
 	for (auto& RenderComponent : RenderComponents)

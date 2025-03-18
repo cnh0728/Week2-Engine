@@ -338,6 +338,8 @@ void UI::RenderShowFlag() {
     if (ImGui::Checkbox("Show Primtives", &bShowPrimitives))
     {
         FEditorManager::Get().SetShowFlag(EEngineShowFlags::SF_Primitives, bShowPrimitives);
+        if (!bShowPrimitives)
+            FEditorManager::Get().SelectActor(nullptr);
     }
 
 	bool bShowText = FEditorManager::Get().IsShowFlagSet(EEngineShowFlags::SF_BillboardText);

@@ -11,15 +11,15 @@ AWorldGrid::AWorldGrid()
     
 	for (int i = -500; i <= 500; i++)
 	{
-		ULineComp* XLineComponent = AddComponent<ULineComp>();
-		XLineComponent->SetupAttachment(RootComponent);
-		XLineComponent->SetRelativeTransform(FTransform(FVector(0.f, static_cast<float>(i), 0.f), FVector(0.f, 0.f, 0.f), FVector(500.f, 1.f, 1.f)));
-		XLineComponent->SetCanPick(false);
+		//ULineComp* XLineComponent = AddComponent<ULineComp>();
+		//XLineComponent->SetupAttachment(RootComponent);
+		//XLineComponent->SetRelativeTransform(FTransform(FVector(0.f, static_cast<float>(i), 0.f), FVector(0.f, 0.f, 0.f), FVector(500.f, 1.f, 1.f)));
+		//XLineComponent->SetCanPick(false);
 
-		ULineComp* YLineComponent = AddComponent<ULineComp>();
-		YLineComponent->SetupAttachment(RootComponent);
-		YLineComponent->SetRelativeTransform(FTransform(FVector(static_cast<float>(i), 0.f, 0.f), FVector(0.f, 0.f, 90.f), FVector(500.f, 1.f, 1.f)));
-		YLineComponent->SetCanPick(false);
+		//ULineComp* YLineComponent = AddComponent<ULineComp>();
+		//YLineComponent->SetupAttachment(RootComponent);
+		//YLineComponent->SetRelativeTransform(FTransform(FVector(static_cast<float>(i), 0.f, 0.f), FVector(0.f, 0.f, 90.f), FVector(500.f, 1.f, 1.f)));
+		//YLineComponent->SetCanPick(false);
 	}
 
      //UConeComp* ConeComp1 = AddComponent<UConeComp>();

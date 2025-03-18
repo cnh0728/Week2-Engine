@@ -305,15 +305,15 @@ void URenderer::CreateVertexBuffer(D3D11_PRIMITIVE_TOPOLOGY Topology, VertexBuff
 
 void URenderer::ClearVertex()
 {
-    for (auto& Pair : BatchVertexBuffers)
-    {
-        auto& Value = Pair.Value;
-        
-        if (Value.GetCount() > 0)
-        {
-            Value.ClearVertices();
-        }
-    }
+	for (auto& Pair : BatchVertexBuffers)
+	{
+		auto& Value = Pair.Value;
+
+		if (Value.GetCount() > 0)
+		{
+			Value.ClearVertices();
+		}
+	}
 }
 
 void URenderer::AddVertices(UPrimitiveComponent* Component)
@@ -337,7 +337,6 @@ void URenderer::AddVertices(UPrimitiveComponent* Component)
             FVector4 Color = Component->GetColor();
             Vertex.SetColor(Color);
         }
-        
     }
     VertexBufferInfo& BufferInfo = BatchVertexBuffers[Topology];
     BufferInfo.AddVertices(Vertices);
