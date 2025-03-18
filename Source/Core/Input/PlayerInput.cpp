@@ -135,7 +135,7 @@ FVector APlayerInput::CalNDCPos(FVector MousePos, FVector WindowSize)
 void APlayerInput::HandleMouseInput(HWND hWnd, LPARAM lParam, bool isDown, bool isRight)
 {
     auto& io = ImGui::GetIO();
-    if (io.WantCaptureMouse || io.WantCaptureKeyboard) {
+    if ((io.WantCaptureMouse) && !isRight) {
         return;
     }
 

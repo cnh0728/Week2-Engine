@@ -69,6 +69,8 @@ void AGizmoHandle::Tick(float DeltaTime)
 		GizmoType = static_cast<EGizmoType>(type);
 	}
 
+
+	// Gizmo에서 그려주고 있는 bounding box를 그릴지 여부를 결정합니다.
 	if (SelectedActor)
 	{
 		for (auto BoundingBox : SelectedActorBoundingBox)
@@ -120,50 +122,42 @@ void AGizmoHandle::SetActive(bool bActive)
 			PrimitiveComponent->SetCanBeRendered(bActive);
 		}
 	}
-
+	
+	// SetActive는 클릭할 때 발생
+	// 클릭하면 일단 bounding box를 정리함.
 	for (auto BoundingBox : SelectedActorBoundingBox)
 	{
+		BoundingBox->DetachFromComponent();
+		GetWorld()->RemoveRenderComponent(BoundingBox);
 		RemoveComponent(BoundingBox);
+
+		UEngine::Get().GObjects.Remove(BoundingBox->GetUUID());
 	}
+	SelectedActorBoundingBox.Empty();
+
+	// 만약 active하는 클릭이었다면. bounding box를 생성
 	if (bIsActive)
 	{
 		if (AActor* SelectedActor = FEditorManager::Get().GetSelectedActor())
 		{
 			for (auto SelectedActorComponent : SelectedActor->GetComponents())
 			{
+				// primitiveComponent만 처리
 				if (auto SelectedActorPrimitive = dynamic_cast<UPrimitiveComponent*>(SelectedActorComponent))
 				{
-					if (dynamic_cast<UTextComponent*>(SelectedActorComponent))
+					// 선택될 수 있는 primitive만 bounding box를 생성(text는 생성 안함)
+					if (SelectedActorPrimitive->IsCanPick())
 					{
-						continue;
+						auto BoundingBox = AddComponent<UBoundingBoxComponent>();
+						SelectedActorBoundingBox.Add(BoundingBox);
+						BoundingBox->SetupAttachment(RootComponent);
+						BoundingBox->SetTargetPrimitive(SelectedActorPrimitive);
+						BoundingBox->RegisterComponentWithWorld(GetWorld());
 					}
-					auto BoundingBox = AddComponent<UBoundingBoxComponent>();
-					SelectedActorBoundingBox.Add(BoundingBox);
-					BoundingBox->SetupAttachment(RootComponent);
-					BoundingBox->SetTargetPrimitive(SelectedActorPrimitive);
-					BoundingBox->RegisterComponentWithWorld(GetWorld());
-
 				}
 			}
 		}
-		else
-		{
-			return;
-		}
 	}
-	else
-	{
-		for (auto BoundingBox : SelectedActorBoundingBox)
-		{
-			BoundingBox->DetachFromComponent();
-			GetWorld()->RemoveRenderComponent(BoundingBox);
-			RemoveComponent(BoundingBox);
-
-			UEngine::Get().GObjects.Remove(BoundingBox->GetUUID());
-		}
-		SelectedActorBoundingBox.Empty();
-	}
-
 }
 
 const char* AGizmoHandle::GetTypeName()

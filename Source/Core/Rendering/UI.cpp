@@ -347,6 +347,7 @@ void UI::RenderPropertyWindow()
     AActor* selectedActor = FEditorManager::Get().GetSelectedActor();
     if (selectedActor != nullptr)
     {
+        ImGui::Text("Selected : [%4d]%s", selectedActor->GetUUID(), *selectedActor->Name.GetString());
         FTransform selectedTransform = selectedActor->GetActorRelativeTransform();
         float position[] = { selectedTransform.GetPosition().X, selectedTransform.GetPosition().Y, selectedTransform.GetPosition().Z };
         float scale[] = { selectedTransform.GetScale().X, selectedTransform.GetScale().Y, selectedTransform.GetScale().Z };
@@ -413,6 +414,7 @@ void UI::RenderPropertyWindow()
 
 void UI::RenderSceneManager()
 {
+    static int selectedBefore = -1;
     const TArray<AActor*>& ActorArray = UEngine::Get().GetWorld()->GetActors();
     uint32 NumActors = ActorArray.Num();
 
@@ -430,17 +432,22 @@ void UI::RenderSceneManager()
 
                 if (Unselectables.Find((ActorArray[n]->Name))>-1)
                     continue;
-                if (ImGui::Selectable(buf, selected == n))
+                if (ImGui::Selectable(buf, (selected == n) && (selectedBefore != selected) ))
                     selected = n;
             }
             ImGui::TreePop();
         }
         if (selected > -1) {
-            if(NumActors > 0)
-                FEditorManager::Get().SelectActor(ActorArray[selected]);
+            if (NumActors > 0)
+            {
+                if (selectedBefore != selected)
+                {
+                    FEditorManager::Get().SelectActor(ActorArray[selected]);
+                }
+            }
         }
+        selectedBefore = selected;
     }
-
     ImGui::End();
 }
 
