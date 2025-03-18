@@ -24,49 +24,62 @@ struct VertexBufferInfo
 {
 public:
 	VertexBufferInfo() = default;
-	VertexBufferInfo(ID3D11Buffer* InBuffer, uint32_t VerticeCount, D3D_PRIMITIVE_TOPOLOGY InTopology, TArray<FVertexSimple>& InVertices)
+	VertexBufferInfo(ID3D11Buffer* InVertexBuffer, ID3D11Buffer* InIndexBuffer, D3D_PRIMITIVE_TOPOLOGY InTopology, TArray<FVertexSimple>& InVertices, TArray<uint32_t>& InIndices)
 	{
-		VertexBuffer = InBuffer;
-		// InstanceBuffer = InInstanceBuffer;
-		VertexCount = VerticeCount;
+		VertexBuffer = InVertexBuffer;
+		IndexBuffer = InIndexBuffer;
+		
+		VertexCount = InVertices.Num();
+		IndexCount = InIndices.Num();
+		
 		Topology = InTopology;
 		//orginVertex에서 가져올거라서 복사해와야함
 		Vertices = InVertices;
-		PreCount = VerticeCount;
+		Indices = InIndices;
+		
+		PreVertexCount = VertexCount;
 	}
 
-	VertexBufferInfo(uint32_t VerticeCount, D3D_PRIMITIVE_TOPOLOGY InTopology, TArray<FVertexSimple>& InVertices)
+	VertexBufferInfo(D3D_PRIMITIVE_TOPOLOGY InTopology, TArray<FVertexSimple>& InVertices, TArray<uint32_t>& InIndices)
 	{
 		// InstanceBuffer = InInstanceBuffer;
-		VertexCount = VerticeCount;
+		VertexCount = InVertices.Num();
+		IndexCount = InIndices.Num();
 		Topology = InTopology;
 		//orginVertex에서 가져올거라서 복사해와야함
 		Vertices = InVertices;
-		PreCount = VerticeCount;
+		Indices = InIndices;
+		PreVertexCount = VertexCount;
 	}
 	
 	~VertexBufferInfo()
 	{
 	}
 
-	ID3D11Buffer*& GetBuffer() { return VertexBuffer; }
-	uint32_t GetCount() const { return VertexCount; }
+	ID3D11Buffer*& GetVertexBuffer() { return VertexBuffer; }
+	uint32_t GetVertexCount() const { return VertexCount; }
+	ID3D11Buffer*& GetIndexBuffer() { return IndexBuffer; }
+	uint32_t GetIndexCount() const{return IndexCount;}
+	
 	D3D_PRIMITIVE_TOPOLOGY GetTopology() const { return Topology; }
 	TArray<FVertexSimple> GetVertices() const { return Vertices; }
-	uint32_t GetPreCount() const { return PreCount; }
+	TArray<uint32_t> GetIndices() const { return Indices; }
+	uint32_t GetVertexPreCount() const { return PreVertexCount; }
 
-	void AddVertices(TArray<FVertexSimple> InVertices){ Vertices.Insert(Vertices.end(), InVertices.begin(), InVertices.end()); VertexCount = Vertices.Num(); }
-	void ClearVertices(){ Vertices = {}; VertexCount = 0; }
-	// ID3D11Buffer* GetInstanceBuffer() { return InstanceBuffer; }
-	// void SetInstanceBuffer(ID3D11Buffer* InInstanceBuffer) { InstanceBuffer = InInstanceBuffer; }
+	void AddVertices(TArray<FVertexSimple> InVertices, TArray<uint32_t> InIndices);
+	void ClearVertices();
 	
 private:
 	ID3D11Buffer* VertexBuffer;
-	// ID3D11Buffer* InstanceBuffer;
-	D3D_PRIMITIVE_TOPOLOGY Topology;
-	uint32_t VertexCount;
 	TArray<FVertexSimple> Vertices;
-	uint32_t PreCount;
+	uint32_t VertexCount;
+	uint32_t PreVertexCount;
+
+	ID3D11Buffer* IndexBuffer;
+	TArray<uint32_t> Indices;
+	uint32_t IndexCount;
+	
+	D3D_PRIMITIVE_TOPOLOGY Topology;
 };
 
 enum class EViewModeIndex : uint32
@@ -147,7 +160,7 @@ public:
     void ResizeVertexBuffer(D3D11_PRIMITIVE_TOPOLOGY Topology);
     void InsertNewVerticesIntoVertexBuffer(D3D11_PRIMITIVE_TOPOLOGY Topology);
     void UpdateVertexBuffer();
-    TMap<D3D11_PRIMITIVE_TOPOLOGY, bool> CheckChangedVertexCountUUID();
+    TMap<D3D11_PRIMITIVE_TOPOLOGY, bool> CheckChangedVertexCount();
 
 	VertexBufferInfo GetVertexBufferInfo(D3D11_PRIMITIVE_TOPOLOGY Topology) { return BatchVertexBuffers[Topology];}
 	void SetVertexBufferInfo(D3D11_PRIMITIVE_TOPOLOGY Topology, VertexBufferInfo BufferInfo)
