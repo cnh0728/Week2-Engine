@@ -57,6 +57,7 @@ public:
     {
         using other = TContainerAllocator<U, IndexSize>;
     };
+
     //~ std::allocator_traits 관련 타입
 
 public:
@@ -72,24 +73,43 @@ public:
     constexpr TContainerAllocator(const TContainerAllocator<U, IndexSize>&) noexcept {}
 
     constexpr ~TContainerAllocator() = default;
-
+    // 이동 생성자/할당자
 public:
     constexpr T* allocate(size_type n) noexcept;
     constexpr void deallocate(T* p, size_type n) noexcept;
+
+    constexpr void construct(T* p, const T& v) noexcept;
+    constexpr void destroy(T* p) noexcept;
+    
+    // 요소 생성 (placement new)
+    template <typename U, typename... Args>
+    void construct(U* p, Args&&... args) {
+        ::new ((void*)p) U(std::forward<Args>(args)...);
+    }
+
+    // 요소 소멸 (명시적 소멸자 호출)
+    template <typename U>
+    void destroy(U* p) {
+        p->~U();
+    }
 };
 
 template <typename T, int IndexSize>
-constexpr T* TContainerAllocator<T, IndexSize>::allocate(size_type n) noexcept
-{
+constexpr T* TContainerAllocator<T, IndexSize>::allocate(size_type n) noexcept {
     const size_t AllocSize = sizeof(T) * n;
-    return static_cast<T*>(FPlatformMemory::Malloc<EAT_Container>(AllocSize));
+    const size_t Alignment = alignof(T); // 타입별 정렬 크기
+    return static_cast<T*>(
+        FPlatformMemory::AlignedMalloc<EAT_Container>(AllocSize, Alignment)
+    );
 }
 
 template <typename T, int IndexSize>
 constexpr void TContainerAllocator<T, IndexSize>::deallocate(T* p, size_type n) noexcept
 {
-    const size_t AllocSize = sizeof(T) * n;
-    FPlatformMemory::Free<EAT_Container>(p, AllocSize);
+    if (p) {
+        const size_t AllocSize = sizeof(T) * n;
+        FPlatformMemory::AlignedFree<EAT_Container>(p, AllocSize);
+    }
 }
 
 template <typename T> using FDefaultAllocator = TContainerAllocator<T, 32>;

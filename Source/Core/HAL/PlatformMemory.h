@@ -96,24 +96,16 @@ void FPlatformMemory::DecrementStats(size_t Size)
 }
 
 template <EAllocationType AllocType>
-void* FPlatformMemory::Malloc(size_t Size)
-{
-    void* Ptr = std::malloc(Size);
-    if (Ptr)
-    {
-        IncrementStats<AllocType>(Size);
-    }
-    return Ptr;
+void* FPlatformMemory::Malloc(size_t Size) {
+    // 기본 정렬 방식 (최대 보장)
+    constexpr size_t DefaultAlignment = alignof(std::max_align_t);
+    return AlignedMalloc<AllocType>(Size, DefaultAlignment);
 }
 
 template <EAllocationType AllocType>
-void* FPlatformMemory::AlignedMalloc(size_t Size, size_t Alignment)
-{
+void* FPlatformMemory::AlignedMalloc(size_t Size, size_t Alignment) {
     void* Ptr = _aligned_malloc(Size, Alignment);
-    if (Ptr)
-    {
-        IncrementStats<AllocType>(Size);
-    }
+    if (Ptr) IncrementStats<AllocType>(Size);
     return Ptr;
 }
 
