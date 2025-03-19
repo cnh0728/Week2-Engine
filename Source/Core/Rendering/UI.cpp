@@ -17,10 +17,11 @@
 #include "Object/Actor/Cone.h"
 #include "Object/Actor/Cylinder.h"
 #include "Object/Actor/WorldGrid.h"
+#include "Object/Actor/Spotlight.h"
 #include "Static/FEditorManager.h"
 #include "Object/World/World.h"
 #include "Object/Gizmo/GizmoHandle.h"
-
+#include "Object/Gizmo/Axis.h"
 void UI::Initialize(HWND hWnd, URenderer& Renderer, UINT ScreenWidth, UINT ScreenHeight)
 {
     // ImGui 초기화
@@ -45,11 +46,11 @@ void UI::Initialize(HWND hWnd, URenderer& Renderer, UINT ScreenWidth, UINT Scree
     io.DisplaySize = ScreenSize;
     this->Renderer = &Renderer;
 
-    Unselectables.Add(FName("Camera"));
-    Unselectables.Add(FName("WorldGrid"));
-    Unselectables.Add(FName("Axis"));
-    Unselectables.Add(FName("Picker"));
-    Unselectables.Add(FName("GizmoHandle"));
+    Unselectables.Add(ACamera::StaticClass()->GetName());
+    Unselectables.Add(AWorldGrid::StaticClass()->GetName());
+    Unselectables.Add(AAxis::StaticClass()->GetName());
+    Unselectables.Add(APicker::StaticClass()->GetName());
+    Unselectables.Add(AGizmoHandle::StaticClass()->GetName());
 }
 
 void UI::Update()
@@ -72,6 +73,7 @@ void UI::Update()
     RenderPropertyWindow();
     RenderSceneManager();
     RenderComponentsByActor();
+    RenderFNameResolver();
     Debug::ShowConsole(bWasWindowSizeUpdated);
 
     // ImGui 렌더링
@@ -164,7 +166,7 @@ void UI::RenderPrimitiveSelection()
 {
     
     
-    const char* items[] = { "Sphere", "Cube", "Cylinder", "Cone" };
+    const char* items[] = { "Sphere", "Cube", "Cylinder", "Cone", "Spotlight"};
 
     ImGui::Combo("Primitive", &currentItem, items, IM_ARRAYSIZE(items));
 
@@ -188,6 +190,10 @@ void UI::RenderPrimitiveSelection()
             else if (strcmp(items[currentItem], "Cone") == 0)
             {
                 World->SpawnActor<ACone>();
+            }
+            else if (strcmp(items[currentItem], "Spotlight") == 0)
+            {
+                World->SpawnActor<ASpotlight>();
             }
             //else if (strcmp(items[currentItem], "Triangle") == 0)
             //{
@@ -369,7 +375,7 @@ void UI::RenderPropertyWindow()
             FVector DeltaEulerAngle = UIEulerAngle - PrevEulerAngle;
 
             selectedTransform.Rotate(DeltaEulerAngle);
-            UE_LOG("Rotation: %.2f, %.2f, %.2f", DeltaEulerAngle.X, DeltaEulerAngle.Y, DeltaEulerAngle.Z);
+            //UE_LOG("Rotation: %.2f, %.2f, %.2f", DeltaEulerAngle.X, DeltaEulerAngle.Y, DeltaEulerAngle.Z);
             selectedActor->SetActorRelatvieTransform(selectedTransform);
         }
         if (ImGui::DragFloat3("Scale", scale, 0.1f))
@@ -476,7 +482,6 @@ void ShowComponentsRecursive(USceneComponent* Component, uint32 uniqueID)
     }
 }
 
-
 void UI::RenderComponentsByActor()
 {
     const TArray<AActor*>& ActorArray = UEngine::Get().GetWorld()->GetActors();
@@ -485,7 +490,7 @@ void UI::RenderComponentsByActor()
     if (NumActors > 0) {
         static int selected = -1;
         ImGui::Begin("Components Tree");
-        if (ImGui::TreeNode("Actors"))
+        if (ImGui::TreeNode("[UUID]Actors/Components(NumChilds)"))
         {
             for (int n = 0; n < NumActors; n++)
             {
@@ -506,6 +511,22 @@ void UI::RenderComponentsByActor()
     }
     ImGui::End();
 }
+
+void UI::RenderFNameResolver()
+{
+    ImGui::Begin("FName Resolver");
+
+    static char id[8];
+    ImGui::InputText("FName DisplayIndex", id, 8);
+    static FString Name;
+    if (ImGui::Button("Resolve"))
+    {
+        Name = FNamePool::ResolveDisplay(atoi(id));
+    }
+    ImGui::Text("%s", *Name);
+    ImGui::End();
+}
+
 
 void UI::SetWindowLayout(float widthRatio, float heightRatio, float posXRatio, float posYRatio)
 {

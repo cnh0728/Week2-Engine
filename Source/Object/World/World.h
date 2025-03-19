@@ -17,6 +17,7 @@ class UPrimitiveComponent;
 
 class UWorld :public UObject
 {
+	DECLARE_CLASS(UWorld, UObject)
 public:
 	UWorld() = default;
 	virtual ~UWorld() = default;

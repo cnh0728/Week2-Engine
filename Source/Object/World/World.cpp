@@ -122,7 +122,7 @@ void UWorld::RenderMainTexture(URenderer& Renderer)
 
 	for (auto& RenderComponent : RenderComponents)
 	{
-		if (UTextComponent* TextComponent = dynamic_cast<UTextComponent*>(RenderComponent))
+		if (UTextComponent* TextComponent = Cast<UTextComponent>(RenderComponent))
 		{
 			// TextComponent->RenderText(Renderer, TextComponent->GetText(),
 			// 	TextComponent->GetComponentTransformMatrix().GetTranslation(),

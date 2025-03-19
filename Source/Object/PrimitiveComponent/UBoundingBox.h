@@ -7,6 +7,7 @@ class UBoundingBoxComponent :
     public UPrimitiveComponent
 {
 	using Super = USceneComponent;
+	DECLARE_CLASS(UBoundingBoxComponent, UPrimitiveComponent)
 public:
 	UBoundingBoxComponent()
 	{
@@ -15,7 +16,7 @@ public:
 	}
 	virtual ~UBoundingBoxComponent() = default;
 	virtual void Tick(float DeltaTime) override;
-	virtual const FMatrix GetComponentTransformMatrix() override;
+	virtual FMatrix GetComponentTransformMatrix() override;
 	EPrimitiveType GetType() override
 	{
 		return EPrimitiveType::EPT_BoundingBox;

@@ -40,7 +40,7 @@ const FTransform USceneComponent::GetComponentTransform()
 	return RelativeTransform;
 }
 
-const FMatrix USceneComponent::GetComponentTransformMatrix()
+FMatrix USceneComponent::GetComponentTransformMatrix()
 {
 	if (Parent)
 	{

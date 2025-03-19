@@ -20,6 +20,7 @@ enum class RenderType
 class AActor : public UObject
 {
 	friend class FEditorManager;
+	DECLARE_CLASS(AActor, UObject)
 public:
 	AActor();
 	virtual ~AActor() override = default;
@@ -101,7 +102,7 @@ public:
 
 	void SetActorRelatvieTransform(const FTransform& InTransform);
 	bool CanEverTick() const { return bCanEverTick; }
-	virtual const char* GetTypeName();
+	//virtual const char* GetTypeName();
 
 	bool Destroy();
 

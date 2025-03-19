@@ -9,6 +9,7 @@
 class UPrimitiveComponent : public USceneComponent
 {
 	using Super = USceneComponent;
+	DECLARE_CLASS(UPrimitiveComponent, USceneComponent)
 public:
 	UPrimitiveComponent() = default;
 	virtual ~UPrimitiveComponent() = default;
@@ -27,6 +28,7 @@ public:
 		{
 		case EPrimitiveType::EPT_Line:
 		case EPrimitiveType::EPT_BoundingBox:
+		case EPrimitiveType::EPT_Spotlight:
 			return D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
 		default:
 			return D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
@@ -43,6 +45,7 @@ public:
 	void SetIsOrthoGraphic(bool IsOrtho) { bIsOrthoGraphic = IsOrtho; }
 	bool GetIsOrthoGraphic() { return bIsOrthoGraphic;}
 	bool IsCanPick() const { return bCanPick; }
+	void SetCanPick(bool bValue) { bCanPick = bValue; }
 protected:
 	bool bCanPick = false;
 	bool bCanBeRendered = false;
@@ -58,6 +61,7 @@ public:
 class UCubeComp : public UPrimitiveComponent
 {
 	using Super = UPrimitiveComponent;
+	DECLARE_CLASS(UCubeComp, UPrimitiveComponent)
 public:
 	UCubeComp()
 	{
@@ -74,6 +78,7 @@ public:
 class USphereComp : public UPrimitiveComponent
 {
 	using Super = UPrimitiveComponent;
+	DECLARE_CLASS(USphereComp, UPrimitiveComponent)
 public:
 	USphereComp()
 	{
@@ -90,6 +95,7 @@ public:
 class UTriangleComp : public UPrimitiveComponent
 {
 	using Super = UPrimitiveComponent;
+	DECLARE_CLASS(UTriangleComp, UPrimitiveComponent)
 public:
 	UTriangleComp()
 	{
@@ -107,6 +113,7 @@ public:
 class ULineComp : public UPrimitiveComponent
 {
 	using Super = UPrimitiveComponent;
+	DECLARE_CLASS(ULineComp, UPrimitiveComponent)
 
 public:
 	ULineComp()
@@ -124,6 +131,7 @@ public:
 class UCylinderComp : public UPrimitiveComponent
 {
 	using Super = UPrimitiveComponent;
+	DECLARE_CLASS(UCylinderComp, UPrimitiveComponent)
 
 public:
 	UCylinderComp()
@@ -142,6 +150,7 @@ public:
 class UConeComp : public UPrimitiveComponent
 {
 	using Super = UPrimitiveComponent;
+	DECLARE_CLASS(UConeComp, UPrimitiveComponent)
 public:
 	UConeComp()
 	{
@@ -152,5 +161,40 @@ public:
 	EPrimitiveType GetType() override
 	{
 		return EPrimitiveType::EPT_Cone;
+	}
+};
+
+class USpotlightComp : public UPrimitiveComponent
+{
+	using Super = UPrimitiveComponent;
+	DECLARE_CLASS(USpotlightComp, UPrimitiveComponent)
+public:
+	USpotlightComp()
+	{
+		bCanBeRendered = true;
+		bCanPick = false;
+	}
+	virtual ~USpotlightComp() = default;
+	EPrimitiveType GetType()override
+	{
+		return EPrimitiveType::EPT_Spotlight;
+	}
+};
+
+class URingComp : public UPrimitiveComponent
+{
+	using Super = UPrimitiveComponent;
+	DECLARE_CLASS(URingComp, UPrimitiveComponent)
+
+public:
+	URingComp()
+	{
+		bCanBeRendered = true;
+		bCanPick = false;
+	}
+	virtual ~URingComp() = default;
+	EPrimitiveType GetType()override
+	{
+		return EPrimitiveType::EPT_Ring;
 	}
 };

@@ -71,7 +71,7 @@ struct FName
 	}
 
 	//  "Player13"이면,
-	// ComparisonIndex = ("Player" 문자열의 EntryId == hash value)
+	// ComparisonIndex = ("player" 문자열의 EntryId == hash value)
 	// Number = 14 ( trailing number가 없으면 0으로 처리함. 따라서 숫자가 붙은 문자열이 들어올 경우 +1로 처리)
 	uint32 DisplayIndex; // 실제 value가 들어가있는 index
 	uint32 ComparisonIndex; // 비교용 index

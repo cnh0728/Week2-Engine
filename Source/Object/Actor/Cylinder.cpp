@@ -24,7 +24,7 @@ void ACylinder::Tick(float DeltaTime)
     Super::Tick(DeltaTime);
 }
 
-const char* ACylinder::GetTypeName()
-{
-    return "Cylinder";
-}
+//const char* ACylinder::GetTypeName()
+//{
+//    return "Cylinder";
+//}

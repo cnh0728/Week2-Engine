@@ -2,6 +2,7 @@
 
 #include "Object/Actor/Camera.h"
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
+#include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Object/World/World.h"
 #include "Static/FEditorManager.h"
 #include <Core/Input/PlayerInput.h>
@@ -9,34 +10,100 @@
 AGizmoHandle::AGizmoHandle()
 {
 	bIsGizmo = true;
-	
-	// !NOTE : Z방향으로 서있음
-	// z
-	UCylinderComp* ZArrow = AddComponent<UCylinderComp>();
-	ZArrow->SetupAttachment(RootComponent);
-	ZArrow->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, 0.0f, 0.0f), FVector(1, 1, 1)));
-	ZArrow->SetColor(FVector4(0.0f, 0.0f, 1.0f, 1.0f));
-	CylinderComponents.Add(ZArrow);
-	
-	// x
-	UCylinderComp* XArrow = AddComponent<UCylinderComp>();
-	XArrow->SetupAttachment(RootComponent);
-	XArrow->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0.0f, 90.0f, 0.0f), FVector(1, 1, 1)));
-	XArrow->SetColor(FVector4(1.0f, 0.0f, 0.0f, 1.0f));
-	CylinderComponents.Add(XArrow);
-	
-	// y
-	UCylinderComp* YArrow = AddComponent<UCylinderComp>();
-	YArrow->SetupAttachment(RootComponent);
-	YArrow->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(90.0f, 0.0f, 0.0f), FVector(1, 1, 1)));
-	YArrow->SetColor(FVector4(0.0f, 1.0f, 0.0f, 1.0f));
-	CylinderComponents.Add(YArrow);
-	
-	UEngine::Get().GetWorld()->AddZIgnoreComponent(ZArrow);
-	UEngine::Get().GetWorld()->AddZIgnoreComponent(XArrow);
-	UEngine::Get().GetWorld()->AddZIgnoreComponent(YArrow);
+	const float GizmoSize = 0.1f;
+	const float GizmoSizeMultiplier = 1 / GizmoSize;
+	// gizmo 중심을 잡기 위한 가상의 component
+	USceneComponent* GizmoCenter = AddComponent<USceneComponent>();
+	SetRootComponent(GizmoCenter);
 
-	SetActive(false); 
+	GizmoCube = AddComponent<UCubeComp>();
+	GizmoCube->SetColor(FVector4(0.2f, 0.2f, 0.2f, 1.f));
+	GizmoCube->SetRelativeTransform(FTransform(FVector(0, 0, 0), FVector(0, 0, 0), FVector(GizmoSize, GizmoSize, GizmoSize)));
+	GizmoCube->SetupAttachment(RootComponent);
+	
+	XArrowBody = AddComponent<UCylinderComp>();
+	XArrowHead = AddComponent<UConeComp>();
+	XArrowBody->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0, -90, 0), FVector(1.0f, 1.0f, 1.0f) * GizmoSizeMultiplier));
+	XArrowHead->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.5f), FQuat(0, 0, 0, 1), FVector(0.02f, 0.02f, 0.02f) * GizmoSizeMultiplier));
+	XArrowBody->SetColor(FVector4(1.0f, 0.0f, 0.0f, 1.0f));
+	XArrowHead->SetColor(FVector4(1.0f, 0.0f, 0.0f, 1.0f));
+	XArrowHead->SetupAttachment(XArrowBody);
+
+	YArrowBody = AddComponent<UCylinderComp>();
+	YArrowHead = AddComponent<UConeComp>();
+	YArrowBody->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(90, 0, 0), FVector(1.0f, 1.0f, 1.0f) * GizmoSizeMultiplier));
+	YArrowHead->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.5f), FQuat(0, 0, 0, 1), FVector(0.02f, 0.02f, 0.02f) * GizmoSizeMultiplier));
+	YArrowBody->SetColor(FVector4(0.0f, 1.0f, 0.0f, 1.0f));
+	YArrowHead->SetColor(FVector4(0.0f, 1.0f, 0.0f, 1.0f));
+	YArrowHead->SetupAttachment(YArrowBody);
+
+	ZArrowBody = AddComponent<UCylinderComp>();
+	ZArrowHead = AddComponent<UConeComp>();
+	ZArrowBody->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(0, 0, 0), FVector(1.0f, 1.0f, 1.0f) * GizmoSizeMultiplier));
+	ZArrowHead->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.5f), FQuat(0, 0, 0, 1), FVector(0.02f, 0.02f, 0.02f) * GizmoSizeMultiplier));
+	ZArrowBody->SetColor(FVector4(0.0f, 0.0f, 1.0f, 1.0f));
+	ZArrowHead->SetColor(FVector4(0.0f, 0.0f, 1.0f, 1.0f));
+	ZArrowHead->SetupAttachment(ZArrowBody);
+
+
+	XArrowBody->SetupAttachment(GizmoCube);
+	YArrowBody->SetupAttachment(GizmoCube);
+	ZArrowBody->SetupAttachment(GizmoCube);
+
+	XRing = AddComponent<URingComp>();
+	XRing->SetupAttachment(GizmoCube);
+	XRing->SetRelativeTransform(FTransform(FVector(), FVector(0,0,90), FVector(5, 0.1, 5)));
+	XRing->SetColor(FVector4(1.0f, 0.f, 0.f, 1.f));
+	
+	YRing = AddComponent<URingComp>();
+	YRing->SetupAttachment(GizmoCube);
+	YRing->SetRelativeTransform(FTransform(FVector(), FQuat(), FVector(5 , 0.1, 5)));
+	YRing->SetColor(FVector4(0.0f, 1.f, 0.f, 1.f));
+
+	ZRing = AddComponent<URingComp>();
+	ZRing->SetupAttachment(GizmoCube);
+	ZRing->SetRelativeTransform(FTransform(FVector(), FVector(90,0,0), FVector(5, 0.1, 5)));
+	ZRing->SetColor(FVector4(0.f, 0.f, 1.f, 1.f));
+
+	XRing->SetupAttachment(GizmoCube);
+	YRing->SetupAttachment(GizmoCube);
+	ZRing->SetupAttachment(GizmoCube);
+
+	XRodHead = AddComponent<UCubeComp>();
+	XRodHead->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.5f), FQuat(0, 0, 0, 1), FVector(0.01f, 0.01f, 0.01f) * GizmoSizeMultiplier));
+	XRodHead->SetColor(FVector4(1.0f, 0.0f, 0.0f, 1.0f));
+	XRodHead->SetupAttachment(XArrowBody);
+	
+	YRodHead = AddComponent<UCubeComp>();
+	YRodHead->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.5f), FQuat(0, 0, 0, 1), FVector(0.01f, 0.01f, 0.01f) * GizmoSizeMultiplier));
+	YRodHead->SetColor(FVector4(0.0f, 1.0f, 0.0f, 1.0f));
+	YRodHead->SetupAttachment(YArrowBody);
+
+	ZRodHead = AddComponent<UCubeComp>();
+	ZRodHead->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.5f), FQuat(0, 0, 0, 1), FVector(0.01f, 0.01f, 0.01f) * GizmoSizeMultiplier));
+	ZRodHead->SetColor(FVector4(0.0f, 0.0f, 1.0f, 1.0f));
+	ZRodHead->SetupAttachment(ZArrowBody);
+
+
+
+	UEngine::Get().GetWorld()->AddZIgnoreComponent(XArrowBody);
+	UEngine::Get().GetWorld()->AddZIgnoreComponent(XArrowHead);
+	UEngine::Get().GetWorld()->AddZIgnoreComponent(YArrowBody);
+	UEngine::Get().GetWorld()->AddZIgnoreComponent(YArrowHead);
+	UEngine::Get().GetWorld()->AddZIgnoreComponent(ZArrowBody);
+	UEngine::Get().GetWorld()->AddZIgnoreComponent(ZArrowHead);
+
+	UEngine::Get().GetWorld()->AddZIgnoreComponent(XRing);
+	UEngine::Get().GetWorld()->AddZIgnoreComponent(YRing);
+	UEngine::Get().GetWorld()->AddZIgnoreComponent(ZRing);
+	UEngine::Get().GetWorld()->AddZIgnoreComponent(XRodHead);
+	UEngine::Get().GetWorld()->AddZIgnoreComponent(YRodHead);
+	UEngine::Get().GetWorld()->AddZIgnoreComponent(ZRodHead);
+
+
+	SetActive(false);
+
+	return;
 }
 
 void AGizmoHandle::BeginPlay()
@@ -46,20 +113,28 @@ void AGizmoHandle::BeginPlay()
 
 void AGizmoHandle::Tick(float DeltaTime)
 {
+	// 모드에 따라서 뜨는 기즈모 종류를 변경
+	UpdateGizmoPrimitives();
+
 	AActor* SelectedActor  = FEditorManager::Get().GetSelectedActor();
 	if (SelectedActor != nullptr && bIsActive)
 	{
-		// Gizmo의 위치정보를 받아옵니다.
-		FTransform GizmoTr = SelectedActor->GetRootComponent()->GetRelativeTransform();
-		//GizmoTr.SetPosition(SelectedActor->GetActorTransform().GetPosition());
-		GizmoTr.SetRotation(FVector(0.0f, 0.0f, 0.0f));
-		GizmoTr.SetScale(FVector(1,1,1));
-		// Actor의 Root component == 위치정보를 수정합니다.
-		SetActorRelatvieTransform(GizmoTr);
+		FVector CamPos = FEditorManager::Get().GetCamera()->GetActorRelativeTransform().GetPosition();
+		FVector SelectedActorPosition = SelectedActor->GetRootComponent()->GetComponentTransform().GetPosition();
+		FTransform GizmoTransform = this->GetRootComponent()->GetRelativeTransform();
+		GizmoTransform.SetPosition(SelectedActorPosition);
+		if (GizmoType == EGizmoType::Scale)
+		{
+			GizmoTransform.SetRotation(SelectedActor->GetRootComponent()->GetComponentTransform().GetRotation());
+		}
+		else
+		{
+			GizmoTransform.SetRotation(FVector());
+		}
+		GizmoTransform.SetScale((CamPos - SelectedActorPosition).Length() / 4);
+		this->GetRootComponent()->SetRelativeTransform(GizmoTransform);
 	}
 
-	SetScaleByDistance();
-	
 	AActor::Tick(DeltaTime);
 
 	if (APlayerInput::Get().GetKeyDown(EKeyCode::Space))
@@ -87,37 +162,12 @@ void AGizmoHandle::Tick(float DeltaTime)
 	}
 }
 
-void AGizmoHandle::SetScaleByDistance()
-{
-	FTransform MyTransform = GetActorRelativeTransform();
-	
-	// 액터의 월드 위치
-	FVector actorWorldPos = MyTransform.GetPosition();
-
-	FTransform CameraTransform = FEditorManager::Get().GetCamera()->GetActorRelativeTransform();
-	
-	// 카메라의 월드 위치
-	FVector cameraWorldPos = CameraTransform.GetPosition();
-
-	// 거리 계산
-	float distance = (actorWorldPos - cameraWorldPos).Length();
-
-	float baseScale = 1.0f;    // 기본 스케일
-	float scaleFactor = distance * 0.1f; // 거리에 비례하여 스케일 증가
-
-	// float minScale = 1.0f;     // 최소 스케일
-	// float maxScale = 1.0f;     // 최대 스케일
-	// float scaleFactor = clamp(1.0f / distance, minScale, maxScale);
-
-	MyTransform.SetScale(scaleFactor, scaleFactor, scaleFactor);
-}
-
 void AGizmoHandle::SetActive(bool bActive)
 {
 	bIsActive = bActive;
 	for (auto& Component : Components)
 	{
-		if (UPrimitiveComponent* PrimitiveComponent = dynamic_cast<UPrimitiveComponent*>(Component))
+		if (UPrimitiveComponent* PrimitiveComponent = Cast<UPrimitiveComponent>(Component))
 		{
 			PrimitiveComponent->SetCanBeRendered(bActive);
 		}
@@ -143,15 +193,18 @@ void AGizmoHandle::SetActive(bool bActive)
 			for (auto SelectedActorComponent : SelectedActor->GetComponents())
 			{
 				// primitiveComponent만 처리
-				if (auto SelectedActorPrimitive = dynamic_cast<UPrimitiveComponent*>(SelectedActorComponent))
+				if (auto SelectedActorPrimitive = Cast<UPrimitiveComponent>(SelectedActorComponent))
 				{
 					// 선택될 수 있는 primitive만 bounding box를 생성(text는 생성 안함)
 					if (SelectedActorPrimitive->IsCanPick())
 					{
 						auto BoundingBox = AddComponent<UBoundingBoxComponent>();
 						SelectedActorBoundingBox.Add(BoundingBox);
-						BoundingBox->SetupAttachment(RootComponent);
+						BoundingBox->SetupAttachment(this->RootComponent);
 						BoundingBox->SetTargetPrimitive(SelectedActorPrimitive);
+
+						// 원래 Actor에서 해주는데, 동적으로 생성되니 수동으로 호출
+						BoundingBox->BeginPlay();
 						BoundingBox->RegisterComponentWithWorld(GetWorld());
 					}
 				}
@@ -160,10 +213,10 @@ void AGizmoHandle::SetActive(bool bActive)
 	}
 }
 
-const char* AGizmoHandle::GetTypeName()
-{
-	return "GizmoHandle";
-}
+//const char* AGizmoHandle::GetTypeName()
+//{
+//	return "GizmoHandle";
+//}
 
 void AGizmoHandle::DoTransform(FTransform& AT, FVector Result, AActor* Actor )
 {
@@ -177,7 +230,9 @@ void AGizmoHandle::DoTransform(FTransform& AT, FVector Result, AActor* Actor )
 			AT.SetPosition({ Result.X, AP.Y, AP.Z });
 			break;
 		case EGizmoType::Rotate:
-			AT.RotatePitch(Result.X);
+			//AT.RotatePitch(Result.X);
+			AT.RotateRoll(Result.Y);
+
 			break;
 		case EGizmoType::Scale:
 			AT.AddScale({ Result.X * .1f, 0, AP.Z * .1f });
@@ -192,7 +247,7 @@ void AGizmoHandle::DoTransform(FTransform& AT, FVector Result, AActor* Actor )
 			AT.SetPosition({ AP.X, Result.Y, AP.Z });
 			break;
 		case EGizmoType::Rotate:
-			AT.RotateRoll(Result.Y);
+			AT.RotatePitch(-Result.X);
 			break;
 		case EGizmoType::Scale:
 			AT.AddScale({ 0, Result.Y * .1f, 0 });
@@ -207,7 +262,7 @@ void AGizmoHandle::DoTransform(FTransform& AT, FVector Result, AActor* Actor )
 			AT.SetPosition({ AP.X, AP.Y, Result.Z });
 			break;
 		case EGizmoType::Rotate:
-			AT.RotatePitch(-Result.Z);
+			AT.RotateYaw(-Result.Z);
 			break;
 		case EGizmoType::Scale:
 			AT.AddScale({0, 0, Result.Z * .1f });
@@ -215,5 +270,46 @@ void AGizmoHandle::DoTransform(FTransform& AT, FVector Result, AActor* Actor )
 		}
 	}
 	Actor->SetActorRelatvieTransform(AT);
+}
+
+void AGizmoHandle::UpdateGizmoPrimitives()
+{
+	if (!bIsActive) return;
+	bool isTranslate = (GizmoType == EGizmoType::Translate);
+	bool isRotate = (GizmoType == EGizmoType::Rotate);
+	bool isScale = (GizmoType == EGizmoType::Scale);
+
+	GizmoCube->SetCanBeRendered(true);
+
+	// Translation
+	XArrowBody->SetCanBeRendered(isTranslate || isScale);
+	XArrowHead->SetCanBeRendered(isTranslate);
+	YArrowBody->SetCanBeRendered(isTranslate || isScale);
+	YArrowHead->SetCanBeRendered(isTranslate);
+	ZArrowBody->SetCanBeRendered(isTranslate || isScale);
+	ZArrowHead->SetCanBeRendered(isTranslate);
+
+	XArrowBody->SetCanPick(isTranslate || isScale);
+	XArrowHead->SetCanPick(isTranslate);
+	YArrowBody->SetCanPick(isTranslate || isScale);
+	YArrowHead->SetCanPick(isTranslate);
+	ZArrowBody->SetCanPick(isTranslate || isScale);
+	ZArrowHead->SetCanPick(isTranslate);
+
+	// Rotation
+	XRing->SetCanBeRendered(isRotate);
+	YRing->SetCanBeRendered(isRotate);
+	ZRing->SetCanBeRendered(isRotate);
+
+	XRing->SetCanPick(isRotate);
+	YRing->SetCanPick(isRotate);
+	ZRing->SetCanPick(isRotate);
+
+	XRodHead->SetCanBeRendered(isScale);
+	XRodHead->SetCanPick(isScale);
+	YRodHead->SetCanBeRendered(isScale);
+	YRodHead->SetCanPick(isScale);
+	ZRodHead->SetCanBeRendered(isScale);
+	ZRodHead->SetCanPick(isScale);
 }
 

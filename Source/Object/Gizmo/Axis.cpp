@@ -44,7 +44,7 @@ void AAxis::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-const char* AAxis::GetTypeName()
-{
-	return "Axis";
-}
+//const char* AAxis::GetTypeName()
+//{
+//	return "Axis";
+//}

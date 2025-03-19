@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "Actor.h"
 
@@ -14,6 +14,7 @@ namespace std {
 class APicker : public AActor
 {
     using Super = AActor;
+	DECLARE_CLASS(APicker, AActor)
 public:
     APicker();
     ~APicker() = default;
@@ -28,7 +29,7 @@ public:
 
     virtual void Tick(float DeltaTime) override;
     virtual void LateTick(float DeltaTime) override;
-    virtual const char* GetTypeName() override;
+    //virtual const char* GetTypeName() override;
 
 protected:
     FVector4 RayOrigin;
