@@ -84,8 +84,6 @@ AGizmoHandle::AGizmoHandle()
 	ZRodHead->SetColor(FVector4(0.0f, 0.0f, 1.0f, 1.0f));
 	ZRodHead->SetupAttachment(ZArrowBody);
 
-
-
 	UEngine::Get().GetWorld()->AddZIgnoreComponent(XArrowBody);
 	UEngine::Get().GetWorld()->AddZIgnoreComponent(XArrowHead);
 	UEngine::Get().GetWorld()->AddZIgnoreComponent(YArrowBody);

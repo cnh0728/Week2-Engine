@@ -409,7 +409,7 @@ void UI::RenderPropertyWindow()
             {
                 selectedComponent->SetColor(ActorColor);
             }
-            bool bRender = selectedComponent->GetCanBeRendered();
+            bool bRender = selectedComponent->GetIsDefaultRendered();
             if (ImGui::Checkbox("Show Primitive", &bRender))
             {
                 selectedComponent->SetCanBeRendered(bRender);

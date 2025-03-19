@@ -34,7 +34,7 @@ public:
 	{
 		return Depth;
 	}
-public:
+public: 
 	virtual void BeginPlay();
 	virtual void Tick(float DeltaTime);
 	virtual void LateTick (float DeltaTime); // 렌더 후 호출
@@ -123,7 +123,7 @@ protected:
 	UTextComponent* UUIDTextComponent = nullptr;
 
 	bool bIsBatch = false;
-
+	
 	AActor* Parent = nullptr;
 	TSet<AActor*> Children;
 	TSet<UActorComponent*> Components;

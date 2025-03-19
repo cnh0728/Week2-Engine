@@ -1064,84 +1064,6 @@ void URenderer::RenderPickingTexture()
     backBuffer->Release();
 }
 
-inline void URenderer::CreateConeVertices()
-{
-	TArray<FVertexSimple> vertices;
-
-	int segments = 36;
-	float radius = 1.f;
-	float height = 1.f;
-
-
-	// 원뿔의 바닥
-	for (int i = 0; i < segments; ++i)
-	{
-		float angle = 2.0f * PI * i / segments;
-		float nextAngle = 2.0f * PI * (i + 1) / segments;
-
-		float x1 = radius * cos(angle);
-		float y1 = radius * sin(angle);
-		float x2 = radius * cos(nextAngle);
-		float y2 = radius * sin(nextAngle);
-
-		 // 바닥 삼각형 (반시계 방향으로 추가)
-        vertices.Add({ 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f });
-        vertices.Add({ x2, y2, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f });
-        vertices.Add({ x1, y1, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f });
-
-        // 옆면 삼각형 (시계 방향으로 추가)
-        vertices.Add({ x1, y1, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f });
-        vertices.Add({ x2, y2, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f });
-        vertices.Add({ 0.0f, 0.0f, height, 0.0f, 1.0f, 0.0f, 1.0f });
-	}
-
-    const TArray<FVertexSimple> tmpArray = vertices;
-    
-	OriginVertices[EPrimitiveType::EPT_Cone] = tmpArray;
-}
-
-inline void URenderer::CreateCylinderVertices()
-{
-	TArray<FVertexSimple> vertices;
-	
-	int segments = 36;
-	float radius = .03f;
-	float height = .5f;
-
-
-	// 원기둥의 바닥과 윗면
-	for (int i = 0; i < segments; ++i)
-	{
-		float angle = 2.0f * PI * i / segments;
-		float nextAngle = 2.0f * PI * (i + 1) / segments;
-
-		float x1 = radius * cos(angle);
-		float y1 = radius * sin(angle);
-		float x2 = radius * cos(nextAngle);
-		float y2 = radius * sin(nextAngle);
-
-		// 바닥 삼각형
-		vertices.Add({ 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f });
-		vertices.Add({ x2, y2, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f });
-		vertices.Add({ x1, y1, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f });
-
-		// 윗면 삼각형
-		vertices.Add({ 0.0f, 0.0f, height, 0.0f, 1.0f, 0.0f, 1.0f });
-		vertices.Add({ x1, y1, height, 0.0f, 1.0f, 0.0f, 1.0f });
-		vertices.Add({ x2, y2, height, 0.0f, 1.0f, 0.0f, 1.0f });
-
-		// 옆면 삼각형 두 개
-		vertices.Add({ x1, y1, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f });
-		vertices.Add({ x2, y2, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f });
-		vertices.Add({ x1, y1, height, 0.0f, 0.0f, 1.0f, 1.0f });
-
-		vertices.Add({ x2, y2, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f });
-		vertices.Add({ x2, y2, height, 0.0f, 0.0f, 1.0f, 1.0f });
-		vertices.Add({ x1, y1, height, 0.0f, 0.0f, 1.0f, 1.0f });
-	}
-
-	OriginVertices[EPrimitiveType::EPT_Cylinder] = vertices;
-}
 void URenderer::CreateText(HWND hWindow) 
 {
     Text = new UText();
@@ -1157,7 +1079,6 @@ void URenderer::RenderText(const FString& InText, const FVector& InTextPos, cons
         FMatrix::GetRotateMatrix(FQuat(Camera->GetActorRelativeTransform().GetRotation())).Inverse();
     // 이동은 스케일의 영향을 받지 않게 따로
 	WorldMatrix.SetTranslateMatrix(InTextPos);
-
 
     // 텍스트 렌더링
     DeviceContext->ClearDepthStencilView(DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);

@@ -122,16 +122,16 @@ void UWorld::RenderMainTexture(URenderer& Renderer)
 
 	for (auto& RenderComponent : RenderComponents)
 	{
-		if (UTextComponent* TextComponent = Cast<UTextComponent>(RenderComponent))
-		{
-			// TextComponent->RenderText(Renderer, TextComponent->GetText(),
-			// 	TextComponent->GetComponentTransformMatrix().GetTranslation(),
-			// 	TextComponent->GetTextSize());
-		}else
-		{
-			RenderComponent->Render();
-		}
+		RenderComponent->Render();
 	}
+
+	// for (auto& RenderComponent : TextRenderComponents)
+	// {
+	// 	UTextComponent* TextComponent = Cast<UTextComponent>(RenderComponent);
+	// 	TextComponent->RenderText(Renderer, TextComponent->GetText(),
+	// 	TextComponent->GetComponentTransformMatrix().GetTranslation(),
+	// 	TextComponent->GetTextSize());
+	// }
 	
 	Renderer.PrepareZIgnore();
 	for (auto& RenderComponent: ZIgnoreRenderComponents)
@@ -139,6 +139,7 @@ void UWorld::RenderMainTexture(URenderer& Renderer)
 		uint32 depth = RenderComponent->GetOwner()->GetDepth();
 		RenderComponent->Render();
 	}
+	
 }
 
 void UWorld::DisplayPickingTexture(URenderer& Renderer)
@@ -195,6 +196,11 @@ void UWorld::AddZIgnoreComponent(UPrimitiveComponent* InComponent)
 {
 	ZIgnoreRenderComponents.Add(InComponent);
 	InComponent->SetIsOrthoGraphic(true);
+}
+
+void UWorld::AddTextComponent(UPrimitiveComponent* InComponent)
+{
+	TextRenderComponents.Add(InComponent);
 }
 
 void UWorld::LoadWorld(const char* SceneName)

@@ -320,8 +320,6 @@ public:
 
 	void RenderPickingTexture();
 
-    void CreateConeVertices();
-    void CreateCylinderVertices();
     FMatrix GetProjectionMatrix() const { return ProjectionMatrix; }
 
 #pragma endregion picking

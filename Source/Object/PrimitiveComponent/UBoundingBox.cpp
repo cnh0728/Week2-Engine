@@ -4,12 +4,12 @@ void UBoundingBoxComponent::Tick(float DeltaTime)
 {
 	if (!Parent)
 	{
-		bCanBeRendered = false;
+		bIsDefaultRendered = false;
 		return;
 	}
 	else
 	{
-		bCanBeRendered = true;
+		bIsDefaultRendered = true;
 		UpdateMinMax();
 	}
 }

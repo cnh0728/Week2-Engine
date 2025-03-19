@@ -39,8 +39,8 @@ public:
 	virtual void RegisterComponentWithWorld(class UWorld* World);
 
 public:
-	void SetCanBeRendered(bool bRender) { bCanBeRendered = bRender; }
-	bool GetCanBeRendered() const { return bCanBeRendered; }
+	void SetCanBeRendered(bool bRender) { bIsDefaultRendered = bRender; }
+	bool GetIsDefaultRendered() const { return bIsDefaultRendered; }
 	
 	void SetIsOrthoGraphic(bool IsOrtho) { bIsOrthoGraphic = IsOrtho; }
 	bool GetIsOrthoGraphic() { return bIsOrthoGraphic;}
@@ -48,7 +48,7 @@ public:
 	void SetCanPick(bool bValue) { bCanPick = bValue; }
 protected:
 	bool bCanPick = false;
-	bool bCanBeRendered = false;
+	bool bIsDefaultRendered = false;
 	bool bUseVertexColor = true;
 	bool bIsOrthoGraphic = false;
 	FVector4 CustomColor = FVector4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -65,7 +65,7 @@ class UCubeComp : public UPrimitiveComponent
 public:
 	UCubeComp()
 	{
-		bCanBeRendered = true;
+		bIsDefaultRendered = true;
 		bCanPick = true;
 	}
 	virtual ~UCubeComp() = default;
@@ -82,7 +82,7 @@ class USphereComp : public UPrimitiveComponent
 public:
 	USphereComp()
 	{
-		bCanBeRendered = true;
+		bIsDefaultRendered = true;
 		bCanPick = true;
 	}
 	virtual ~USphereComp() = default;
@@ -99,7 +99,7 @@ class UTriangleComp : public UPrimitiveComponent
 public:
 	UTriangleComp()
 	{
-		bCanBeRendered = true;
+		bIsDefaultRendered = true;
 		bCanPick = true;
 
 	}
@@ -118,7 +118,7 @@ class ULineComp : public UPrimitiveComponent
 public:
 	ULineComp()
 	{
-		bCanBeRendered = true;
+		bIsDefaultRendered = true;
 		bCanPick = false;
 	}
 	virtual ~ULineComp() = default;
@@ -136,7 +136,7 @@ class UCylinderComp : public UPrimitiveComponent
 public:
 	UCylinderComp()
 	{
-		bCanBeRendered = true;
+		bIsDefaultRendered = true;
 		bCanPick = true;
 
 	}
@@ -154,7 +154,7 @@ class UConeComp : public UPrimitiveComponent
 public:
 	UConeComp()
 	{
-		bCanBeRendered = true;
+		bIsDefaultRendered = true;
 		bCanPick = true;
 	}
 	virtual ~UConeComp() = default;
@@ -171,7 +171,7 @@ class USpotlightComp : public UPrimitiveComponent
 public:
 	USpotlightComp()
 	{
-		bCanBeRendered = true;
+		bIsDefaultRendered = true;
 		bCanPick = false;
 	}
 	virtual ~USpotlightComp() = default;
@@ -189,7 +189,7 @@ class URingComp : public UPrimitiveComponent
 public:
 	URingComp()
 	{
-		bCanBeRendered = true;
+		bIsDefaultRendered = true;
 		bCanPick = false;
 	}
 	virtual ~URingComp() = default;
