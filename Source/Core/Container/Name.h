@@ -96,7 +96,7 @@ public:
 
 //private:
 
-	static constexpr uint32 PoolSize = 1024;
+	static constexpr uint32 PoolSize = 128;
 #ifndef IS_FNAME_POOL_HASHED
 	uint32 CurrentComparisonPoolSize = 1;
 	uint32 CurrentDisplayPoolSize = 1;
@@ -105,7 +105,7 @@ public:
 	static FNameEntry DisplayNameEntryPool[PoolSize];
 
 
-	static constexpr uint8 CacheSize = 16;
+	static constexpr uint8 CacheSize = 4;
 	uint32 ComparisonNameEntryCache[CacheSize][2] = {0}; // hash값 / ComparisonNameEntryPool의 Id값 : 
 	uint32 DisplayNameEntryCache[CacheSize][2] = {0};
 	uint8 ComparisonCacheCursor = 0;

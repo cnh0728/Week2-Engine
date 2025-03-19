@@ -346,10 +346,19 @@ void UI::RenderViewMode() {
 }
 
 void UI::RenderShowFlag() {
+    ImGui::Text("Show Flag");
     bool bShowPrimitives = FEditorManager::Get().IsShowFlagSet(EEngineShowFlags::SF_Primitives);
     if (ImGui::Checkbox("Show Primtives", &bShowPrimitives))
     {
         FEditorManager::Get().SetShowFlag(EEngineShowFlags::SF_Primitives, bShowPrimitives);
+        if (!bShowPrimitives)
+            FEditorManager::Get().SelectActor(nullptr);
+    }
+
+    bool bShowTextBillboard = FEditorManager::Get().IsShowFlagSet(EEngineShowFlags::SF_BillboardText);
+    if (ImGui::Checkbox("Show Billboard Text", &bShowTextBillboard))
+    {
+        FEditorManager::Get().SetShowFlag(EEngineShowFlags::SF_BillboardText, bShowTextBillboard);
     }
 }
 
@@ -487,6 +496,8 @@ void UI::RenderComponentsByActor()
     const TArray<AActor*>& ActorArray = UEngine::Get().GetWorld()->GetActors();
     uint32 NumActors = ActorArray.Num();
 
+    SetWindowLayout(0.3f, 0.2f, 1.f, 0.4f);
+
     if (NumActors > 0) {
         static int selected = -1;
         ImGui::Begin("Components Tree");
@@ -514,6 +525,8 @@ void UI::RenderComponentsByActor()
 
 void UI::RenderFNameResolver()
 {
+    SetWindowLayout(0.3f, 0.1f, 1.f, 0.6f);
+
     ImGui::Begin("FName Resolver");
 
     static char id[8];

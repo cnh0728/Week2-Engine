@@ -18,7 +18,7 @@ AGizmoHandle::AGizmoHandle()
 
 	GizmoCube = AddComponent<UCubeComp>();
 	GizmoCube->SetColor(FVector4(0.2f, 0.2f, 0.2f, 1.f));
-	GizmoCube->SetRelativeTransform(FTransform(FVector(0, 0, 0), FVector(0, 0, 0), FVector(GizmoSize, GizmoSize, GizmoSize)));
+	GizmoCube->SetRelativeTransform(FTransform(FVector(0, 0, 0), FVector(0, 0, 0), FVector(GizmoSize/2, GizmoSize/2, GizmoSize/2)));
 	GizmoCube->SetupAttachment(RootComponent);
 	
 	XArrowBody = AddComponent<UCylinderComp>();
@@ -97,6 +97,8 @@ AGizmoHandle::AGizmoHandle()
 	UEngine::Get().GetWorld()->AddZIgnoreComponent(XRodHead);
 	UEngine::Get().GetWorld()->AddZIgnoreComponent(YRodHead);
 	UEngine::Get().GetWorld()->AddZIgnoreComponent(ZRodHead);
+
+	UEngine::Get().GetWorld()->AddZIgnoreComponent(GizmoCube);
 
 
 	SetActive(false);
@@ -309,5 +311,10 @@ void AGizmoHandle::UpdateGizmoPrimitives()
 	YRodHead->SetCanPick(isScale);
 	ZRodHead->SetCanBeRendered(isScale);
 	ZRodHead->SetCanPick(isScale);
+
+
+	GizmoCube->SetCanPick(isTranslate || isScale);
+	GizmoCube->SetCanBeRendered(isTranslate || isScale);
+
 }
 
