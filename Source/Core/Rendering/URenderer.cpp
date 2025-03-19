@@ -566,8 +566,8 @@ void URenderer::UpdateConstant(USceneComponent* Component) const
         Constants->M = M;
         Constants->V = V;
         Constants->P = P;
-		// Constants->Color = UpdateInfo.Color;
-		// Constants->bUseVertexColor = UpdateInfo.bUseVertexColor ? 1 : 0;
+		Constants->Color = Component->GetColor();
+        Constants->bUseCustomColor = Component->bCustomColor;
     }
     DeviceContext->Unmap(ConstantBuffer, 0);
 }
