@@ -29,7 +29,7 @@ AAxis::AAxis()
 	ZTransform.SetScale(FVector(1000.0f, 10.0f, 10.0f));
 	ZTransform.Rotate({0.0f, 90.0f, 0.0f});
 	LineZ->SetRelativeTransform(ZTransform);
-	LineZ->SetColor(FVector4(0.0f, 0.0f, 1.0f, 2.0f));
+	LineZ->SetColor(FVector4(0.0f, 0.0f, 1.0f, 1.0f));
 	LineZ->SetupAttachment(RootComponent);
 } 
 
