@@ -36,6 +36,8 @@ PS_INPUT TextureVS(VS_INPUT input)
 float4 TexturePS(PS_INPUT input) : SV_TARGET
 {
     float4 color = shaderTexture.Sample(SampleType, input.texCoord);
-    
+
+    color.a = 0.0f;
+
     return color;
 }

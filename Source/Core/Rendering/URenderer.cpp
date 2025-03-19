@@ -49,6 +49,7 @@ void URenderer::Create(HWND hWindow)
     InitMatrix();
 
 	CreateParticle(hWindow);
+    CreateTexture(hWindow);
 }
 
 void URenderer::Release()
@@ -1292,11 +1293,16 @@ void URenderer::CreateTexture(HWND hWindow)
 {
 	Texture = new UTexture();
     TextureRenderer = new UTextureRenderer();
+    TextureRenderer->Create(Device, hWindow);
 	Texture->Create(Device, L"light_bulb_texture.tga");
 }
 
 void URenderer::RenderTexture(const FVector& InPos)
 {
+    DeviceContext->ClearDepthStencilView(DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+    CurrentTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+    DeviceContext->IASetPrimitiveTopology(CurrentTopology);
+
     // 텍스트의 WorldMatrix 결정
     ACamera* Camera = FEditorManager::Get().GetCamera();
     // 스케일 * 회전
@@ -1305,8 +1311,14 @@ void URenderer::RenderTexture(const FVector& InPos)
     // 이동은 스케일의 영향을 받지 않게 따로
     WorldMatrix.SetTranslateMatrix(InPos);
 
-	TextureRenderer->Render(DeviceContext, 4, WorldMatrix, ViewMatrix, ProjectionMatrix, Texture->GetTexture());
-	Texture->Render(Device, DeviceContext);
+    TurnOnAlphaBlending(EAlphaBlendingState::Normal);
+    TurnZBufferOff();
+
+    Texture->Render(Device, DeviceContext);
+	TextureRenderer->Render(DeviceContext, 6, WorldMatrix, ViewMatrix, ProjectionMatrix, Texture->GetTexture());
+
+    TurnOffAlphaBlending();
+    TurnZBufferOn();
 }
 
 

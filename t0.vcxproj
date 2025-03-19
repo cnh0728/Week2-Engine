@@ -206,6 +206,7 @@
     <ClCompile Include="Source\Core\Math\Matrix.cpp" />
     <ClCompile Include="Source\Core\Math\Vector.cpp" />
     <ClCompile Include="Source\Object\ObjectFactory.cpp" />
+    <ClCompile Include="Source\Object\PrimitiveComponent\BillBoardComponent.cpp" />
     <ClCompile Include="Source\Object\PrimitiveComponent\TextComponent.cpp" />
     <ClCompile Include="Source\Object\PrimitiveComponent\UBoundingBox.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui.cpp" />
@@ -263,6 +264,7 @@
     <ClInclude Include="Source\Object\Actor\Cylinder.h" />
     <ClInclude Include="Source\Object\Gizmo\Axis.h" />
     <ClInclude Include="Source\Object\ObjectFactory.h" />
+    <ClInclude Include="Source\Object\PrimitiveComponent\BillBoardComponent.h" />
     <ClInclude Include="Source\Object\PrimitiveComponent\TextComponent.h" />
     <ClInclude Include="Source\Object\PrimitiveComponent\UBoundingBox.h" />
     <ClInclude Include="Source\ThirdParty\DirectXTex\Include\DirectXTex.h" />
@@ -328,7 +330,7 @@
     <Text Include="Source\Core\Rendering\Text\font01.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\..\Downloads\light_bulb_texture.tga" />
+    <Image Include="light_bulb_texture.tga" />
     <Image Include="Source\Core\Rendering\Particle\ice003.tga" />
     <Image Include="Source\Core\Rendering\Text\font01.tga" />
   </ItemGroup>

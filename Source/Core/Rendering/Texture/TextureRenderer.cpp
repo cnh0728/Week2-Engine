@@ -117,10 +117,10 @@ bool UTextureRenderer::CreateShader(ID3D11Device* Device, HWND HWindow, const wc
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "UV", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	};
 
-	Device->CreateInputLayout(Layout, ARRAYSIZE(Layout), VertexShaderCSO->GetBufferPointer(), VertexShaderCSO->GetBufferSize(), &InputLayout);
+	Result = Device->CreateInputLayout(Layout, ARRAYSIZE(Layout), VertexShaderCSO->GetBufferPointer(), VertexShaderCSO->GetBufferSize(), &InputLayout);
 	if (FAILED(Result))
 	{
 		return false;
@@ -211,7 +211,7 @@ bool UTextureRenderer::SetShaderParameters(ID3D11DeviceContext* DeviceContext, F
 		FMatrix::Transpose(WorldMatrix);
 
 	DeviceContext->Unmap(ConstantBuffer, 0);
-	DeviceContext->VSSetConstantBuffers(3, 1, &ConstantBuffer);
+	DeviceContext->VSSetConstantBuffers(0, 1, &ConstantBuffer);
 	DeviceContext->PSSetShaderResources(0, 1, &Texture);
 
 	return true;
