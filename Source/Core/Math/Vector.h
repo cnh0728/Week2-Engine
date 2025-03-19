@@ -2,7 +2,7 @@
 #include "MathUtility.h"
 
 
-struct FVector
+struct FVector 
 {
     float X, Y, Z;
     FVector() : X(0), Y(0), Z(0) {}
@@ -239,4 +239,45 @@ struct alignas(16) FVector4 : public FVector
         return FVector(X, Y, Z) * denom;
     }
 
+};
+
+struct FVector2
+{
+    float X, Y;
+
+    FVector2() : X(0), Y(0) {}
+    FVector2(float Val) : X(Val), Y(Val) {}
+    FVector2(float X, float Y) : X(X), Y(Y) {}
+
+    static const FVector2 ZeroVector;
+    static const FVector2 OneVector;
+
+    static float DotProduct(const FVector2& A, const FVector2& B)
+    {
+        return A.X * B.X + A.Y * B.Y;
+    }
+
+    float Length() const
+    {
+        return FMath::Sqrt(X * X + Y * Y);
+    }
+
+    FVector2 GetSafeNormal(float Tolerance = 1.e-8f) const
+    {
+        const float SquareSum = X * X + Y * Y;
+        if (SquareSum < Tolerance)
+        {
+            return ZeroVector;
+        }
+        const float Scale = FMath::InvSqrt(SquareSum);
+        return { X * Scale, Y * Scale };
+    }
+
+    FVector2 operator+(const FVector2& Other) const { return { X + Other.X, Y + Other.Y }; }
+    FVector2 operator-(const FVector2& Other) const { return { X - Other.X, Y - Other.Y }; }
+    FVector2 operator*(float Scalar) const { return { X * Scalar, Y * Scalar }; }
+    FVector2 operator/(float Scalar) const { return { X / Scalar, Y / Scalar }; }
+
+    bool operator==(const FVector2& Other) const { return X == Other.X && Y == Other.Y; }
+    bool operator!=(const FVector2& Other) const { return X != Other.X || Y != Other.Y; }
 };

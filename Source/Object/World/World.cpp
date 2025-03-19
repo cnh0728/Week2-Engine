@@ -14,6 +14,7 @@
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Static/FEditorManager.h"
 #include "Object/PrimitiveComponent/TextComponent.h"
+#include <Object/PrimitiveComponent/BillBoardComponent.h>
 
 void UWorld::BeginPlay()
 {
@@ -61,7 +62,7 @@ void UWorld::LateTick(float DeltaTime)
 	PendingDestroyActors.Empty();
 }
 
-void UWorld::Render()
+void UWorld::Render(float DeltaTime)
 {
 	URenderer* Renderer = UEngine::Get().GetRenderer();
 
@@ -80,7 +81,7 @@ void UWorld::Render()
 	// 	RenderPickingTexture(*Renderer);
 	// }
 	
-	RenderMainTexture(*Renderer);
+	RenderMainTexture(*Renderer, DeltaTime);
 	
 	// DisplayPickingTexture(*Renderer);
 
@@ -113,7 +114,7 @@ void UWorld::RenderPickingTexture(URenderer& Renderer)
 	// }
 }
 
-void UWorld::RenderMainTexture(URenderer& Renderer)
+void UWorld::RenderMainTexture(URenderer& Renderer, float DeltaTime)
 {
 	Renderer.PrepareMain();
 	Renderer.PrepareMainShader();
@@ -142,21 +143,29 @@ void UWorld::RenderMainTexture(URenderer& Renderer)
 		}
 	}
 
-	// for (auto& RenderComponent : TextRenderComponents)
-	// {
-	// 	UTextComponent* TextComponent = Cast<UTextComponent>(RenderComponent);
-	// 	TextComponent->RenderText(Renderer, TextComponent->GetText(),
-	// 	TextComponent->GetComponentTransformMatrix().GetTranslation(),
-	// 	TextComponent->GetTextSize());
-	// }
-	
 	Renderer.PrepareZIgnore();
 	for (auto& RenderComponent: ZIgnoreRenderComponents)
 	{
 		uint32 depth = RenderComponent->GetOwner()->GetDepth();
 		RenderComponent->Render();
 	}
+
+	for (auto& RenderComponent : TextRenderComponents)
+	{
+		UTextComponent* TextComponent = Cast<UTextComponent>(RenderComponent);
+		TextComponent->RenderText(Renderer, TextComponent->GetText(),
+			TextComponent->GetComponentTransformMatrix().GetTranslation(),
+			TextComponent->GetTextSize());
+	}
 	
+	Renderer.RenderParticle(DeltaTime);
+
+	for (auto& RenderComponent : BillBoardRenderComponents)
+	{
+		UBillBoardComponent* BillBoardComponent = Cast<UBillBoardComponent>(RenderComponent);
+		Renderer.RenderTexture(BillBoardComponent->GetComponentTransformMatrix().GetTranslation());
+	}
+
 }
 
 void UWorld::DisplayPickingTexture(URenderer& Renderer)
@@ -218,6 +227,11 @@ void UWorld::AddZIgnoreComponent(UPrimitiveComponent* InComponent)
 void UWorld::AddTextComponent(UPrimitiveComponent* InComponent)
 {
 	TextRenderComponents.Add(InComponent);
+}
+
+void UWorld::AddBillBoardComponent(UPrimitiveComponent* InComponent)
+{
+	BillBoardRenderComponents.Add(InComponent);
 }
 
 void UWorld::LoadWorld(const char* SceneName)

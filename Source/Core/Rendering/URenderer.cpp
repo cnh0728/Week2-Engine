@@ -47,6 +47,9 @@ void URenderer::Create(HWND hWindow)
 	CreateAlphaBlendingState();
 
     InitMatrix();
+
+	CreateParticle(hWindow);
+    CreateTexture(hWindow);
 }
 
 void URenderer::Release()
@@ -1064,42 +1067,14 @@ void URenderer::RenderPickingTexture()
     backBuffer->Release();
 }
 
-void URenderer::CreateText(HWND hWindow) 
-{
-    Text = new UText();
-    Text->Create(Device, DeviceContext, hWindow, UEngine::Get().GetScreenWidth(), UEngine::Get().GetScreenHeight());
-}
-
-void URenderer::RenderText(const FString& InText, const FVector& InTextPos, const FVector& InTextSize)
-{
-    // 텍스트의 WorldMatrix 결정
-	ACamera* Camera = FEditorManager::Get().GetCamera();
-    // 스케일 * 회전
-    FMatrix WorldMatrix = FMatrix::GetScaleMatrix(InTextSize) *
-        FMatrix::GetRotateMatrix(FQuat(Camera->GetActorRelativeTransform().GetRotation())).Inverse();
-    // 이동은 스케일의 영향을 받지 않게 따로
-	WorldMatrix.SetTranslateMatrix(InTextPos);
-
-    // 텍스트 렌더링
-    DeviceContext->ClearDepthStencilView(DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
-
-    TurnZBufferOff();
-    TurnOnAlphaBlending();
-
-	Text->Render(DeviceContext, WorldMatrix, ViewMatrix, ProjectionMatrix, InText);
-
-	TurnOffAlphaBlending();
-	TurnZBufferOn();
-}
-
 void URenderer::TurnZBufferOn() 
 {
-	DeviceContext->OMSetDepthStencilState(DepthStencilState, 0);
+	DeviceContext->OMSetDepthStencilState(DepthStencilState, 1);
 }
 
 void URenderer::TurnZBufferOff() 
 {
-	DeviceContext->OMSetDepthStencilState(IgnoreDepthStencilState, 0);
+	DeviceContext->OMSetDepthStencilState(IgnoreDepthStencilState, 1);
 }
 
 
@@ -1107,6 +1082,7 @@ void URenderer::CreateAlphaBlendingState()
 {
     D3D11_BLEND_DESC blendStateDescription;
     ZeroMemory(&blendStateDescription, sizeof(D3D11_BLEND_DESC));
+    
     // 알파 블렌딩을 위한 설정
     blendStateDescription.RenderTarget[0].BlendEnable = TRUE;
     blendStateDescription.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
@@ -1117,8 +1093,23 @@ void URenderer::CreateAlphaBlendingState()
     blendStateDescription.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
     blendStateDescription.RenderTarget[0].RenderTargetWriteMask = 0x0f;
 
+    // 알파블렌딩 on
     Device->CreateBlendState(&blendStateDescription, &AlphaEnableBlendingState);
 
+    // 파티클 알파블렌딩 설정
+    blendStateDescription.RenderTarget[0].BlendEnable = TRUE;
+    blendStateDescription.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+    blendStateDescription.RenderTarget[0].DestBlend = D3D11_BLEND_ONE;
+    blendStateDescription.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+    blendStateDescription.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ZERO;
+    blendStateDescription.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
+    blendStateDescription.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+    blendStateDescription.RenderTarget[0].RenderTargetWriteMask = 0x0f;
+
+    Device->CreateBlendState(&blendStateDescription, &ParticleAlphaEnableBlendingState);
+
+
+    // 알파블렌딩 끈 상태도 생성
     blendStateDescription.RenderTarget[0].BlendEnable = FALSE;
     Device->CreateBlendState(&blendStateDescription, &AlphaDisableBlendingState);
 }
@@ -1130,6 +1121,11 @@ void URenderer::ReleaseAlphaBlendingState()
         AlphaEnableBlendingState->Release();
         AlphaEnableBlendingState = nullptr;
     }
+	if (ParticleAlphaEnableBlendingState)
+	{
+		ParticleAlphaEnableBlendingState->Release();
+		ParticleAlphaEnableBlendingState = nullptr;
+	}
     if (AlphaDisableBlendingState)
     {
         AlphaDisableBlendingState->Release();
@@ -1137,10 +1133,19 @@ void URenderer::ReleaseAlphaBlendingState()
     }
 }
 
-void URenderer::TurnOnAlphaBlending()
+void URenderer::TurnOnAlphaBlending(EAlphaBlendingState State)
 {
     float blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-    DeviceContext->OMSetBlendState(AlphaEnableBlendingState, blendFactor, 0xffffffff);
+    switch (State)
+    {
+    case EAlphaBlendingState::Normal:
+        DeviceContext->OMSetBlendState(AlphaEnableBlendingState, blendFactor, 0xffffffff);
+        break;
+
+	case EAlphaBlendingState::Particle:
+		DeviceContext->OMSetBlendState(ParticleAlphaEnableBlendingState, blendFactor, 0xffffffff);
+		break;
+	}
 }
 
 void URenderer::TurnOffAlphaBlending()
@@ -1148,7 +1153,98 @@ void URenderer::TurnOffAlphaBlending()
     float blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
     DeviceContext->OMSetBlendState(AlphaDisableBlendingState, blendFactor, 0xffffffff);
 }
-void URenderer::SetViewMode(EViewModeIndex viewMode) {
+
+void URenderer::CreateText(HWND hWindow)
+{
+    Text = new UText();
+    Text->Create(Device, DeviceContext, hWindow, UEngine::Get().GetScreenWidth(), UEngine::Get().GetScreenHeight());
+}
+
+void URenderer::RenderText(const FString& InText, const FVector& InTextPos, const FVector& InTextSize)
+{
+    // 텍스트의 WorldMatrix 결정
+    ACamera* Camera = FEditorManager::Get().GetCamera();
+    // 스케일 * 회전
+    FMatrix WorldMatrix = FMatrix::GetScaleMatrix(InTextSize) *
+        FMatrix::GetRotateMatrix(FQuat(Camera->GetActorRelativeTransform().GetRotation())).Inverse();
+    // 이동은 스케일의 영향을 받지 않게 따로
+    WorldMatrix.SetTranslateMatrix(InTextPos);
+
+
+    // 텍스트 렌더링
+    DeviceContext->ClearDepthStencilView(DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+
+    TurnOnAlphaBlending(EAlphaBlendingState::Normal);
+    TurnZBufferOff();
+
+    Text->Render(DeviceContext, WorldMatrix, ViewMatrix, ProjectionMatrix, InText);
+
+    TurnOffAlphaBlending();
+    TurnZBufferOn();
+}
+
+
+void URenderer::CreateParticle(HWND hWindow) 
+{
+    UParticle::Get().Create(Device, DeviceContext, L"Source/Core/Rendering/Particle/particle_config_01.txt");
+
+	ParticleShader = new UParticleShader();
+	ParticleShader->Create(Device, hWindow);
+}
+
+void URenderer::RenderParticle(float DeltaTime) 
+{
+    DeviceContext->ClearDepthStencilView(DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+    CurrentTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+    DeviceContext->IASetPrimitiveTopology(CurrentTopology);
+
+
+    TurnOnAlphaBlending(EAlphaBlendingState::Particle);
+    TurnZBufferOff();
+
+    UParticle::Get().Frame(DeltaTime, DeviceContext);
+    UParticle::Get().Render(DeviceContext);
+    ParticleShader->Render(DeviceContext, UParticle::Get().GetIndexCount(), WorldMatrix, ViewMatrix, ProjectionMatrix, UParticle::Get().GetTexture());
+
+    TurnOffAlphaBlending();
+    TurnZBufferOn();
+}
+
+void URenderer::CreateTexture(HWND hWindow) 
+{
+	Texture = new UTexture();
+    TextureRenderer = new UTextureRenderer();
+    TextureRenderer->Create(Device, hWindow);
+	Texture->Create(Device, L"light_bulb_texture.tga");
+}
+
+void URenderer::RenderTexture(const FVector& InPos)
+{
+    DeviceContext->ClearDepthStencilView(DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+    CurrentTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+    DeviceContext->IASetPrimitiveTopology(CurrentTopology);
+
+    // 텍스트의 WorldMatrix 결정
+    ACamera* Camera = FEditorManager::Get().GetCamera();
+    // 스케일 * 회전
+    FMatrix WorldMatrix = FMatrix::GetScaleMatrix(1) *
+        FMatrix::GetRotateMatrix(FQuat(Camera->GetActorRelativeTransform().GetRotation())).Inverse();
+    // 이동은 스케일의 영향을 받지 않게 따로
+    WorldMatrix.SetTranslateMatrix(InPos);
+
+    TurnOnAlphaBlending(EAlphaBlendingState::Normal);
+    TurnZBufferOff();
+
+    Texture->Render(Device, DeviceContext);
+	TextureRenderer->Render(DeviceContext, 6, WorldMatrix, ViewMatrix, ProjectionMatrix, Texture->GetTexture());
+
+    TurnOffAlphaBlending();
+    TurnZBufferOn();
+}
+
+
+void URenderer::SetViewMode(EViewModeIndex viewMode)
+{
     CurrentViewMode = viewMode;
 
     switch (CurrentViewMode)
@@ -1164,7 +1260,8 @@ void URenderer::SetViewMode(EViewModeIndex viewMode) {
     CreateRasterizerState();
 }
 
-EViewModeIndex URenderer::GetCurrentViewMode() const {
+EViewModeIndex URenderer::GetCurrentViewMode() const
+{
     return CurrentViewMode;
 
 }

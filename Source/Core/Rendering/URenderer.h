@@ -14,6 +14,9 @@
 #include "Core/Math/Transform.h"
 #include "Object/USceneComponent.h"
 #include "Text/Text.h"
+#include "Particle/Particle.h"
+#include "Particle/ParticleShader.h"
+#include "Texture/TextureRenderer.h"
 
 
 struct FVertexSimple;
@@ -88,6 +91,12 @@ enum class EViewModeIndex : uint32
     VMI_Lit,
     VMI_Unlit,
     VMI_Wireframe,
+};
+
+enum class EAlphaBlendingState : uint32
+{
+	Normal,
+	Particle,
 };
 
 class URenderer
@@ -191,7 +200,7 @@ public:
 	void OnUpdateWindowSize(int Width, int Height);
 
     /** Alpha Blending을 켜고 끄는 함수 **/
-	void TurnOnAlphaBlending();
+	void TurnOnAlphaBlending(EAlphaBlendingState State);
 	void TurnOffAlphaBlending();
 
     void CreateText(HWND hWindow);
@@ -207,6 +216,14 @@ public:
     void SetViewMode(EViewModeIndex viewMode);
 
     EViewModeIndex GetCurrentViewMode() const;
+
+    void CreateParticle(HWND hWindow);
+
+    void RenderParticle(float deltaTime);
+
+	void CreateTexture(HWND hWindow);
+
+	void RenderTexture(const FVector& InPos);
 
 protected:
     /** Direct3D Device 및 SwapChain을 생성합니다. */
@@ -283,13 +300,23 @@ protected:
 
 	// Alpha Blending
 	ID3D11BlendState* AlphaEnableBlendingState = nullptr;
+    ID3D11BlendState* ParticleAlphaEnableBlendingState = nullptr;
 	ID3D11BlendState* AlphaDisableBlendingState = nullptr;
 
-    // 텍스트클래스
+
+    // 텍스트 클래스
     UText* Text = nullptr;
+
+    // 파티클 클래스
+	UParticleShader* ParticleShader = nullptr;
+	EAlphaBlendingState AlphaBlendingState = EAlphaBlendingState::Normal;
 
     EViewModeIndex CurrentViewMode = EViewModeIndex::VMI_Lit;
     D3D11_FILL_MODE CurrentFillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
+
+	// 텍스쳐 클래스
+	UTexture* Texture = nullptr;
+	UTextureRenderer* TextureRenderer = nullptr;
 
 #pragma region picking
 protected:

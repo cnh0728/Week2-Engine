@@ -21,7 +21,9 @@
 #include "Static/FEditorManager.h"
 #include "Object/World/World.h"
 #include "Object/Gizmo/GizmoHandle.h"
+#include "Core/Rendering/Particle/Particle.h"
 #include "Object/Gizmo/Axis.h"
+
 void UI::Initialize(HWND hWnd, URenderer& Renderer, UINT ScreenWidth, UINT ScreenHeight)
 {
     // ImGui 초기화
@@ -172,6 +174,7 @@ void UI::RenderPrimitiveSelection()
 
     if (ImGui::Button("Spawn"))
     {
+        UParticle::Get().Reload(Renderer->GetDevice(), Renderer->GetDeviceContext());
         UWorld* World = UEngine::Get().GetWorld();
         for (int i = 0 ;  i < NumOfSpawn; i++)
         {

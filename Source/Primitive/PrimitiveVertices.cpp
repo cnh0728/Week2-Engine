@@ -499,10 +499,10 @@ void FVertexSimple::CreateTextureBoardVertices()
 	TArray<FVertexSimple> Vertices;
 	TArray<uint32> Indices;
 
-	Vertices.Add({ 0.5f, -0.5f, -0.5f,  1.0f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f,0.0f, 0.0f });  // Bottom-left (orange)
-	Vertices.Add({ 0.5f,  0.5f, -0.5f,  0.5f, 0.0f, 0.5f, 1.0f, 1.0f, 0.0f, 0.0f,1.0f, 0.0f });  // Top-left (purple)
-	Vertices.Add({ 0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 0.5f, 1.0f, 1.0f, 0.0f, 0.0f,1.0f, 1.0f });  // Top-right (dark blue)
-	Vertices.Add({ 0.5f, -0.5f,  0.5f,  0.5f, 0.5f, 0.5f, 1.0f, 1.0f, 0.0f, 0.0f,0.0f, 1.0f });  // Bottom-right (gray)
+	Vertices.Add({ 0.5f, -0.5f, -0.5f,  1.0f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f,0.0f, 1.0f });  // Bottom-left (orange)
+	Vertices.Add({ 0.5f, -0.5f,  0.5f,  0.5f, 0.0f, 0.5f, 1.0f, 1.0f, 0.0f, 0.0f,0.0f, 0.0f });  // Top-left (purple)
+	Vertices.Add({ 0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 0.5f, 1.0f, 1.0f, 0.0f, 0.0f,1.0f, 0.0f });  // Top-right (dark blue)
+	Vertices.Add({ 0.5f,  0.5f, -0.5f,  0.5f, 0.5f, 0.5f, 1.0f, 1.0f, 0.0f, 0.0f,1.0f, 1.0f });  // Bottom-right (gray)
 
 	Indices = {
 		0,  1,  2,  0,  2,  3,

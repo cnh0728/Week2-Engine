@@ -7,6 +7,9 @@
     <FxCompile Include="Shaders\ShaderW0.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="Shaders\ShaderParticle.hlsl">
+      <Filter>Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -151,10 +154,21 @@
     <ClCompile Include="Source\Object\PrimitiveComponent\TextComponent.cpp">
       <Filter>Object\PrimitiveComponent</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Object\Class\Class.cpp" />
-    <ClCompile Include="Source\Core\Math\Box.cpp" />
-    <ClCompile Include="Source\Data\SettingsLoader.cpp" />
-    <ClCompile Include="Source\Object\PrimitiveComponent\UBoundingBox.cpp" />
+    <ClCompile Include="Source\Core\Rendering\Particle\Particle.cpp">
+      <Filter>Core\Rendering\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Core\Rendering\Particle\ParticleShader.cpp">
+      <Filter>Core\Rendering\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Object\PrimitiveComponent\UBoundingBox.cpp">
+      <Filter>Object\PrimitiveComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Core\Math\Box.cpp">
+      <Filter>Core\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Data\SettingsLoader.cpp">
+      <Filter>Data</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Core\AbstractClass\Singleton.h">
@@ -343,10 +357,21 @@
     <ClInclude Include="Source\Object\PrimitiveComponent\TextComponent.h">
       <Filter>Object\PrimitiveComponent</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Object\Class\Class.h" />
-    <ClInclude Include="Source\Core\Math\Box.h" />
-    <ClInclude Include="Source\Data\SettingsLoader.h" />
-    <ClInclude Include="Source\Object\PrimitiveComponent\UBoundingBox.h" />
+    <ClInclude Include="Source\Core\Rendering\Particle\Particle.h">
+      <Filter>Core\Rendering\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Core\Rendering\Particle\ParticleShader.h">
+      <Filter>Core\Rendering\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Object\PrimitiveComponent\UBoundingBox.h">
+      <Filter>Object\PrimitiveComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Core\Math\Box.h">
+      <Filter>Core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Data\SettingsLoader.h">
+      <Filter>Data</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\ThirdParty\DirectXTex\Include\DirectXTex.inl">
@@ -427,15 +452,24 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{ed352bdb-43df-43f4-811c-3ecdb972894e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\Rendering\Particle">
+      <UniqueIdentifier>{0ecf12f7-9383-4d1b-b916-4a7346ebb557}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Source\Core\Rendering\Text\font01.tga">
       <Filter>Core\Rendering\Text</Filter>
     </Image>
+    <Image Include="Source\Core\Rendering\Particle\ice003.tga">
+      <Filter>Core\Rendering\Particle</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Text Include="Source\Core\Rendering\Text\font01.txt">
       <Filter>Core\Rendering\Text</Filter>
+    </Text>
+    <Text Include="Source\Core\Rendering\Particle\particle_config_01.txt">
+      <Filter>Core\Rendering\Particle</Filter>
     </Text>
   </ItemGroup>
 </Project>

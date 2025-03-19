@@ -1,0 +1,5 @@
+Particle Count: 400
+Particles Per Second: 500.0
+Particle Size: 0.05
+Particle Life Time: 2.0
+Texture 1: Source/Core/Rendering/Particle/ice003.tga

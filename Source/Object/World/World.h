@@ -33,10 +33,10 @@ public:
   
 	bool DestroyActor(AActor* InActor);
 	
-	void Render();
+	void Render(float DeltaTime);
 	void RenderPickingTexture(URenderer& Renderer);
 	void DisplayPickingTexture(URenderer& Renderer);
-	void RenderMainTexture(URenderer& Renderer);
+	void RenderMainTexture(URenderer& Renderer, float DeltaTime);
 
 	void ClearWorld();
 	void LoadWorld(const char* SceneName);
@@ -44,6 +44,7 @@ public:
 
 	void AddZIgnoreComponent(UPrimitiveComponent* InComponent);
 	void AddTextComponent(UPrimitiveComponent* InComponent);
+	void AddBillBoardComponent(UPrimitiveComponent* InComponent);
 	void RemoveZIgnoreComponent(UPrimitiveComponent* InComponent) {ZIgnoreRenderComponents.Remove(InComponent); }
 	bool ContainsZIgnoreComponent(UPrimitiveComponent* InComponent) {return ZIgnoreRenderComponents.Find(InComponent) != -1; }
 	
@@ -66,6 +67,7 @@ protected:
 	TArray<AActor*>  Actors;
 	TArray<UPrimitiveComponent*> ZIgnoreRenderComponents;
 	TArray<UPrimitiveComponent*> TextRenderComponents;
+	TArray<UPrimitiveComponent*> BillBoardRenderComponents;
 	TArray<AActor*> ActorsToSpawn;
 	TArray<AActor*> PendingDestroyActors; // TODO: 추후에 TQueue로 변경
 	TSet<UPrimitiveComponent*> RenderComponents;
