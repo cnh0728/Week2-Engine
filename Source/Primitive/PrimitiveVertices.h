@@ -53,6 +53,7 @@ public:
 	static void CreateSphereVertices();
 	static void CreateTextureBoardVertices();
 	static void CreateBoundingBoxVertices();
+	static void CreateSpotlightVertices();
 };
 
 enum class EPrimitiveType : uint8
@@ -67,6 +68,7 @@ enum class EPrimitiveType : uint8
 	EPT_Texture,
 	EPT_BoundingBox,
 	EPT_Ring,
+	EPT_Spotlight,
 	EPT_Max, //EPTMAX는 항상 마지막
 };
 

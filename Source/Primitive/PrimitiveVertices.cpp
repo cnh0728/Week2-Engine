@@ -24,6 +24,7 @@ void FVertexSimple::CreateOriginVertices()
 	CreateSphereVertices();
 	CreateTextureBoardVertices();
 	CreateBoundingBoxVertices();
+	CreateSpotlightVertices();
 }
 
 void FVertexSimple::CreateCubeVertices()
@@ -497,4 +498,45 @@ void FVertexSimple::CreateBoundingBoxVertices()
 	
 	OriginVertices[EPrimitiveType::EPT_BoundingBox]=Vertices;
 	OriginIndices[EPrimitiveType::EPT_BoundingBox]=Indices;
+}
+
+
+void FVertexSimple::CreateSpotlightVertices()
+{
+	TArray<FVertexSimple> Vertices;
+	TArray<uint32_t> Indices;
+
+	int segments = 128;
+	float radius = 0.5f;
+	float height = 1.0f;
+
+	// spotlight의 원점(광원)
+	Vertices.Add({ 0,0, 0, 1.0f,1.0f,1.0f,1.0f });
+
+	for (int i = 0; i <= segments; ++i)
+	{
+		float angle = 2.0f * PI * i / segments;
+
+		float x = radius * cos(angle);
+		float y = radius * sin(angle);
+		float z = height;
+
+		// 바닥 Vertex 추가
+		Vertices.Add({ x,y,z,1.0f,1.0f,1.0f,1.0f });
+	}
+
+	for (int i = 1; i < segments + 1; i++)
+	{
+		Indices.Add(0);
+		Indices.Add(i);
+		Indices.Add(i);
+		Indices.Add(i+1);
+		Indices.Add(i+1);
+		Indices.Add(0);
+	}
+
+	// normal은 없습니다.
+
+	OriginVertices[EPrimitiveType::EPT_Spotlight] = Vertices;
+	OriginIndices[EPrimitiveType::EPT_Spotlight] = Indices;
 }

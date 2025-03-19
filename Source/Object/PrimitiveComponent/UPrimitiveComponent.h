@@ -27,6 +27,7 @@ public:
 		{
 		case EPrimitiveType::EPT_Line:
 		case EPrimitiveType::EPT_BoundingBox:
+		case EPrimitiveType::EPT_Spotlight:
 			return D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
 		default:
 			return D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
@@ -158,5 +159,22 @@ public:
 	EPrimitiveType GetType() override
 	{
 		return EPrimitiveType::EPT_Cone;
+	}
+};
+
+class USpotlightComp : public UPrimitiveComponent
+{
+	using Super = UPrimitiveComponent;
+	DECLARE_CLASS(USpotlightComp, UPrimitiveComponent)
+public:
+	USpotlightComp()
+	{
+		bCanBeRendered = true;
+		bCanPick = false;
+	}
+	virtual ~USpotlightComp() = default;
+	EPrimitiveType GetType()override
+	{
+		return EPrimitiveType::EPT_Spotlight;
 	}
 };
