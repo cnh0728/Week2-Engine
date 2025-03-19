@@ -92,7 +92,13 @@ AGizmoHandle::AGizmoHandle()
 	UEngine::Get().GetWorld()->AddZIgnoreComponent(YArrowHead);
 	UEngine::Get().GetWorld()->AddZIgnoreComponent(ZArrowBody);
 	UEngine::Get().GetWorld()->AddZIgnoreComponent(ZArrowHead);
-	UEngine::Get().GetWorld()->AddZIgnoreComponent(GizmoCube);
+
+	UEngine::Get().GetWorld()->AddZIgnoreComponent(XRing);
+	UEngine::Get().GetWorld()->AddZIgnoreComponent(YRing);
+	UEngine::Get().GetWorld()->AddZIgnoreComponent(ZRing);
+	UEngine::Get().GetWorld()->AddZIgnoreComponent(XRodHead);
+	UEngine::Get().GetWorld()->AddZIgnoreComponent(YRodHead);
+	UEngine::Get().GetWorld()->AddZIgnoreComponent(ZRodHead);
 
 
 	SetActive(false);

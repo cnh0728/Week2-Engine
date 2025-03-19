@@ -375,7 +375,7 @@ void UI::RenderPropertyWindow()
             FVector DeltaEulerAngle = UIEulerAngle - PrevEulerAngle;
 
             selectedTransform.Rotate(DeltaEulerAngle);
-            UE_LOG("Rotation: %.2f, %.2f, %.2f", DeltaEulerAngle.X, DeltaEulerAngle.Y, DeltaEulerAngle.Z);
+            //UE_LOG("Rotation: %.2f, %.2f, %.2f", DeltaEulerAngle.X, DeltaEulerAngle.Y, DeltaEulerAngle.Z);
             selectedActor->SetActorRelatvieTransform(selectedTransform);
         }
         if (ImGui::DragFloat3("Scale", scale, 0.1f))
