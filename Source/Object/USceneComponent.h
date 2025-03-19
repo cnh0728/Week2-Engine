@@ -24,7 +24,7 @@ public:
 	FMatrix GetRelativeTransformMatrix() const;
 	/* 월드 트랜스폼을 반환, 이걸로 렌더링한다*/
 	const FTransform GetComponentTransform(); // !!! 사용금지 !!!
-	virtual const FMatrix GetComponentTransformMatrix();
+	virtual FMatrix GetComponentTransformMatrix();
 
 	void SetRelativeTransform(const FTransform& InTransform);
 

@@ -125,7 +125,7 @@ void FVertexSimple::CreateCylinderVertices()
 		Vertices.Add({ x1, y1, height, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, x1 * 0.5f + 0.5f, y1 * 0.5f + 0.5f });
 		uint32 v4 = Vertices.Num();
 		Vertices.Add({ x2, y2, height, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, x2 * 0.5f + 0.5f, y2 * 0.5f + 0.5f });
-		TempIndices = { bottomCenterIndex, v2, v1 };
+		TempIndices = { topCenterIndex, v3, v4 };
 		Indices.Insert(Indices.end(), TempIndices.begin(), TempIndices.end());
 
 		// Side faces with duplicated vertices for correct normals and UV mapping

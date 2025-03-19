@@ -174,6 +174,7 @@ void AActor::SetUUIDTag()
 	UUIDTextComponent->SetupAttachment(RootComponent);
 	UUIDTextComponent->SetRelativeTransform(FTransform(FVector(0.0f, 0.9f, 0.9f), FVector(), FVector().One()));
 	UUIDTextComponent->SetText(UUIDTag);
+	UUIDTextComponent->bIsUUIDText = true;
 }
 
 void AActor::SetUUIDTextCanBeRendered(bool bRender) {

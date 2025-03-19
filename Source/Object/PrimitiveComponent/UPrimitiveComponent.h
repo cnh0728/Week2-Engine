@@ -44,6 +44,7 @@ public:
 	void SetIsOrthoGraphic(bool IsOrtho) { bIsOrthoGraphic = IsOrtho; }
 	bool GetIsOrthoGraphic() { return bIsOrthoGraphic;}
 	bool IsCanPick() const { return bCanPick; }
+	void SetCanPick(bool bValue) { bCanPick = bValue; }
 protected:
 	bool bCanPick = false;
 	bool bCanBeRendered = false;
@@ -176,5 +177,23 @@ public:
 	EPrimitiveType GetType()override
 	{
 		return EPrimitiveType::EPT_Spotlight;
+	}
+};
+
+class URingComp : public UPrimitiveComponent
+{
+	using Super = UPrimitiveComponent;
+	DECLARE_CLASS(URingComp, UPrimitiveComponent)
+
+public:
+	URingComp()
+	{
+		bCanBeRendered = true;
+		bCanPick = false;
+	}
+	virtual ~URingComp() = default;
+	EPrimitiveType GetType()override
+	{
+		return EPrimitiveType::EPT_Ring;
 	}
 };

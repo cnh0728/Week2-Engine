@@ -10,6 +10,8 @@ class UTextComponent : public UPrimitiveComponent {
 public:
 	UTextComponent();
 	virtual ~UTextComponent() = default;
+
+	virtual FMatrix GetComponentTransformMatrix() override;
 	virtual void SetText(const FString& InText);
 	virtual FString GetText() const;
 	virtual void RenderText(URenderer& Renderer, const FString& InText, const FVector& InTextPos, const FVector& InTextSize);
@@ -19,6 +21,7 @@ public:
 	}
 	virtual void SetTextSize(const uint32& InTextSize);
 	virtual uint32 GetTextSize() const;
+	bool bIsUUIDText = false;
 
 protected:
 	FString Text;

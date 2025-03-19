@@ -69,7 +69,7 @@ TSet<UPrimitiveComponent*> UPrimitiveComponent::FilterPrimitiveComponents(TSet<U
 
 	for (auto Comp : Components)
 	{
-		if (UPrimitiveComponent* Prim = dynamic_cast<UPrimitiveComponent*>(Comp))
+		if (UPrimitiveComponent* Prim = Cast<UPrimitiveComponent>(Comp))
 			NewSet.Add(Prim);
 	}
 	return NewSet;

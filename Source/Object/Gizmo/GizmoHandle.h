@@ -27,7 +27,6 @@ public:
 public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
-	void SetScaleByDistance();
 	void SetActive(bool bActive);
 	void SetSelectedAxis(ESelectedAxis NewAxis) { SelectedAxis = NewAxis; }
 	ESelectedAxis GetSelectedAxis() const { return SelectedAxis; }
@@ -40,9 +39,25 @@ private:
 
 	ESelectedAxis SelectedAxis = ESelectedAxis::None;
 	EGizmoType GizmoType = EGizmoType::Translate;
+	void UpdateGizmoPrimitives();
 
 	//virtual const char* GetTypeName() override;
 private:
 	TSet<UBoundingBoxComponent*> SelectedActorBoundingBox;
+
+
+	UCubeComp* GizmoCube;
+	UCylinderComp* XArrowBody;
+	UConeComp* XArrowHead;
+	UCylinderComp* YArrowBody;
+	UConeComp* YArrowHead;
+	UCylinderComp* ZArrowBody;
+	UConeComp* ZArrowHead;
+	URingComp* XRing;
+	URingComp* YRing;
+	URingComp* ZRing;
+	UCubeComp* XRodHead;
+	UCubeComp* YRodHead;
+	UCubeComp* ZRodHead;
 };
 

@@ -15,7 +15,7 @@ void UBoundingBoxComponent::Tick(float DeltaTime)
 }
 
 // 부모 component의 scale을 나눠서 구할 수 없음 -> override
-const FMatrix UBoundingBoxComponent::GetComponentTransformMatrix()
+FMatrix UBoundingBoxComponent::GetComponentTransformMatrix()
 {
 	return OverrideBoxTransform.GetMatrix();
 }

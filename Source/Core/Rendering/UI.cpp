@@ -21,7 +21,7 @@
 #include "Static/FEditorManager.h"
 #include "Object/World/World.h"
 #include "Object/Gizmo/GizmoHandle.h"
-
+#include "Object/Gizmo/Axis.h"
 void UI::Initialize(HWND hWnd, URenderer& Renderer, UINT ScreenWidth, UINT ScreenHeight)
 {
     // ImGui 초기화
@@ -46,11 +46,11 @@ void UI::Initialize(HWND hWnd, URenderer& Renderer, UINT ScreenWidth, UINT Scree
     io.DisplaySize = ScreenSize;
     this->Renderer = &Renderer;
 
-    Unselectables.Add(FName("Camera"));
-    Unselectables.Add(FName("WorldGrid"));
-    Unselectables.Add(FName("Axis"));
-    Unselectables.Add(FName("Picker"));
-    Unselectables.Add(FName("GizmoHandle"));
+    Unselectables.Add(ACamera::StaticClass()->GetName());
+    Unselectables.Add(AWorldGrid::StaticClass()->GetName());
+    Unselectables.Add(AAxis::StaticClass()->GetName());
+    Unselectables.Add(APicker::StaticClass()->GetName());
+    Unselectables.Add(AGizmoHandle::StaticClass()->GetName());
 }
 
 void UI::Update()
@@ -487,7 +487,7 @@ void UI::RenderComponentsByActor()
     if (NumActors > 0) {
         static int selected = -1;
         ImGui::Begin("Components Tree");
-        if (ImGui::TreeNode("Actors"))
+        if (ImGui::TreeNode("[UUID]Actors/Components(NumChilds)"))
         {
             for (int n = 0; n < NumActors; n++)
             {
