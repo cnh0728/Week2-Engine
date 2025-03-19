@@ -107,9 +107,8 @@ private:
         FMatrix M;
     	FMatrix V;
     	FMatrix P;
-        // FVector4 Color;
-		// true인 경우 Vertex Color를 사용하고, false인 경우 Color를 사용합니다.
-        // uint32 bUseVertexColor;
+        FVector4 Color;
+        int bUseCustomColor;
     };
 	
 	struct alignas(16) FPickingConstants
@@ -348,8 +347,6 @@ public:
 
 	void RenderPickingTexture();
 
-    void CreateConeVertices();
-    void CreateCylinderVertices();
     FMatrix GetProjectionMatrix() const { return ProjectionMatrix; }
 
 #pragma endregion picking

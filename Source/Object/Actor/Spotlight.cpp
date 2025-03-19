@@ -1,25 +1,25 @@
-﻿#include "Sphere.h"
+﻿#include "Spotlight.h"
 #include <Object/PrimitiveComponent/UPrimitiveComponent.h>
 #include <Object/PrimitiveComponent/UBoundingBox.h>
-ASphere::ASphere()
+ASpotlight::ASpotlight()
 {
 	bCanEverTick = true;
 
-	USphereComp* SphereComponent = AddComponent<USphereComp>();
+	USpotlightComp* SpotlightComp = AddComponent<USpotlightComp>();
 
-	RootComponent = SphereComponent;
+	RootComponent = SpotlightComp;
 
 	SetActorRelatvieTransform(FTransform());
 }
 
-void ASphere::BeginPlay()
+void ASpotlight::BeginPlay()
 {
 	SetUUIDTag();
 
 	Super::BeginPlay();
 }
 
-void ASphere::Tick(float DeltaTime)
+void ASpotlight::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }

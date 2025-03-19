@@ -26,7 +26,7 @@ void UPrimitiveComponent::UpdateConstantDepth(const URenderer& Renderer, const i
 void UPrimitiveComponent::Render()
 {
 	URenderer* Renderer = UEngine::Get().GetRenderer();
-	if (Renderer == nullptr || !bCanBeRendered)
+	if (Renderer == nullptr || bIsDefaultRendered == false)
 	{
 		return;
 	}
@@ -56,7 +56,10 @@ void UPrimitiveComponent::RegisterComponentWithWorld(UWorld* World)
 		Renderer->AddBatchVertices(this);
 	}else
 	{
-		World->AddRenderComponent(this);
+		if (bIsDefaultRendered)
+		{
+			World->AddRenderComponent(this);
+		}
 	}
 
 	EPrimitiveType ComponentType = GetType();
@@ -76,7 +79,7 @@ TSet<UPrimitiveComponent*> UPrimitiveComponent::FilterPrimitiveComponents(TSet<U
 
 	for (auto Comp : Components)
 	{
-		if (UPrimitiveComponent* Prim = dynamic_cast<UPrimitiveComponent*>(Comp))
+		if (UPrimitiveComponent* Prim = Cast<UPrimitiveComponent>(Comp))
 			NewSet.Add(Prim);
 	}
 	return NewSet;

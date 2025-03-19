@@ -17,6 +17,7 @@ class UPrimitiveComponent;
 
 class UWorld :public UObject
 {
+	DECLARE_CLASS(UWorld, UObject)
 public:
 	UWorld() = default;
 	virtual ~UWorld() = default;
@@ -42,6 +43,7 @@ public:
 	void SaveWorld();
 
 	void AddZIgnoreComponent(UPrimitiveComponent* InComponent);
+	void AddTextComponent(UPrimitiveComponent* InComponent);
 	void RemoveZIgnoreComponent(UPrimitiveComponent* InComponent) {ZIgnoreRenderComponents.Remove(InComponent); }
 	bool ContainsZIgnoreComponent(UPrimitiveComponent* InComponent) {return ZIgnoreRenderComponents.Find(InComponent) != -1; }
 	
@@ -63,6 +65,7 @@ public:
 protected:
 	TArray<AActor*>  Actors;
 	TArray<UPrimitiveComponent*> ZIgnoreRenderComponents;
+	TArray<UPrimitiveComponent*> TextRenderComponents;
 	TArray<AActor*> ActorsToSpawn;
 	TArray<AActor*> PendingDestroyActors; // TODO: 추후에 TQueue로 변경
 	TSet<UPrimitiveComponent*> RenderComponents;

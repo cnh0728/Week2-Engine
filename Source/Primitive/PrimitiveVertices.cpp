@@ -27,6 +27,7 @@ void FVertexSimple::CreateOriginVertices()
 	CreateSphereVertices();
 	CreateTextureBoardVertices();
 	CreateBoundingBoxVertices();
+	CreateSpotlightVertices();
 }
 
 void FVertexSimple::CreateCubeVertices()
@@ -85,7 +86,7 @@ void FVertexSimple::CreateCubeVertices()
 
 	URenderer* Renderer = UEngine::Get().GetRenderer();
 	VertexBufferInfo BufferInfo = {UPrimitiveComponent::GetTopology(Type), Vertices, Indices};
-	Renderer->CreateVertexBuffer(Type, BufferInfo);
+	// //Renderer->CreateVertexBuffer(Type, BufferInfo);
 }
 
 void FVertexSimple::CreateCylinderVertices()
@@ -133,7 +134,7 @@ void FVertexSimple::CreateCylinderVertices()
 		Vertices.Add({ x1, y1, height, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, x1 * 0.5f + 0.5f, y1 * 0.5f + 0.5f });
 		uint32 v4 = Vertices.Num();
 		Vertices.Add({ x2, y2, height, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, x2 * 0.5f + 0.5f, y2 * 0.5f + 0.5f });
-		TempIndices = { bottomCenterIndex, v2, v1 };
+		TempIndices = { topCenterIndex, v3, v4 };
 		Indices.Insert(Indices.end(), TempIndices.begin(), TempIndices.end());
 
 		// Side faces with duplicated vertices for correct normals and UV mapping
@@ -159,7 +160,7 @@ void FVertexSimple::CreateCylinderVertices()
 
 	URenderer* Renderer = UEngine::Get().GetRenderer();
 	VertexBufferInfo BufferInfo = {UPrimitiveComponent::GetTopology(Type), Vertices, Indices};
-	Renderer->CreateVertexBuffer(Type, BufferInfo);
+	//Renderer->CreateVertexBuffer(Type, BufferInfo);
 
 }
 
@@ -213,7 +214,7 @@ void FVertexSimple::CreateTriangleVertices()
 
 	URenderer* Renderer = UEngine::Get().GetRenderer();
 	VertexBufferInfo BufferInfo = {UPrimitiveComponent::GetTopology(Type), Vertices, Indices};
-	Renderer->CreateVertexBuffer(Type, BufferInfo);
+	//Renderer->CreateVertexBuffer(Type, BufferInfo);
 
 }
 
@@ -308,7 +309,7 @@ void FVertexSimple::CreateRingVertices()
 
 	URenderer* Renderer = UEngine::Get().GetRenderer();
 	VertexBufferInfo BufferInfo = {UPrimitiveComponent::GetTopology(Type), Vertices, Indices};
-	Renderer->CreateVertexBuffer(Type, BufferInfo);
+	//Renderer->CreateVertexBuffer(Type, BufferInfo);
 
 }
 
@@ -402,7 +403,7 @@ void FVertexSimple::CreateConeVertices()
 
 	URenderer* Renderer = UEngine::Get().GetRenderer();
 	VertexBufferInfo BufferInfo = {UPrimitiveComponent::GetTopology(Type), Vertices, Indices};
-	Renderer->CreateVertexBuffer(Type, BufferInfo);
+	//Renderer->CreateVertexBuffer(Type, BufferInfo);
 
 }
 
@@ -490,7 +491,7 @@ void FVertexSimple::CreateSphereVertices()
 
 	URenderer* Renderer = UEngine::Get().GetRenderer();
 	VertexBufferInfo BufferInfo = {UPrimitiveComponent::GetTopology(Type), Vertices, Indices};
-	Renderer->CreateVertexBuffer(Type, BufferInfo);
+	//Renderer->CreateVertexBuffer(Type, BufferInfo);
 }
 
 void FVertexSimple::CreateTextureBoardVertices()
@@ -514,7 +515,7 @@ void FVertexSimple::CreateTextureBoardVertices()
 
 	URenderer* Renderer = UEngine::Get().GetRenderer();
 	VertexBufferInfo BufferInfo = {UPrimitiveComponent::GetTopology(Type), Vertices, Indices};
-	Renderer->CreateVertexBuffer(Type, BufferInfo);
+	//Renderer->CreateVertexBuffer(Type, BufferInfo);
 }
 
 void FVertexSimple::CreateBoundingBoxVertices()
@@ -542,7 +543,51 @@ void FVertexSimple::CreateBoundingBoxVertices()
 	};
 
 	EPrimitiveType Type = EPrimitiveType::EPT_BoundingBox;
+	OriginVertices[Type]=Vertices;
+	OriginIndices[Type]=Indices;
 	
+	URenderer* Renderer = UEngine::Get().GetRenderer();
+	VertexBufferInfo BufferInfo = {UPrimitiveComponent::GetTopology(Type), Vertices, Indices};
+	Renderer->CreateVertexBuffer(Type, BufferInfo);
+}
+
+void FVertexSimple::CreateSpotlightVertices()
+{
+	TArray<FVertexSimple> Vertices;
+	TArray<uint32_t> Indices;
+
+	int segments = 128;
+	float radius = 0.5f;
+	float height = 1.0f;
+
+	// spotlight의 원점(광원)
+	Vertices.Add({ 0,0, 0, 1.0f,1.0f,1.0f,1.0f });
+
+	for (int i = 0; i <= segments; ++i)
+	{
+		float angle = 2.0f * PI * i / segments;
+
+		float x = radius * cos(angle);
+		float y = radius * sin(angle);
+		float z = height;
+
+		// 바닥 Vertex 추가
+		Vertices.Add({ x,y,z,1.0f,1.0f,1.0f,1.0f });
+	}
+
+	for (int i = 1; i < segments + 1; i++)
+	{
+		Indices.Add(0);
+		Indices.Add(i);
+		Indices.Add(i);
+		Indices.Add(i+1);
+		Indices.Add(i+1);
+		Indices.Add(0);
+	}
+
+	// normal은 없습니다.
+
+	EPrimitiveType Type = EPrimitiveType::EPT_Spotlight;
 	OriginVertices[Type]=Vertices;
 	OriginIndices[Type]=Indices;
 	

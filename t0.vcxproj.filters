@@ -377,6 +377,7 @@
     <None Include="Source\ThirdParty\DirectXTex\Include\DirectXTex.inl">
       <Filter>ThirdParty\DirectXTex\Include</Filter>
     </None>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Core">

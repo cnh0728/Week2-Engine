@@ -190,5 +190,5 @@ FVector FBox::GetCenter() const
 
 FVector FBox::GetExtent() const
 {
-	return(Max - Min) / 2.f;
+	return(Max - Min); // bounding box 는 -0.5 ~ 0.5 사이의 크기
 }

@@ -18,7 +18,7 @@ public:
         requires std::derived_from<T, UObject>
     static T* ConstructObject()
     {
-        UE_LOG("DEBUG: Construct %s Object", typeid(T).name());
+        UE_LOG("DEBUG: Construct %s Object", *(T::StaticClass()->GetName().GetString()));
 
         constexpr size_t ObjectSize = sizeof(T);
         void* RawMemory = FPlatformMemory::Malloc<EAT_Object>(ObjectSize);
@@ -34,11 +34,11 @@ public:
         // Object 제거시 Index가 달라지기 때문에 임시 주석처리 <- RemoveSwap으로 해결 가능
         // NewObject->InternalIndex = UEngine::Get().GObjects.Add(NewObject);
         UEngine::Get().GObjects.Add(NewObject->GetUUID(), NewObject);
-        FString Name(typeid(T).name());
-        Name = Name.SubStr(7);
+        FName Name = T::StaticClass()->GetName();
+        FString NameStr = Name.GetString();
         static uint8 ObjectContructionCount = 0;
 
-        NewObject->Name = FName(*Name, ObjectContructionCount++);
+        NewObject->Name = FName(*NameStr, ObjectContructionCount++);
         return NewObject.get();
     }
 };

@@ -33,6 +33,8 @@ public:// UIWindows
     void RenderPropertyWindow();
 	void RenderSceneManager();
     void RenderComponentsByActor();
+    void RenderFNameResolver();
+
 private:
 	bool bWasWindowSizeUpdated = true;
     ImVec2 ScreenSize;

@@ -17,10 +17,11 @@
 
 void UWorld::BeginPlay()
 {
-	for (const auto& Actor : Actors)
+	for (const auto& Actor : ActorsToSpawn)
 	{
 		Actor->BeginPlay();
 	}
+	ActorsToSpawn.Empty();
 }
 
 void UWorld::Tick(float DeltaTime)
@@ -121,15 +122,7 @@ void UWorld::RenderMainTexture(URenderer& Renderer, float DeltaTime)
 
 	for (auto& RenderComponent : RenderComponents)
 	{
-		if (UTextComponent* TextComponent = dynamic_cast<UTextComponent*>(RenderComponent))
-		{
-			// TextComponent->RenderText(Renderer, TextComponent->GetText(),
-			// 	TextComponent->GetComponentTransformMatrix().GetTranslation(),
-			// 	TextComponent->GetTextSize());
-		}else
-		{
-			RenderComponent->Render();
-		}
+		RenderComponent->Render();
 	}
 
 	Renderer.RenderParticle(DeltaTime);
@@ -137,6 +130,13 @@ void UWorld::RenderMainTexture(URenderer& Renderer, float DeltaTime)
 	Renderer.RenderTexture(FVector(0, 0, 0));
 
 	//Renderer.RenderText();
+	// for (auto& RenderComponent : TextRenderComponents)
+	// {
+	// 	UTextComponent* TextComponent = Cast<UTextComponent>(RenderComponent);
+	// 	TextComponent->RenderText(Renderer, TextComponent->GetText(),
+	// 	TextComponent->GetComponentTransformMatrix().GetTranslation(),
+	// 	TextComponent->GetTextSize());
+	// }
 	
 	Renderer.PrepareZIgnore();
 	for (auto& RenderComponent: ZIgnoreRenderComponents)
@@ -144,6 +144,7 @@ void UWorld::RenderMainTexture(URenderer& Renderer, float DeltaTime)
 		uint32 depth = RenderComponent->GetOwner()->GetDepth();
 		RenderComponent->Render();
 	}
+	
 }
 
 void UWorld::DisplayPickingTexture(URenderer& Renderer)
@@ -200,6 +201,11 @@ void UWorld::AddZIgnoreComponent(UPrimitiveComponent* InComponent)
 {
 	ZIgnoreRenderComponents.Add(InComponent);
 	InComponent->SetIsOrthoGraphic(true);
+}
+
+void UWorld::AddTextComponent(UPrimitiveComponent* InComponent)
+{
+	TextRenderComponents.Add(InComponent);
 }
 
 void UWorld::LoadWorld(const char* SceneName)

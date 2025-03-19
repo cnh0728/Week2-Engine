@@ -15,11 +15,12 @@ void AActor::BeginPlay()
 {
 	D3D11_PRIMITIVE_TOPOLOGY Topology = D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
 	
-	for (auto& Component : Components)
+	for (auto& Component : Components) 
 	{
 		Component->BeginPlay();
 
-		if (UPrimitiveComponent* PrimitiveComponent = dynamic_cast<UPrimitiveComponent*>(Component))
+		//if (UPrimitiveComponent* PrimitiveComponent = dynamic_cast<UPrimitiveComponent*>(Component))
+		if (UPrimitiveComponent* PrimitiveComponent = Cast<UPrimitiveComponent>(Component))
 		{
 			Topology = PrimitiveComponent->GetTopology(PrimitiveComponent->GetType());
 			PrimitiveComponent->RegisterComponentWithWorld(World);
@@ -60,7 +61,8 @@ void AActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	for (auto& Component : Components)
 	{		
 		Component->EndPlay(EndPlayReason);
-		if (const auto PrimitiveComp = dynamic_cast<UPrimitiveComponent*>(Component))
+		//if (const auto PrimitiveComp = dynamic_cast<UPrimitiveComponent*>(Component))
+		if (const auto PrimitiveComp = Cast<UPrimitiveComponent>(Component))
 		{
 			if (World->ContainsZIgnoreComponent(PrimitiveComp))
 			{
@@ -137,10 +139,10 @@ void AActor::SetActorRelatvieTransform(const FTransform& InTransform)
 	}
 }
 
-const char* AActor::GetTypeName()
-{
-	return "Actor";
-}
+//const char* AActor::GetTypeName()
+//{
+//	return "Actor";
+//}
 
 bool AActor::Destroy()
 {
@@ -181,6 +183,11 @@ void AActor::SetUUIDTag()
 	UUIDTextComponent->SetupAttachment(RootComponent);
 	UUIDTextComponent->SetRelativeTransform(FTransform(FVector(0.0f, 0.9f, 0.9f), FVector(), FVector().One()));
 	UUIDTextComponent->SetText(UUIDTag);
+
+	UUIDTextComponent->SetCanBeRendered(false);
+	UEngine::Get().GetWorld()->AddTextComponent(UUIDTextComponent);
+	
+	UUIDTextComponent->bIsUUIDText = true;
 }
 
 void AActor::SetUUIDTextCanBeRendered(bool bRender) {

@@ -569,8 +569,8 @@ void URenderer::UpdateConstant(USceneComponent* Component) const
         Constants->M = M;
         Constants->V = V;
         Constants->P = P;
-		// Constants->Color = UpdateInfo.Color;
-		// Constants->bUseVertexColor = UpdateInfo.bUseVertexColor ? 1 : 0;
+		Constants->Color = Component->GetColor();
+        Constants->bUseCustomColor = Component->bCustomColor;
     }
     DeviceContext->Unmap(ConstantBuffer, 0);
 }
@@ -1144,6 +1144,34 @@ inline void URenderer::CreateCylinderVertices()
 	}
 
 	OriginVertices[EPrimitiveType::EPT_Cylinder] = vertices;
+}
+
+void URenderer::CreateText(HWND hWindow) 
+{
+    Text = new UText();
+    Text->Create(Device, DeviceContext, hWindow, UEngine::Get().GetScreenWidth(), UEngine::Get().GetScreenHeight());
+}
+
+void URenderer::RenderText(const FString& InText, const FVector& InTextPos, const FVector& InTextSize)
+{
+    // 텍스트의 WorldMatrix 결정
+	ACamera* Camera = FEditorManager::Get().GetCamera();
+    // 스케일 * 회전
+    FMatrix WorldMatrix = FMatrix::GetScaleMatrix(InTextSize) *
+        FMatrix::GetRotateMatrix(FQuat(Camera->GetActorRelativeTransform().GetRotation())).Inverse();
+    // 이동은 스케일의 영향을 받지 않게 따로
+	WorldMatrix.SetTranslateMatrix(InTextPos);
+
+    // 텍스트 렌더링
+    DeviceContext->ClearDepthStencilView(DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+
+    TurnZBufferOff();
+    TurnOnAlphaBlending();
+
+	Text->Render(DeviceContext, WorldMatrix, ViewMatrix, ProjectionMatrix, InText);
+
+	TurnOffAlphaBlending();
+	TurnZBufferOn();
 }
 
 void URenderer::TurnZBufferOn() 

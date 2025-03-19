@@ -20,6 +20,7 @@ enum class RenderType
 class AActor : public UObject
 {
 	friend class FEditorManager;
+	DECLARE_CLASS(AActor, UObject)
 public:
 	AActor();
 	virtual ~AActor() override = default;
@@ -33,7 +34,7 @@ public:
 	{
 		return Depth;
 	}
-public:
+public: 
 	virtual void BeginPlay();
 	virtual void Tick(float DeltaTime);
 	virtual void LateTick (float DeltaTime); // 렌더 후 호출
@@ -101,7 +102,7 @@ public:
 
 	void SetActorRelatvieTransform(const FTransform& InTransform);
 	bool CanEverTick() const { return bCanEverTick; }
-	virtual const char* GetTypeName();
+	//virtual const char* GetTypeName();
 
 	bool Destroy();
 
@@ -122,7 +123,7 @@ protected:
 	UTextComponent* UUIDTextComponent = nullptr;
 
 	bool bIsBatch = false;
-
+	
 	AActor* Parent = nullptr;
 	TSet<AActor*> Children;
 	TSet<UActorComponent*> Components;

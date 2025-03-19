@@ -171,6 +171,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Object\Class\Class.cpp" />
     <ClCompile Include="Source\Core\Math\Box.cpp" />
     <ClCompile Include="Source\Core\Container\Name.cpp" />
     <ClCompile Include="Source\Core\Math\Plane.cpp" />
@@ -221,8 +222,10 @@
     <ClCompile Include="Source\Object\PrimitiveComponent\UPrimitiveComponent.cpp" />
     <ClCompile Include="Source\Object\World\World.cpp" />
     <ClCompile Include="Source\Object\Actor\Sphere.cpp" />
+    <ClCompile Include="Source\Object\Actor\Spotlight.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Object\Class\Class.h" />
     <ClInclude Include="Source\Core\Math\Box.h" />
     <ClInclude Include="Source\Core\Container\Name.h" />
     <ClInclude Include="Source\Core\Rendering\Particle\Particle.h" />
@@ -232,6 +235,7 @@
     <ClInclude Include="Source\Core\Rendering\Text\Font.h" />
     <ClInclude Include="Source\Core\Rendering\Text\FontShader.h" />
     <ClInclude Include="Source\Core\Rendering\Text\Text.h" />
+    <ClInclude Include="Source\Object\Actor\Spotlight.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Object\Actor\WorldGrid.h" />
@@ -301,6 +305,7 @@
     <ClInclude Include="Source\Object\Actor\Sphere.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ClassDiagram.cd" />
     <None Include="Source\ThirdParty\DirectXTex\Include\DirectXTex.inl" />
   </ItemGroup>
   <ItemGroup>

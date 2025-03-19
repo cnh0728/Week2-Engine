@@ -360,6 +360,13 @@ FName::FName()
 FString FName::GetString() const
 {
 	FString Disp = FNamePool::Get().ResolveDisplay(DisplayIndex);
-	Disp += FString::FromInt(Number);
-	return Disp;
+	if (Number)
+	{
+		Disp += FString::FromInt(Number - 1);
+		return Disp;
+	}
+	else
+	{
+		return Disp;
+	}
 }
