@@ -470,7 +470,7 @@ bool UParticle::UpdateBuffers(ID3D11DeviceContext* DeviceContext)
 	}
 
 	VerticesPtr = (VertexType*)MappedResource.pData;
-	auto a = sizeof(VertexType);
+
 	memcpy(VerticesPtr, (void*)Vertices, (sizeof(VertexType) * VertexCount));
 	DeviceContext->Unmap(VertexBuffer, 0);
 

@@ -1215,6 +1215,28 @@ void URenderer::RenderParticle(float DeltaTime)
     TurnZBufferOn();
 }
 
+void URenderer::CreateTexture(HWND hWindow) 
+{
+	Texture = new UTexture();
+    TextureRenderer = new UTextureRenderer();
+	Texture->Create(Device, L"light_bulb_texture.tga");
+}
+
+void URenderer::RenderTexture(const FVector& InPos)
+{
+    // 텍스트의 WorldMatrix 결정
+    ACamera* Camera = FEditorManager::Get().GetCamera();
+    // 스케일 * 회전
+    FMatrix WorldMatrix = FMatrix::GetScaleMatrix(1) *
+        FMatrix::GetRotateMatrix(FQuat(Camera->GetActorRelativeTransform().GetRotation())).Inverse();
+    // 이동은 스케일의 영향을 받지 않게 따로
+    WorldMatrix.SetTranslateMatrix(InPos);
+
+	TextureRenderer->Render(DeviceContext, 4, WorldMatrix, ViewMatrix, ProjectionMatrix, Texture->GetTexture());
+	Texture->Render(Device, DeviceContext);
+}
+
+
 void URenderer::SetViewMode(EViewModeIndex viewMode)
 {
     CurrentViewMode = viewMode;

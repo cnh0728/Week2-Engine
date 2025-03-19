@@ -151,6 +151,8 @@ void UWorld::RenderMainTexture(URenderer& Renderer, float DeltaTime)
 
 	Renderer.RenderParticle(DeltaTime);
 
+	Renderer.RenderTexture(FVector(0, 0, 0));
+
 	//Renderer.RenderText();
 	
 	// Renderer.PrepareZIgnore();

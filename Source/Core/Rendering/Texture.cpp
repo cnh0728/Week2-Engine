@@ -98,3 +98,51 @@ void UTexture::Release()
 		Texture = nullptr;
 	}
 }
+
+void UTexture::Render(ID3D11Device* Device, ID3D11DeviceContext* DeviceContext)
+{
+
+	D3D11_MAPPED_SUBRESOURCE MappedResource;
+	FVertexSimple* VerticesPtr;
+	D3D11_BUFFER_DESC VertexBufferDesc, IndexBufferDesc;
+	D3D11_SUBRESOURCE_DATA VertexData, IndexData;
+
+	Vertices = OriginVertices[EPrimitiveType::EPT_Texture];
+	Indices = OriginIndices[EPrimitiveType::EPT_Texture];
+
+	VertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	VertexBufferDesc.ByteWidth = sizeof(FVertexSimple) * Vertices.Num();
+	VertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	VertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	VertexBufferDesc.MiscFlags = 0;
+	VertexBufferDesc.StructureByteStride = 0;
+	VertexData.pSysMem = Vertices.GetData();
+	VertexData.SysMemPitch = 0;
+	VertexData.SysMemSlicePitch = 0;
+	Device->CreateBuffer(&VertexBufferDesc, &VertexData, &VertexBuffer);
+
+	IndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	IndexBufferDesc.ByteWidth = sizeof(uint32) * Indices.Num();
+	IndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	IndexBufferDesc.CPUAccessFlags = 0;
+	IndexBufferDesc.MiscFlags = 0;
+	IndexBufferDesc.StructureByteStride = 0;
+	IndexData.pSysMem = Indices.GetData();
+	IndexData.SysMemPitch = 0;
+	IndexData.SysMemSlicePitch = 0;
+
+	Device->CreateBuffer(&IndexBufferDesc, &IndexData, &IndexBuffer);
+
+	uint32 Stride = sizeof(FVertexSimple);;
+	uint32 Offset = 0;
+
+	DeviceContext->IASetVertexBuffers(0, 1, &VertexBuffer, &Stride, &Offset);
+	DeviceContext->IASetIndexBuffer(IndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+
+	DeviceContext->Map(VertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
+	VerticesPtr = (FVertexSimple*)MappedResource.pData;
+
+	memcpy(VerticesPtr, Vertices.GetData(), Vertices.Num() * (sizeof(FVertexSimple)));
+
+	DeviceContext->Unmap(VertexBuffer, 0);
+}

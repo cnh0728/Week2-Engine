@@ -176,6 +176,7 @@
     <ClCompile Include="Source\Core\Math\Plane.cpp" />
     <ClCompile Include="Source\Core\Rendering\Particle\Particle.cpp" />
     <ClCompile Include="Source\Core\Rendering\Particle\ParticleShader.cpp" />
+    <ClCompile Include="Source\Core\Rendering\Texture\TextureRenderer.cpp" />
     <ClCompile Include="Source\Object\Actor\WorldGrid.cpp" />
     <ClCompile Include="Source\Core\Rendering\Texture.cpp" />
     <ClCompile Include="Source\Core\Rendering\Text\Font.cpp" />
@@ -226,6 +227,7 @@
     <ClInclude Include="Source\Core\Rendering\Particle\Particle.h" />
     <ClInclude Include="Source\Core\Rendering\Particle\ParticleShader.h" />
     <ClInclude Include="Source\Core\Rendering\Texture.h" />
+    <ClInclude Include="Source\Core\Rendering\Texture\TextureRenderer.h" />
     <ClInclude Include="Source\Core\Rendering\Text\Font.h" />
     <ClInclude Include="Source\Core\Rendering\Text\FontShader.h" />
     <ClInclude Include="Source\Core\Rendering\Text\Text.h" />
@@ -310,6 +312,10 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>
+    <FxCompile Include="Shaders\ShaderTexture.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="Shaders\ShaderW0.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -322,6 +328,7 @@
     <Text Include="Source\Core\Rendering\Text\font01.txt" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\..\..\Downloads\light_bulb_texture.tga" />
     <Image Include="Source\Core\Rendering\Particle\ice003.tga" />
     <Image Include="Source\Core\Rendering\Text\font01.tga" />
   </ItemGroup>

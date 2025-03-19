@@ -15,6 +15,7 @@
 #include "Text/Text.h"
 #include "Particle/Particle.h"
 #include "Particle/ParticleShader.h"
+#include "Texture/TextureRenderer.h"
 
 
 struct FVertexSimple;
@@ -216,6 +217,10 @@ public:
 
     void RenderParticle(float deltaTime);
 
+	void CreateTexture(HWND hWindow);
+
+	void RenderTexture(const FVector& InPos);
+
 protected:
     /** Direct3D Device 및 SwapChain을 생성합니다. */
     void CreateDeviceAndSwapChain(HWND hWindow);
@@ -303,6 +308,10 @@ protected:
 
     EViewModeIndex CurrentViewMode = EViewModeIndex::VMI_Lit;
     D3D11_FILL_MODE CurrentFillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
+
+	// 텍스쳐 클래스
+	UTexture* Texture = nullptr;
+	UTextureRenderer* TextureRenderer = nullptr;
 
 #pragma region picking
 protected:
