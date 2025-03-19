@@ -17,10 +17,11 @@
 
 void UWorld::BeginPlay()
 {
-	for (const auto& Actor : Actors)
+	for (const auto& Actor : ActorsToSpawn)
 	{
 		Actor->BeginPlay();
 	}
+	ActorsToSpawn.Empty();
 }
 
 void UWorld::Tick(float DeltaTime)

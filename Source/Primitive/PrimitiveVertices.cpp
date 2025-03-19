@@ -85,7 +85,7 @@ void FVertexSimple::CreateCubeVertices()
 
 	URenderer* Renderer = UEngine::Get().GetRenderer();
 	VertexBufferInfo BufferInfo = {UPrimitiveComponent::GetTopology(Type), Vertices, Indices};
-	Renderer->CreateVertexBuffer(Type, BufferInfo);
+	// //Renderer->CreateVertexBuffer(Type, BufferInfo);
 }
 
 void FVertexSimple::CreateCylinderVertices()
@@ -159,7 +159,7 @@ void FVertexSimple::CreateCylinderVertices()
 
 	URenderer* Renderer = UEngine::Get().GetRenderer();
 	VertexBufferInfo BufferInfo = {UPrimitiveComponent::GetTopology(Type), Vertices, Indices};
-	Renderer->CreateVertexBuffer(Type, BufferInfo);
+	//Renderer->CreateVertexBuffer(Type, BufferInfo);
 
 }
 
@@ -213,7 +213,7 @@ void FVertexSimple::CreateTriangleVertices()
 
 	URenderer* Renderer = UEngine::Get().GetRenderer();
 	VertexBufferInfo BufferInfo = {UPrimitiveComponent::GetTopology(Type), Vertices, Indices};
-	Renderer->CreateVertexBuffer(Type, BufferInfo);
+	//Renderer->CreateVertexBuffer(Type, BufferInfo);
 
 }
 
@@ -308,7 +308,7 @@ void FVertexSimple::CreateRingVertices()
 
 	URenderer* Renderer = UEngine::Get().GetRenderer();
 	VertexBufferInfo BufferInfo = {UPrimitiveComponent::GetTopology(Type), Vertices, Indices};
-	Renderer->CreateVertexBuffer(Type, BufferInfo);
+	//Renderer->CreateVertexBuffer(Type, BufferInfo);
 
 }
 
@@ -402,7 +402,7 @@ void FVertexSimple::CreateConeVertices()
 
 	URenderer* Renderer = UEngine::Get().GetRenderer();
 	VertexBufferInfo BufferInfo = {UPrimitiveComponent::GetTopology(Type), Vertices, Indices};
-	Renderer->CreateVertexBuffer(Type, BufferInfo);
+	//Renderer->CreateVertexBuffer(Type, BufferInfo);
 
 }
 
@@ -490,7 +490,7 @@ void FVertexSimple::CreateSphereVertices()
 
 	URenderer* Renderer = UEngine::Get().GetRenderer();
 	VertexBufferInfo BufferInfo = {UPrimitiveComponent::GetTopology(Type), Vertices, Indices};
-	Renderer->CreateVertexBuffer(Type, BufferInfo);
+	//Renderer->CreateVertexBuffer(Type, BufferInfo);
 }
 
 void FVertexSimple::CreateTextureBoardVertices()
@@ -514,7 +514,7 @@ void FVertexSimple::CreateTextureBoardVertices()
 
 	URenderer* Renderer = UEngine::Get().GetRenderer();
 	VertexBufferInfo BufferInfo = {UPrimitiveComponent::GetTopology(Type), Vertices, Indices};
-	Renderer->CreateVertexBuffer(Type, BufferInfo);
+	//Renderer->CreateVertexBuffer(Type, BufferInfo);
 }
 
 void FVertexSimple::CreateBoundingBoxVertices()
@@ -548,5 +548,5 @@ void FVertexSimple::CreateBoundingBoxVertices()
 	
 	URenderer* Renderer = UEngine::Get().GetRenderer();
 	VertexBufferInfo BufferInfo = {UPrimitiveComponent::GetTopology(Type), Vertices, Indices};
-	Renderer->CreateVertexBuffer(Type, BufferInfo);
+	//Renderer->CreateVertexBuffer(Type, BufferInfo);
 }
