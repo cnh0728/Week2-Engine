@@ -14,11 +14,12 @@ AActor::AActor() : Depth{ 0 }
 void AActor::BeginPlay()
 {
 	
-	for (auto& Component : Components)
+	for (auto& Component : Components) 
 	{
 		Component->BeginPlay();
 
-		if (UPrimitiveComponent* PrimitiveComponent = dynamic_cast<UPrimitiveComponent*>(Component))
+		//if (UPrimitiveComponent* PrimitiveComponent = dynamic_cast<UPrimitiveComponent*>(Component))
+		if (UPrimitiveComponent* PrimitiveComponent = Cast<UPrimitiveComponent>(Component))
 		{
 			PrimitiveComponent->RegisterComponentWithWorld(World);
 		}
@@ -51,7 +52,8 @@ void AActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	for (auto& Component : Components)
 	{		
 		Component->EndPlay(EndPlayReason);
-		if (const auto PrimitiveComp = dynamic_cast<UPrimitiveComponent*>(Component))
+		//if (const auto PrimitiveComp = dynamic_cast<UPrimitiveComponent*>(Component))
+		if (const auto PrimitiveComp = Cast<UPrimitiveComponent>(Component))
 		{
 			if (World->ContainsZIgnoreComponent(PrimitiveComp))
 			{

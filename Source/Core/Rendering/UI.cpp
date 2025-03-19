@@ -72,6 +72,7 @@ void UI::Update()
     RenderPropertyWindow();
     RenderSceneManager();
     RenderComponentsByActor();
+    RenderFNameResolver();
     Debug::ShowConsole(bWasWindowSizeUpdated);
 
     // ImGui 렌더링
@@ -473,7 +474,6 @@ void ShowComponentsRecursive(USceneComponent* Component, uint32 uniqueID)
     }
 }
 
-
 void UI::RenderComponentsByActor()
 {
     const TArray<AActor*>& ActorArray = UEngine::Get().GetWorld()->GetActors();
@@ -503,6 +503,22 @@ void UI::RenderComponentsByActor()
     }
     ImGui::End();
 }
+
+void UI::RenderFNameResolver()
+{
+    ImGui::Begin("FName Resolver");
+
+    static char id[8];
+    ImGui::InputText("FName DisplayIndex", id, 8);
+    static FString Name;
+    if (ImGui::Button("Resolve"))
+    {
+        Name = FNamePool::ResolveDisplay(atoi(id));
+    }
+    ImGui::Text("%s", *Name);
+    ImGui::End();
+}
+
 
 void UI::SetWindowLayout(float widthRatio, float heightRatio, float posXRatio, float posYRatio)
 {

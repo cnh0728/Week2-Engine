@@ -4,7 +4,7 @@
 
 class UActorComponent : public UObject
 {
-	DECLARE_CLASS(UActorComponent, UObject)
+	DECLARE_CLASS(UActorComponent, UObject, UClass::CASTCLASS_UActorComponent)
 public:
 	UActorComponent() = default;
 

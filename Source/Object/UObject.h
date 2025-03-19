@@ -3,6 +3,7 @@
 #include "Core/HAL/PlatformType.h"
 #include "Core/Container/Name.h"
 #include "Object/Class/Class.h"
+#include "Cast.h"
 
 // TODO: RTTI 구현하면 enable_shared_from_this 제거
 class UObject : public std::enable_shared_from_this<UObject>
@@ -22,12 +23,21 @@ public:
 	uint32 GetInternalIndex() const { return InternalIndex; }
 
 public:
-	virtual UClass* GetClass() const
+	FORCEINLINE virtual UClass* GetClass() const
 	{
 		return StaticClass();
 	}
 
 	static UClass* StaticClass(); // 각 클래스마다 하나씩
-	virtual bool IsA(UClass* TargetClass) const;
-	virtual const char* GetTypeName() { return "UObject"; }
+	FORCEINLINE bool IsA(UClass* TargetClass) const
+	{
+		UClass* CurrentClass = GetClass();
+		while (CurrentClass) {
+			if (CurrentClass == TargetClass)
+				return true;
+			CurrentClass = CurrentClass->SuperClass;
+		}
+		return false;
+	}
+	FORCEINLINE virtual const char* GetTypeName() { return "UObject"; }
 };

@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "Core/Container/Name.h"
-
+#include <concepts>
 
 // uobject를 상속받는 클래스당 하나씩만 만들어짐
 class UClass
@@ -8,9 +8,11 @@ class UClass
 public:
     UClass* SuperClass;
     FName Name;
+
+    uint32 ClassCastFlags;
     UClass(UClass* InSuperClass, FName InName) : SuperClass(InSuperClass), Name(InName) {}
 
-    bool IsChildOf(const UClass* SomeBase) const {
+    FORCEINLINE bool IsChildOf(const UClass* SomeBase) const {
         for (const UClass* Super = this; Super; Super = Super->SuperClass)
         {
             if (Super == SomeBase)
@@ -21,22 +23,23 @@ public:
         return false;
     }
 
-    FName GetName() const {
+    FORCEINLINE FName GetName() const {
         return Name;
     }
+
 };
 
 
 #define DECLARE_CLASS(Class, Super) \
     public: \
-    static UClass* StaticClass() { \
+    FORCEINLINE static UClass* StaticClass() { \
         static UClass ClassPrivate(Super::StaticClass(), FName(#Class)); \
         return &ClassPrivate; \
     } \
-    virtual UClass* GetClass() const override { \
+    FORCEINLINE virtual UClass* GetClass() const override { \
         return StaticClass(); \
     } \
-    virtual const char* GetTypeName() override { \
+    FORCEINLINE virtual const char* GetTypeName() override { \
         return #Class; \
     } \
     private:

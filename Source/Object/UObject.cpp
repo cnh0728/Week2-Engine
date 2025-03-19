@@ -18,13 +18,4 @@ UClass* UObject::StaticClass()
 }
 
 
-inline bool UObject::IsA(UClass* TargetClass) const
-{
-	UClass* CurrentClass = GetClass();
-	while (CurrentClass) {
-		if (CurrentClass == TargetClass)
-			return true;
-		CurrentClass = CurrentClass->SuperClass;
-	}
-	return false;
-}
+

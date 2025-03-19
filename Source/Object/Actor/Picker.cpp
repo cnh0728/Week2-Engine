@@ -109,14 +109,16 @@ void APicker::Tick(float DeltaTime)
             FEditorManager::Get().SelectPrimitive(PickedComponent);   
         }else //기즈모면
         {
-            AGizmoHandle* Gizmo = dynamic_cast<AGizmoHandle*>(PickedComponent->GetOwner());
+            //AGizmoHandle* Gizmo = dynamic_cast<AGizmoHandle*>(PickedComponent->GetOwner());
+            AGizmoHandle* Gizmo = Cast<AGizmoHandle>(PickedComponent->GetOwner());
 
             if (Gizmo == nullptr)
             {
                 return;
             }
                 
-            UPrimitiveComponent* CylinderComp = dynamic_cast<UPrimitiveComponent*>(PickedComponent);
+            //UPrimitiveComponent* CylinderComp = dynamic_cast<UPrimitiveComponent*>(PickedComponent);
+            UPrimitiveComponent* CylinderComp = Cast<UPrimitiveComponent>(PickedComponent);
 			FVector4 CompColor = CylinderComp->GetColor();
             if (1.0f - FMath::Abs(CompColor.X) < KINDA_SMALL_NUMBER) // Red - X축
             {
