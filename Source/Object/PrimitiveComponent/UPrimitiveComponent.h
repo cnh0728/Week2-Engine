@@ -21,8 +21,9 @@ public:
 	virtual void Render();
 
 	virtual EPrimitiveType GetType() { return EPrimitiveType::EPT_None; }
-	D3D11_PRIMITIVE_TOPOLOGY GetTopology() {
-		switch (GetType())
+
+	static D3D11_PRIMITIVE_TOPOLOGY GetTopology(EPrimitiveType Type) {
+		switch (Type)
 		{
 		case EPrimitiveType::EPT_Line:
 		case EPrimitiveType::EPT_BoundingBox:
@@ -111,7 +112,7 @@ public:
 	ULineComp()
 	{
 		bCanBeRendered = true;
-		bCanPick = true;
+		bCanPick = false;
 	}
 	virtual ~ULineComp() = default;
 	EPrimitiveType GetType() override

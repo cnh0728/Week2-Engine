@@ -2,6 +2,8 @@
 #include <d3dcompiler.h>
 #include "Core/Math/Transform.h"
 #include <Object/Actor/Camera.h>
+
+#include "Object/Actor/WorldGrid.h"
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Static/FEditorManager.h"
 
@@ -259,27 +261,29 @@ TMap<D3D11_PRIMITIVE_TOPOLOGY, bool> URenderer::CheckChangedVertexCount()
     return Topologies;
 }
 
-void URenderer::Render()
+void URenderer::RenderBatch()
 {
     //Pending으로 돌면서 버텍스 갯수 달라졌으면 resize, 같으면 동적할당으로 버텍스버퍼 업데이트
-    UpdateVertexBuffer();
+
+    //TODO: 배치 액터별로 하고 바꾸기 지금은 그리드만 있으니까 임시용
+    UpdateConstant(FEditorManager::Get().GetWorldGrid()->GetRootComponent());
     
     for (auto& Pair : BatchVertexBuffers)
     { 
         auto& Key = Pair.Key;
         auto& Value = Pair.Value;
 
-        //그려야하느게 없으면 컨티뉴
-        if (Value.GetVertexCount() == 0)
-        {
-            continue;
-        }
-
         if (CurrentTopology != Value.GetTopology())
         {
             D3D11_PRIMITIVE_TOPOLOGY Topology = Value.GetTopology();
             DeviceContext->IASetPrimitiveTopology(Topology);
             CurrentTopology = Topology;
+        }
+
+        //그려야하느게 없으면 컨티뉴
+        if (Value.GetVertexCount() == 0)
+        {
+            continue;
         }
         
         ID3D11Buffer* VertexBuffer = Value.GetVertexBuffer();
@@ -293,12 +297,17 @@ void URenderer::Render()
     }
 }
 
-void URenderer::CreateVertexBuffer(D3D11_PRIMITIVE_TOPOLOGY Topology, VertexBufferInfo BufferInfo)
+void URenderer::CreateVertexBuffer(EPrimitiveType VertexType, VertexBufferInfo BufferInfo)
 {
+    if (VertexBuffers.Contains(VertexType))
+    {
+        return;
+    }
+    
     TArray<FVertexSimple> Vertices = BufferInfo.GetVertices();
     FVertexSimple* RawVertices = Vertices.GetData();
     // D3D11_PRIMITIVE_TOPOLOGY Topology = BufferInfo.GetTopology();
-
+    D3D11_PRIMITIVE_TOPOLOGY Topology = UPrimitiveComponent::GetTopology(VertexType);
     uint32_t VertexByteWidth = BufferInfo.GetVertexCount() * sizeof(FVertexSimple);
 
     if (VertexByteWidth == 0)
@@ -307,10 +316,10 @@ void URenderer::CreateVertexBuffer(D3D11_PRIMITIVE_TOPOLOGY Topology, VertexBuff
     }
     
     D3D11_BUFFER_DESC VertexBufferDesc = {};
-    VertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+    VertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
     VertexBufferDesc.ByteWidth = VertexByteWidth;
     VertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-    VertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+    VertexBufferDesc.CPUAccessFlags = 0;
     
     D3D11_SUBRESOURCE_DATA VertexBufferSRD = {};
     VertexBufferSRD.pSysMem = RawVertices;
@@ -331,10 +340,10 @@ void URenderer::CreateVertexBuffer(D3D11_PRIMITIVE_TOPOLOGY Topology, VertexBuff
     }
     
     D3D11_BUFFER_DESC IndexBufferDesc = {};
-    IndexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+    IndexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
     IndexBufferDesc.ByteWidth = IndexByteWidth;
     IndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-    IndexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+    IndexBufferDesc.CPUAccessFlags = 0;
 
     D3D11_SUBRESOURCE_DATA indexData = {};
     indexData.pSysMem = RawIndices;
@@ -343,11 +352,63 @@ void URenderer::CreateVertexBuffer(D3D11_PRIMITIVE_TOPOLOGY Topology, VertexBuff
     Device->CreateBuffer(&IndexBufferDesc, &indexData, &IndexBuffer);
     
     VertexBufferInfo NewBufferInfo = {VertexBuffer, IndexBuffer, Topology, Vertices, Indices};
-    SetVertexBufferInfo(Topology, NewBufferInfo);
-    // VertexBuffers.Add(UUID, NewBufferInfo);
+    SetVertexBufferInfo(VertexType, NewBufferInfo);
+}
+
+void URenderer::CreateBatchVertexBuffer(D3D11_PRIMITIVE_TOPOLOGY Topology, VertexBufferInfo BufferInfo)
+{
+    TArray<FVertexSimple> Vertices = BufferInfo.GetVertices();
+    FVertexSimple* RawVertices = Vertices.GetData();
+    // D3D11_PRIMITIVE_TOPOLOGY Topology = BufferInfo.GetTopology();
+
+    uint32_t VertexByteWidth = BufferInfo.GetVertexCount() * sizeof(FVertexSimple);
+
+    if (VertexByteWidth == 0)
+    {
+        return;
+    }
+    
+    D3D11_BUFFER_DESC VertexBufferDesc = {};
+    VertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+    VertexBufferDesc.ByteWidth = VertexByteWidth;
+    VertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+    VertexBufferDesc.CPUAccessFlags = 0;
+    
+    D3D11_SUBRESOURCE_DATA VertexBufferSRD = {};
+    VertexBufferSRD.pSysMem = RawVertices;
+
+    //UUID받으면 설정이 빈 버퍼 만들어주기
+    ID3D11Buffer* VertexBuffer;
+    Device->CreateBuffer(&VertexBufferDesc, &VertexBufferSRD, &VertexBuffer);
+
+
+    TArray<uint32_t> Indices = BufferInfo.GetIndices();
+    uint32_t* RawIndices = Indices.GetData();
+
+    uint32_t IndexByteWidth = BufferInfo.GetIndexCount() * sizeof(uint32_t);
+    
+    if (IndexByteWidth == 0)
+    {
+        return;
+    }
+    
+    D3D11_BUFFER_DESC IndexBufferDesc = {};
+    IndexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+    IndexBufferDesc.ByteWidth = IndexByteWidth;
+    IndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+    IndexBufferDesc.CPUAccessFlags = 0;
+
+    D3D11_SUBRESOURCE_DATA indexData = {};
+    indexData.pSysMem = RawIndices;
+
+    ID3D11Buffer* IndexBuffer;
+    Device->CreateBuffer(&IndexBufferDesc, &indexData, &IndexBuffer);
+    
+    VertexBufferInfo NewBufferInfo = {VertexBuffer, IndexBuffer, Topology, Vertices, Indices};
+    SetBatchVertexBufferInfo(Topology, NewBufferInfo);
  }
 
-void URenderer::ClearVertex()
+void URenderer::ClearBatchVertex()
 {
     for (auto& Pair : BatchVertexBuffers)
     {
@@ -360,23 +421,25 @@ void URenderer::ClearVertex()
     }
 }
 
-void URenderer::AddVertices(UPrimitiveComponent* Component)
+void URenderer::AddBatchVertices(UPrimitiveComponent* Component)
 {
     //자기 컴포넌트 매트릭스 곱해서 버텍스 ADD하기
     //월드매트릭스만 해주고 V, P는 Constant로 넘기기 (Primitivie별로 곱해줄 필요없으니까)
-    FMatrix WorldMatrix = Component->GetComponentTransformMatrix();
+    // FMatrix WorldMatrix = Component->GetComponentTransformMatrix();
     
     //월드매트릭스만 해주고 V, P는 Constant로 넘기기 (Primitivie별로 곱해줄 필요없으니까
-
-    D3D11_PRIMITIVE_TOPOLOGY Topology = Component->GetTopology();
+    
+    D3D11_PRIMITIVE_TOPOLOGY Topology = Component->GetTopology(Component->GetType());
     
     // uint32_t UUID = Component->GetOwner()->GetUUID();
     TArray<FVertexSimple> Vertices = OriginVertices[Component->GetType()];
     TArray<uint32_t> Indices = OriginIndices[Component->GetType()];
 
+    FMatrix ComponentWorldMatrix = Component->GetComponentTransformMatrix();
+    
     for (FVertexSimple& Vertex : Vertices)
     {
-        Vertex.SetPos(WorldMatrix);
+        Vertex.SetPos(ComponentWorldMatrix);
         if (Component->bCustomColor)
         {
             FVector4 Color = Component->GetColor();
@@ -394,47 +457,23 @@ void URenderer::AddVertices(UPrimitiveComponent* Component)
     BufferInfo.AddVertices(Vertices, Indices);
 }
 
-void URenderer::ResizeVertexBuffer(D3D11_PRIMITIVE_TOPOLOGY Topology)
+VertexBufferInfo URenderer::ResizeBatchVertexBuffer(D3D11_PRIMITIVE_TOPOLOGY Topology)
 {
     if (BatchVertexBuffers.Contains(Topology) == false)
     {
-        return;
+        return VertexBufferInfo();
     }
 
     VertexBufferInfo BufferInfo = BatchVertexBuffers[Topology]; //버텍스버퍼를 제외한 이전 정보 저장용
     
     ReleaseVertexBuffer(Topology);
 
-    CreateVertexBuffer(Topology, BufferInfo);
+    CreateBatchVertexBuffer(Topology, BufferInfo);
+
+    return BufferInfo;
 }
 
-void URenderer::InsertNewVerticesIntoVertexBuffer(D3D11_PRIMITIVE_TOPOLOGY Topology)
-{
-    if (BatchVertexBuffers.Contains(Topology) == false)
-    {
-        return;
-    }
-
-    VertexBufferInfo BufferInfo = BatchVertexBuffers[Topology];
-    D3D11_MAPPED_SUBRESOURCE VertexMappedResource;
-    ID3D11Buffer* VertexBuffer = BufferInfo.GetVertexBuffer();
-    
-    DeviceContext->Map(VertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &VertexMappedResource);
-    memcpy(VertexMappedResource.pData, BufferInfo.GetVertices().GetData(), BufferInfo.GetVertexCount() * sizeof(FVertexSimple));
-    DeviceContext->Unmap(VertexBuffer, 0);
-
-    // D3D11_MAPPED_SUBRESOURCE IndexMappedResource;
-    // ID3D11Buffer* IndexBuffer = BufferInfo.GetIndexBuffer();
-    //
-    // uint32_t* Indices = BufferInfo.GetIndices().GetData();
-    // uint32_t IndexCount = BufferInfo.GetIndexCount();
-    //
-    // DeviceContext->Map(IndexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &IndexMappedResource);
-    // memcpy(IndexMappedResource.pData, Indices, IndexCount * sizeof(uint32_t));
-    // DeviceContext->Unmap(IndexBuffer, 0);
-}
-
-void URenderer::UpdateVertexBuffer()
+void URenderer::UpdateBatchVertexBuffer()
 {
     TMap<D3D11_PRIMITIVE_TOPOLOGY, bool> ChangedType = CheckChangedVertexCount();
 
@@ -445,10 +484,7 @@ void URenderer::UpdateVertexBuffer()
         
         if (IsVertexCountChanged)
         {
-            ResizeVertexBuffer(Topology);
-        }else
-        {
-            InsertNewVerticesIntoVertexBuffer(Topology);
+            ResizeBatchVertexBuffer(Topology);
         }
     }
 }
@@ -461,6 +497,39 @@ void URenderer::ReleaseVertexBuffer(D3D11_PRIMITIVE_TOPOLOGY Topology)
         BatchVertexBuffers[Topology].GetIndexBuffer()->Release();
         BatchVertexBuffers.Remove(Topology);
     }
+}
+
+void URenderer::RenderPrimtivie(UPrimitiveComponent* Component)
+{
+    if (VertexBuffers.Contains(Component->GetType()) == false)
+    {
+        return;
+    }
+
+    VertexBufferInfo Info = VertexBuffers[Component->GetType()];
+
+    if (Info.GetVertexBuffer() == nullptr)
+    {
+        return;
+    }
+
+    if (CurrentTopology != Info.GetTopology())
+    {
+        DeviceContext->IASetPrimitiveTopology(Info.GetTopology());
+        CurrentTopology = Info.GetTopology();
+    }
+
+    UpdateConstant(Component);
+
+    ID3D11Buffer* VertexBuffer = Info.GetVertexBuffer();
+    ID3D11Buffer* IndexBuffer = Info.GetIndexBuffer();
+    uint32_t IndexCount = Info.GetIndexCount();
+    
+    UINT Offset = 0;
+    DeviceContext->IASetVertexBuffers(0, 1, &VertexBuffer, &Stride, &Offset);
+    DeviceContext->IASetIndexBuffer(IndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+        
+    DeviceContext->DrawIndexed(IndexCount, 0, 0);
 }
 
 void URenderer::ReleaseAllVertexBuffer()
@@ -479,22 +548,26 @@ void URenderer::ReleaseAllVertexBuffer()
     BatchVertexBuffers.Empty();
 }
 
-void URenderer::UpdateConstant() const
+void URenderer::UpdateConstant(USceneComponent* Component) const
 {
     if (!ConstantBuffer) return;
 
+    ACamera* Camera = FEditorManager::Get().GetCamera();
+
     D3D11_MAPPED_SUBRESOURCE ConstantBufferMSR;
 
-    FMatrix VP =  //버텍스는 이미 곱해져서 갈거라 VP만
-        FMatrix::Transpose(ProjectionMatrix) * 
-        FMatrix::Transpose(ViewMatrix);
+    FMatrix M = FMatrix::Transpose(Component->GetComponentTransformMatrix());
+    FMatrix V = FMatrix::Transpose(ViewMatrix);
+    FMatrix P = FMatrix::Transpose(ProjectionMatrix);
 
     // D3D11_MAP_WRITE_DISCARD는 이전 내용을 무시하고 새로운 데이터로 덮어쓰기 위해 사용
     DeviceContext->Map(ConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &ConstantBufferMSR);
     {
         // 매핑된 메모리를 FConstants 구조체로 캐스팅
         FConstants* Constants = static_cast<FConstants*>(ConstantBufferMSR.pData);
-        Constants->VP = VP;
+        Constants->M = M;
+        Constants->V = V;
+        Constants->P = P;
 		// Constants->Color = UpdateInfo.Color;
 		// Constants->bUseVertexColor = UpdateInfo.bUseVertexColor ? 1 : 0;
     }

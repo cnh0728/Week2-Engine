@@ -120,6 +120,9 @@ void UI::RenderControlPanel()
 void UI::RenderWorldGridSetting()
 {
     AWorldGrid* WorldGrid = FEditorManager::Get().GetWorldGrid();
+    
+    if (WorldGrid == nullptr)
+        return;
 
     float Spacing = WorldGrid->GetSpacing();
     

@@ -30,37 +30,44 @@ void UPrimitiveComponent::Render()
 	{
 		return;
 	}
-	if (GetOwner()->IsCanPick() == false)
-	{
-		if (bIsPicked)
-		{
-			/*bUseVertexColor = false;
-			SetCustomColor(FVector4(1.0f, 0.647f, 0.0f, 1.0f));*/
-		}
-		else
-		{
-			bUseVertexColor = true;
-		}
-	}
-	// Renderer->RenderPrimitive(this);
+	// if (GetOwner()->IsCanPick() == false)
+	// {
+	// 	if (bIsPicked)
+	// 	{
+	// 		/*bUseVertexColor = false;
+	// 		SetCustomColor(FVector4(1.0f, 0.647f, 0.0f, 1.0f));*/
+	// 	}
+	// 	else
+	// 	{
+	// 		bUseVertexColor = true;
+	// 	}
+	// }
+	Renderer->RenderPrimtivie(this);
 }
 
 void UPrimitiveComponent::RegisterComponentWithWorld(UWorld* World)
 {
-	World->AddRenderComponent(this);
-
-	EPrimitiveType ComponentType = GetType();
-	
-	TArray<FVertexSimple> Vertices = OriginVertices[ComponentType];
-	TArray<uint32_t> Indices = OriginIndices[ComponentType];
-	
-	D3D11_PRIMITIVE_TOPOLOGY Topology = GetTopology();
-
-	VertexBufferInfo BufferInfo = VertexBufferInfo(Topology, Vertices, Indices);
-	
 	URenderer* Renderer = UEngine::Get().GetRenderer();
 	
-	Renderer->CreateVertexBuffer(Topology, BufferInfo);
+	D3D11_PRIMITIVE_TOPOLOGY Topology = GetTopology(GetType());
+
+	if (GetOwner()->IsBatchActor())
+	{
+		Renderer->AddBatchVertices(this);
+	}else
+	{
+		World->AddRenderComponent(this);
+	}
+
+	EPrimitiveType ComponentType = GetType();
+
+	TArray<FVertexSimple> Vertices = OriginVertices[ComponentType];
+
+	TArray<uint32_t> Indices = OriginIndices[ComponentType];
+	
+	VertexBufferInfo BufferInfo = VertexBufferInfo(Topology, Vertices, Indices);
+
+	Renderer->CreateVertexBuffer(GetType(), BufferInfo);
 }
 
 TSet<UPrimitiveComponent*> UPrimitiveComponent::FilterPrimitiveComponents(TSet<UActorComponent*>& Components)
