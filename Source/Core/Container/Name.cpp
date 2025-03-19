@@ -352,22 +352,10 @@ FName::FName()
 	Number = 0; 
 }
 
-int32 FName::Compare(const FName& Other) const
-{
-	if (ComparisonIndex == Other.ComparisonIndex)
-	{
-		return Number - Other.Number;
-	}
-	else
-	{
-		return -2147483648;
-	}
-}
+//int32 FName::Compare(const FName& Other) const
 
-bool FName::operator==(const FName& Other) const
-{
-	return ComparisonIndex == Other.ComparisonIndex;
-}
+//bool FName::operator==(const FName& Other) const
+
 
 FString FName::GetString() const
 {

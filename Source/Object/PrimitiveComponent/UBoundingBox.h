@@ -1,27 +1,35 @@
 ﻿#pragma once
 #include "UPrimitiveComponent.h"
-class UBoundingBox :
+#include "Core/Math/Box.h"
+
+// Parent Component의 BoundingBox를 계산하고, 렌더합니다.
+class UBoundingBoxComponent :
     public UPrimitiveComponent
 {
 	using Super = USceneComponent;
 public:
-	UBoundingBox()
+	UBoundingBoxComponent()
 	{
 		bCanBeRendered = false;
+		bCanPick = false;
 	}
-	virtual ~UBoundingBox() = default;
+	virtual ~UBoundingBoxComponent() = default;
 	virtual void Tick(float DeltaTime) override;
 	virtual const FMatrix GetComponentTransformMatrix() override;
 	EPrimitiveType GetType() override
 	{
-		return EPrimitiveType::EPT_Bounding_Box;
+		return EPrimitiveType::EPT_BoundingBox;
 	}
 
-	FVector MinBoxCorner;
-	FVector MaxBoxCorner;
+	FBox BBox;
 	FTransform OverrideBoxTransform;
 private:
-	void UpdateMinMax();
+	void UpdateMinMax ();
+	
+private:
+	UPrimitiveComponent* TargetPrimitive = nullptr;
+public:
+	void SetTargetPrimitive(UPrimitiveComponent* Target) { TargetPrimitive = Target; }
 	
 };
 

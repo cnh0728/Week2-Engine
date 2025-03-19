@@ -48,16 +48,29 @@ void UPrimitiveComponent::Render()
 void UPrimitiveComponent::RegisterComponentWithWorld(UWorld* World)
 {
 	World->AddRenderComponent(this);
+
+	EPrimitiveType ComponentType = GetType();
 	
-	TArray<FVertexSimple> Vertices = OriginVertices[GetType()];
+	TArray<FVertexSimple> Vertices = OriginVertices[ComponentType];
+	TArray<uint32_t> Indices = OriginIndices[ComponentType];
 	
 	D3D11_PRIMITIVE_TOPOLOGY Topology = GetTopology();
 
-	VertexBufferInfo BufferInfo = VertexBufferInfo(Vertices.Num(), Topology, Vertices);
+	VertexBufferInfo BufferInfo = VertexBufferInfo(Topology, Vertices, Indices);
 	
 	URenderer* Renderer = UEngine::Get().GetRenderer();
-
-	uint32_t UUID = GetOwner()->GetUUID();
 	
 	Renderer->CreateVertexBuffer(Topology, BufferInfo);
+}
+
+TSet<UPrimitiveComponent*> UPrimitiveComponent::FilterPrimitiveComponents(TSet<UActorComponent*>& Components)
+{
+	TSet<UPrimitiveComponent*> NewSet;
+
+	for (auto Comp : Components)
+	{
+		if (UPrimitiveComponent* Prim = dynamic_cast<UPrimitiveComponent*>(Comp))
+			NewSet.Add(Prim);
+	}
+	return NewSet;
 }

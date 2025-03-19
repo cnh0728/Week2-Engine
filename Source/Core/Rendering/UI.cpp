@@ -22,7 +22,6 @@
 #include "Object/Gizmo/GizmoHandle.h"
 #include "Core/Rendering/Particle/Particle.h"
 
-
 void UI::Initialize(HWND hWnd, URenderer& Renderer, UINT ScreenWidth, UINT ScreenHeight)
 {
     // ImGui 초기화
@@ -47,7 +46,11 @@ void UI::Initialize(HWND hWnd, URenderer& Renderer, UINT ScreenWidth, UINT Scree
     io.DisplaySize = ScreenSize;
     this->Renderer = &Renderer;
 
-    //Unselectables.Add(FName("Camera"));
+    Unselectables.Add(FName("Camera"));
+    Unselectables.Add(FName("WorldGrid"));
+    Unselectables.Add(FName("Axis"));
+    Unselectables.Add(FName("Picker"));
+    Unselectables.Add(FName("GizmoHandle"));
 }
 
 void UI::Update()
@@ -69,6 +72,7 @@ void UI::Update()
     RenderControlPanel();
     RenderPropertyWindow();
     RenderSceneManager();
+    RenderComponentsByActor();
     Debug::ShowConsole(bWasWindowSizeUpdated);
 
     // ImGui 렌더링
@@ -156,6 +160,8 @@ void UI::RenderMemoryUsage()
 
 void UI::RenderPrimitiveSelection()
 {
+    
+    
     const char* items[] = { "Sphere", "Cube", "Cylinder", "Cone" };
 
     ImGui::Combo("Primitive", &currentItem, items, IM_ARRAYSIZE(items));
@@ -344,6 +350,7 @@ void UI::RenderPropertyWindow()
     AActor* selectedActor = FEditorManager::Get().GetSelectedActor();
     if (selectedActor != nullptr)
     {
+        ImGui::Text("Selected : [%4d]%s", selectedActor->GetUUID(), *selectedActor->Name.GetString());
         FTransform selectedTransform = selectedActor->GetActorRelativeTransform();
         float position[] = { selectedTransform.GetPosition().X, selectedTransform.GetPosition().Y, selectedTransform.GetPosition().Z };
         float scale[] = { selectedTransform.GetScale().X, selectedTransform.GetScale().Y, selectedTransform.GetScale().Z };
@@ -395,13 +402,14 @@ void UI::RenderPropertyWindow()
             {
                 selectedComponent->SetColor(ActorColor);
             }
+            bool bRender = selectedComponent->GetCanBeRendered();
+            if (ImGui::Checkbox("Show Primitive", &bRender))
+            {
+                selectedComponent->SetCanBeRendered(bRender);
+            }
+        
         }
 
-        bool bRender = selectedComponent->GetCanBeRendered();
-        if (ImGui::Checkbox("Show Primitive", &bRender))
-        {
-            selectedComponent->SetCanBeRendered(bRender);
-        }
         
     }
     ImGui::End();
@@ -409,6 +417,7 @@ void UI::RenderPropertyWindow()
 
 void UI::RenderSceneManager()
 {
+    static int selectedBefore = -1;
     const TArray<AActor*>& ActorArray = UEngine::Get().GetWorld()->GetActors();
     uint32 NumActors = ActorArray.Num();
 
@@ -423,17 +432,77 @@ void UI::RenderSceneManager()
                 char buf[32];
 
                 sprintf_s(buf, "%s", *ActorArray[n]->Name.GetString());
-                if (ImGui::Selectable(buf, selected == n))
+
+                if (Unselectables.Find((ActorArray[n]->Name))>-1)
+                    continue;
+                if (ImGui::Selectable(buf, (selected == n) && (selectedBefore != selected) ))
                     selected = n;
             }
             ImGui::TreePop();
         }
         if (selected > -1) {
-            if(NumActors > 0)
-                FEditorManager::Get().SelectActor(ActorArray[selected]);
+            if (NumActors > 0)
+            {
+                if (selectedBefore != selected)
+                {
+                    FEditorManager::Get().SelectActor(ActorArray[selected]);
+                }
+            }
+        }
+        selectedBefore = selected;
+    }
+    ImGui::End();
+}
+
+void ShowComponentsRecursive(USceneComponent* Component, uint32 uniqueID)
+{
+    if (!Component) return;
+    
+    FString NodeID = FString("##") + FString::FromInt(uniqueID);
+    const TSet<USceneComponent*>& Children = Component->GetAttachChildren();
+    if (ImGui::TreeNode(*NodeID, "[%4d]%s(%d)", Component->GetUUID(), *Component->Name.GetString(), Children.Num()))
+    {
+        uint32 id = 0;
+        FTransform T = Component->GetComponentTransform();
+        FVector P = T.GetPosition();
+        ImGui::Text("CompPos : %f %f %f", P.X, P.Y, P.Z);
+        for (USceneComponent* Child : Children)
+        {
+            ShowComponentsRecursive(Child, 128*uniqueID + (id++));
+        }
+
+        ImGui::TreePop();
+    }
+}
+
+
+void UI::RenderComponentsByActor()
+{
+    const TArray<AActor*>& ActorArray = UEngine::Get().GetWorld()->GetActors();
+    uint32 NumActors = ActorArray.Num();
+
+    if (NumActors > 0) {
+        static int selected = -1;
+        ImGui::Begin("Components Tree");
+        if (ImGui::TreeNode("Actors"))
+        {
+            for (int n = 0; n < NumActors; n++)
+            {
+                ImGui::PushID(n);
+                if (ImGui::TreeNode("", "[%4d]%s", ActorArray[n]->GetUUID(), *ActorArray[n]->Name.GetString()))
+                {
+                    if (USceneComponent* RootComponent = ActorArray[n]->GetRootComponent())
+                    {
+                        ShowComponentsRecursive(RootComponent, 0);
+                    }
+                    ImGui::TreePop();
+                }
+                ImGui::PopID();
+
+            }
+        ImGui::TreePop();
         }
     }
-
     ImGui::End();
 }
 

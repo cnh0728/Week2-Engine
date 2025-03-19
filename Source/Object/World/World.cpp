@@ -145,7 +145,7 @@ void UWorld::RenderMainTexture(URenderer& Renderer, float DeltaTime)
 		{
 			TextComponent->RenderText(Renderer, TextComponent->GetText(),
 				TextComponent->GetComponentTransformMatrix().GetTranslation(),
-				TextComponent->GetComponentTransformMatrix().GetScale() * TextComponent->GetTextSize());
+				TextComponent->GetTextSize());
 		}
 	}
 

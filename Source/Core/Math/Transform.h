@@ -23,9 +23,10 @@ public:
 
 	FTransform(FVector InPosition, FVector InRotation, FVector InScale)
 		: Position(InPosition)
-		, Rotation(InRotation)
+		, Rotation(0)
 		, Scale(InScale)
 	{
+		SetRotation(InRotation);
 	}
 
 	FTransform(FVector InPosition, FQuat InQuat, FVector InScale)
