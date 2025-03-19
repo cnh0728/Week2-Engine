@@ -4,8 +4,8 @@ cbuffer constants : register(b0)
     matrix M;
     matrix V;
     matrix P;
-    // float4 CustomColor;
-    // uint bUseVertexColor;
+    float4 Color;
+    int bUseCustomColor;
 }
 
 cbuffer UUIDColor : register(b1){
@@ -51,8 +51,7 @@ PS_INPUT mainVS(VS_INPUT input)
     // output.depthPosition = output.position;
     // output.position = input.position;
     
-    // output.color = bUseVertexColor == 1 ? input.color : CustomColor;
-    output.color = input.color;
+    output.color = bUseCustomColor == 1 ? Color : input.color;
     return output;
 }
 

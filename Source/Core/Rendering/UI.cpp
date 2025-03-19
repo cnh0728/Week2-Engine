@@ -408,10 +408,7 @@ void UI::RenderPropertyWindow()
             {
                 selectedComponent->SetCanBeRendered(bRender);
             }
-        
         }
-
-        
     }
     ImGui::End();
 }
