@@ -1,6 +1,9 @@
 ﻿#include "Spotlight.h"
 #include <Object/PrimitiveComponent/UPrimitiveComponent.h>
 #include <Object/PrimitiveComponent/UBoundingBox.h>
+#include "Object/PrimitiveComponent/BillBoardComponent.h"
+#include "Object/World/World.h"
+
 ASpotlight::ASpotlight()
 {
 	bCanEverTick = true;
@@ -10,6 +13,13 @@ ASpotlight::ASpotlight()
 	RootComponent = SpotlightComp;
 
 	SetActorRelatvieTransform(FTransform());
+
+	UBillBoardComponent* BillBoardComponent = AddComponent<UBillBoardComponent>();
+	BillBoardComponent->SetupAttachment(RootComponent);
+	BillBoardComponent->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(), FVector().One()));
+
+	BillBoardComponent->SetCanBeRendered(false);	
+	UEngine::Get().GetWorld()->AddBillBoardComponent(BillBoardComponent);
 }
 
 void ASpotlight::BeginPlay()

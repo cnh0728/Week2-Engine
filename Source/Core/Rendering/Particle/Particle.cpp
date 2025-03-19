@@ -231,7 +231,7 @@ void UParticle::EmitParticles(float FrameTime)
     CenterY = 0.0f;
     CenterZ = 0.0f;
 
-    Radius = 0.5f;
+    Radius = 0.7f;
 
 	// 매 프레임마다 생성된 파티클의 원점 위치를 원의 둘레를 따라 이동시킴
     Angle += FrameTime * 3.0f;

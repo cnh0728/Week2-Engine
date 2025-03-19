@@ -68,6 +68,6 @@ private:
 	float ParticleLifeTime;
 	wchar_t TextureFileName[256];
 	float AccumulatedTime;
-	float ElapsedTime;
+	float ElapsedTime = 5.0f;
 	uint32 CurrentParticleCount;
 };
