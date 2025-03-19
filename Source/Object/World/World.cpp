@@ -60,7 +60,7 @@ void UWorld::LateTick(float DeltaTime)
 	PendingDestroyActors.Empty();
 }
 
-void UWorld::Render()
+void UWorld::Render(float DeltaTime)
 {
 	URenderer* Renderer = UEngine::Get().GetRenderer();
 
@@ -79,7 +79,7 @@ void UWorld::Render()
 	// 	RenderPickingTexture(*Renderer);
 	// }
 	
-	RenderMainTexture(*Renderer);
+	RenderMainTexture(*Renderer, DeltaTime);
 	
 	// DisplayPickingTexture(*Renderer);
 
@@ -113,7 +113,7 @@ void UWorld::RenderPickingTexture(URenderer& Renderer)
 	// }
 }
 
-void UWorld::RenderMainTexture(URenderer& Renderer)
+void UWorld::RenderMainTexture(URenderer& Renderer, float DeltaTime)
 {
 	Renderer.PrepareMain();
 	Renderer.PrepareMainShader();
@@ -148,6 +148,8 @@ void UWorld::RenderMainTexture(URenderer& Renderer)
 				TextComponent->GetComponentTransformMatrix().GetScale() * TextComponent->GetTextSize());
 		}
 	}
+
+	Renderer.RenderParticle(DeltaTime);
 
 	//Renderer.RenderText();
 	

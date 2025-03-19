@@ -1,5 +1,6 @@
 ﻿#include "Cube.h"
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
+
 ACube::ACube()
 {
 	bCanEverTick = true;

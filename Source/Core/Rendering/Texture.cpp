@@ -10,6 +10,21 @@ UTexture::~UTexture()
 {
 }
 
+SubUV UTexture::GetSubUV(int CharacterIndex, int AtlasWidth, int AtlasHeight, int CharWidth, int CharHeight)
+{
+	int Columns = AtlasWidth / CharWidth;
+	int Rows = AtlasHeight / CharHeight;
+
+	int Column = CharacterIndex % Columns;
+	int Row = CharacterIndex / Columns;
+
+	SubUV UV;
+	UV.U = FVector2(Column * CharWidth / (float)AtlasWidth, (Column + 1) * CharWidth / (float)AtlasWidth);
+	UV.V = FVector2(Row * CharHeight / (float)AtlasHeight, (Row + 1) * CharHeight / (float)AtlasHeight);
+
+	return UV;
+}
+
 void PrintErrorMessage(HRESULT hr)
 {
 	char* errorMsg = nullptr;

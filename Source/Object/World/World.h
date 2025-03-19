@@ -32,10 +32,10 @@ public:
   
 	bool DestroyActor(AActor* InActor);
 	
-	void Render();
+	void Render(float DeltaTime);
 	void RenderPickingTexture(URenderer& Renderer);
 	void DisplayPickingTexture(URenderer& Renderer);
-	void RenderMainTexture(URenderer& Renderer);
+	void RenderMainTexture(URenderer& Renderer, float DeltaTime);
 
 	void ClearWorld();
 	void LoadWorld(const char* SceneName);
