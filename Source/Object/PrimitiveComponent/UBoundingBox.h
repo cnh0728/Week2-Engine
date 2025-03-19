@@ -11,7 +11,7 @@ class UBoundingBoxComponent :
 public:
 	UBoundingBoxComponent()
 	{
-		bIsDefaultRendered = false;
+		bIsDefaultRendered = true;
 		bCanPick = false;
 	}
 	virtual ~UBoundingBoxComponent() = default;

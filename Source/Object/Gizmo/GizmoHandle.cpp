@@ -18,7 +18,7 @@ AGizmoHandle::AGizmoHandle()
 
 	GizmoCube = AddComponent<UCubeComp>();
 	GizmoCube->SetColor(FVector4(0.2f, 0.2f, 0.2f, 1.f));
-	GizmoCube->SetRelativeTransform(FTransform(FVector(0, 0, 0), FVector(0, 0, 0), FVector(GizmoSize, GizmoSize, GizmoSize)));
+	GizmoCube->SetRelativeTransform(FTransform(FVector(0, 0, 0), FVector(0, 0, 0), FVector(GizmoSize/2, GizmoSize/2, GizmoSize/2)));
 	GizmoCube->SetupAttachment(RootComponent);
 	
 	XArrowBody = AddComponent<UCylinderComp>();
