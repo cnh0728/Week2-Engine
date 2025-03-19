@@ -26,7 +26,7 @@ void UPrimitiveComponent::UpdateConstantDepth(const URenderer& Renderer, const i
 void UPrimitiveComponent::Render()
 {
 	URenderer* Renderer = UEngine::Get().GetRenderer();
-	if (Renderer == nullptr)
+	if (Renderer == nullptr || bIsDefaultRendered == false)
 	{
 		return;
 	}
