@@ -18,7 +18,7 @@ ASpotlight::ASpotlight()
 	SpotlightComp->SetupAttachment(RootComponent);
 	BillBoardComponent->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(), FVector().One()));
 
-	BillBoardComponent->SetCanBeRendered(false);	
+	BillBoardComponent->SetIsDefaultRendered(false);	
 	UEngine::Get().GetWorld()->AddBillBoardComponent(BillBoardComponent);
 }
 

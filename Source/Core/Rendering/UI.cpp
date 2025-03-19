@@ -424,7 +424,7 @@ void UI::RenderPropertyWindow()
             bool bRender = selectedComponent->GetIsDefaultRendered();
             if (ImGui::Checkbox("Show Primitive", &bRender))
             {
-                selectedComponent->SetCanBeRendered(bRender);
+                selectedComponent->SetIsDefaultRendered(bRender);
             }
         }
     }

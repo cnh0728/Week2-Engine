@@ -23,7 +23,6 @@ AAxis::AAxis()
 	LineY->SetColor(FVector4(0.0f, 1.0f, 0.0f, 1.0f));
 	LineY->SetupAttachment(RootComponent);
 
-
 	ULineComp* LineZ = AddComponent<ULineComp>();
 	FTransform ZTransform = LineZ->GetRelativeTransform();
 	ZTransform.SetScale(FVector(1000.0f, 10.0f, 10.0f));

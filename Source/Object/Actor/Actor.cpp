@@ -184,7 +184,7 @@ void AActor::SetUUIDTag()
 	UUIDTextComponent->SetRelativeTransform(FTransform(FVector(0.0f, 0.9f, 0.9f), FVector(), FVector().One()));
 	UUIDTextComponent->SetText(UUIDTag);
 
-	UUIDTextComponent->SetCanBeRendered(false);
+	UUIDTextComponent->SetIsDefaultRendered(false);
 	UEngine::Get().GetWorld()->AddTextComponent(UUIDTextComponent);
 	
 	UUIDTextComponent->bIsUUIDText = true;
@@ -193,7 +193,7 @@ void AActor::SetUUIDTag()
 void AActor::SetUUIDTextCanBeRendered(bool bRender) {
 	if (UUIDTextComponent)
 	{
-		UUIDTextComponent->SetCanBeRendered(bRender);
+		UUIDTextComponent->SetIsDefaultRendered(bRender);
 	}
 }
 
