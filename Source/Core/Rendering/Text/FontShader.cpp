@@ -236,7 +236,8 @@ bool UFontShader::SetShaderParameters(ID3D11DeviceContext* DeviceContext, FMatri
 	DeviceContext->PSSetShaderResources(0, 1, &Texture);
 
 	Result = DeviceContext->Map(PixelBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
-
+	std::string A, B;
+	A == B;
 	if (FAILED(Result))
 	{
 		return false;

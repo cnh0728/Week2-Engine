@@ -98,6 +98,8 @@ AGizmoHandle::AGizmoHandle()
 	UEngine::Get().GetWorld()->AddZIgnoreComponent(YRodHead);
 	UEngine::Get().GetWorld()->AddZIgnoreComponent(ZRodHead);
 
+	UEngine::Get().GetWorld()->AddZIgnoreComponent(GizmoCube);
+
 
 	SetActive(false);
 
@@ -309,5 +311,10 @@ void AGizmoHandle::UpdateGizmoPrimitives()
 	YRodHead->SetCanPick(isScale);
 	ZRodHead->SetCanBeRendered(isScale);
 	ZRodHead->SetCanPick(isScale);
+
+
+	GizmoCube->SetCanPick(isTranslate || isScale);
+	GizmoCube->SetCanBeRendered(isTranslate || isScale);
+
 }
 

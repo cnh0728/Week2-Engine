@@ -3,7 +3,7 @@
 
 class UBillBoardComponent : public UPrimitiveComponent {
 	using Super = UPrimitiveComponent;
-
+	DECLARE_CLASS(UBillBoardComponent, UPrimitiveComponent)
 public:
 	UBillBoardComponent();
 	virtual ~UBillBoardComponent() = default;
