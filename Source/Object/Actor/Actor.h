@@ -49,7 +49,8 @@ public:
 	
 	bool IsGizmoActor() const { return bIsGizmo; }
 	bool IsCanPick() const { return bCanPick; }
-
+	bool IsBatchActor() const { return bIsBatch; }
+	
 	virtual void SetUUIDTextCanBeRendered(bool bRender);
 	
 private:
@@ -120,7 +121,8 @@ protected:
 	bool bCanPick = true;
 	bool bIsGizmo = false;
 	UTextComponent* UUIDTextComponent = nullptr;
-	
+
+	bool bIsBatch = false;
 
 	AActor* Parent = nullptr;
 	TSet<AActor*> Children;

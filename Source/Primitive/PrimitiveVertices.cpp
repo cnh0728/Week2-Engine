@@ -1,5 +1,8 @@
 ﻿#include "PrimitiveVertices.h"
 
+#include "Core/Engine.h"
+#include "Object/PrimitiveComponent/UPrimitiveComponent.h"
+
 TMap<EPrimitiveType, TArray<FVertexSimple>> OriginVertices = {
 	{
 		EPrimitiveType::EPT_Line,{
@@ -76,8 +79,14 @@ void FVertexSimple::CreateCubeVertices()
 		20, 21, 22, 20, 22, 23  // 오른쪽
 	};
 
-	OriginVertices[EPrimitiveType::EPT_Cube] = Vertices;
-	OriginIndices[EPrimitiveType::EPT_Cube] = Indices;
+	EPrimitiveType Type = EPrimitiveType::EPT_Cube;
+	
+	OriginVertices[Type] = Vertices;
+	OriginIndices[Type] = Indices;
+
+	URenderer* Renderer = UEngine::Get().GetRenderer();
+	VertexBufferInfo BufferInfo = {UPrimitiveComponent::GetTopology(Type), Vertices, Indices};
+	Renderer->CreateVertexBuffer(Type, BufferInfo);
 }
 
 void FVertexSimple::CreateCylinderVertices()
@@ -144,8 +153,15 @@ void FVertexSimple::CreateCylinderVertices()
 		Indices.Insert(Indices.end(), TempIndices.begin(), TempIndices.end());
 	}
 
-	OriginVertices[EPrimitiveType::EPT_Cylinder] = Vertices;
-	OriginIndices[EPrimitiveType::EPT_Cylinder] = Indices;
+	EPrimitiveType Type = EPrimitiveType::EPT_Cylinder;
+	
+	OriginVertices[Type] = Vertices;
+	OriginIndices[Type] = Indices;
+
+	URenderer* Renderer = UEngine::Get().GetRenderer();
+	VertexBufferInfo BufferInfo = {UPrimitiveComponent::GetTopology(Type), Vertices, Indices};
+	Renderer->CreateVertexBuffer(Type, BufferInfo);
+
 }
 
 void FVertexSimple::CreateTriangleVertices()
@@ -191,8 +207,15 @@ void FVertexSimple::CreateTriangleVertices()
 	TempIndices = { i3, i4, i5 };
 	Indices.Insert(Indices.end(), TempIndices.begin(), TempIndices.end());
 
-	OriginVertices[EPrimitiveType::EPT_Triangle] = Vertices;
-	OriginIndices[EPrimitiveType::EPT_Triangle] = Indices;
+	EPrimitiveType Type = EPrimitiveType::EPT_Triangle;
+	
+	OriginVertices[Type] = Vertices;
+	OriginIndices[Type] = Indices;
+
+	URenderer* Renderer = UEngine::Get().GetRenderer();
+	VertexBufferInfo BufferInfo = {UPrimitiveComponent::GetTopology(Type), Vertices, Indices};
+	Renderer->CreateVertexBuffer(Type, BufferInfo);
+
 }
 
 void FVertexSimple::CreateRingVertices()
@@ -280,8 +303,14 @@ void FVertexSimple::CreateRingVertices()
 		Indices.Insert(Indices.end(), TempIndices.begin(), TempIndices.end());
 	}
 
-	OriginVertices[EPrimitiveType::EPT_Ring]=Vertices;
-	OriginIndices[EPrimitiveType::EPT_Ring]=Indices;
+	EPrimitiveType Type = EPrimitiveType::EPT_Ring;
+	OriginVertices[Type]=Vertices;
+	OriginIndices[Type]=Indices;
+
+	URenderer* Renderer = UEngine::Get().GetRenderer();
+	VertexBufferInfo BufferInfo = {UPrimitiveComponent::GetTopology(Type), Vertices, Indices};
+	Renderer->CreateVertexBuffer(Type, BufferInfo);
+
 }
 
 void FVertexSimple::CreateConeVertices()
@@ -368,8 +397,14 @@ void FVertexSimple::CreateConeVertices()
 		i += 2;
 	}
 
-	OriginVertices[EPrimitiveType::EPT_Cone]=Vertices;
-	OriginIndices[EPrimitiveType::EPT_Cone]=Indices;
+	EPrimitiveType Type = EPrimitiveType::EPT_Cone;
+	OriginVertices[Type]=Vertices;
+	OriginIndices[Type]=Indices;
+
+	URenderer* Renderer = UEngine::Get().GetRenderer();
+	VertexBufferInfo BufferInfo = {UPrimitiveComponent::GetTopology(Type), Vertices, Indices};
+	Renderer->CreateVertexBuffer(Type, BufferInfo);
+
 }
 
 void FVertexSimple::CreateSphereVertices()
@@ -449,9 +484,14 @@ void FVertexSimple::CreateSphereVertices()
 		Indices.Add(baseIndex + i + 1);
 	}
 
-	OriginVertices[EPrimitiveType::EPT_Sphere]=Vertices;
-	OriginIndices[EPrimitiveType::EPT_Sphere]=Indices;
+	EPrimitiveType Type = EPrimitiveType::EPT_Sphere;
 
+	OriginVertices[Type]=Vertices;
+	OriginIndices[Type]=Indices;
+
+	URenderer* Renderer = UEngine::Get().GetRenderer();
+	VertexBufferInfo BufferInfo = {UPrimitiveComponent::GetTopology(Type), Vertices, Indices};
+	Renderer->CreateVertexBuffer(Type, BufferInfo);
 }
 
 void FVertexSimple::CreateTextureBoardVertices()
@@ -468,8 +508,14 @@ void FVertexSimple::CreateTextureBoardVertices()
 		0,  1,  2,  0,  2,  3,
 	};
 
-	OriginVertices[EPrimitiveType::EPT_Texture]=Vertices;
-	OriginIndices[EPrimitiveType::EPT_Texture]=Indices;
+	EPrimitiveType Type = EPrimitiveType::EPT_Texture;
+	
+	OriginVertices[Type]=Vertices;
+	OriginIndices[Type]=Indices;
+
+	URenderer* Renderer = UEngine::Get().GetRenderer();
+	VertexBufferInfo BufferInfo = {UPrimitiveComponent::GetTopology(Type), Vertices, Indices};
+	Renderer->CreateVertexBuffer(Type, BufferInfo);
 }
 
 void FVertexSimple::CreateBoundingBoxVertices()
@@ -495,11 +541,15 @@ void FVertexSimple::CreateBoundingBoxVertices()
 		// 좌우 연결선
 		0, 4,  1, 5,  2, 6,  3, 7
 	};
-	
-	OriginVertices[EPrimitiveType::EPT_BoundingBox]=Vertices;
-	OriginIndices[EPrimitiveType::EPT_BoundingBox]=Indices;
-}
 
+	EPrimitiveType Type = EPrimitiveType::EPT_BoundingBox;
+	OriginVertices[Type]=Vertices;
+	OriginIndices[Type]=Indices;
+	
+	URenderer* Renderer = UEngine::Get().GetRenderer();
+	VertexBufferInfo BufferInfo = {UPrimitiveComponent::GetTopology(Type), Vertices, Indices};
+	Renderer->CreateVertexBuffer(Type, BufferInfo);
+}
 
 void FVertexSimple::CreateSpotlightVertices()
 {
@@ -537,6 +587,11 @@ void FVertexSimple::CreateSpotlightVertices()
 
 	// normal은 없습니다.
 
-	OriginVertices[EPrimitiveType::EPT_Spotlight] = Vertices;
-	OriginIndices[EPrimitiveType::EPT_Spotlight] = Indices;
+	EPrimitiveType Type = EPrimitiveType::EPT_Spotlight;
+	OriginVertices[Type]=Vertices;
+	OriginIndices[Type]=Indices;
+	
+	URenderer* Renderer = UEngine::Get().GetRenderer();
+	VertexBufferInfo BufferInfo = {UPrimitiveComponent::GetTopology(Type), Vertices, Indices};
+	Renderer->CreateVertexBuffer(Type, BufferInfo);
 }

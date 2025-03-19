@@ -13,6 +13,7 @@ AActor::AActor() : Depth{ 0 }
 
 void AActor::BeginPlay()
 {
+	D3D11_PRIMITIVE_TOPOLOGY Topology = D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
 	
 	for (auto& Component : Components) 
 	{
@@ -21,9 +22,17 @@ void AActor::BeginPlay()
 		//if (UPrimitiveComponent* PrimitiveComponent = dynamic_cast<UPrimitiveComponent*>(Component))
 		if (UPrimitiveComponent* PrimitiveComponent = Cast<UPrimitiveComponent>(Component))
 		{
+			Topology = PrimitiveComponent->GetTopology(PrimitiveComponent->GetType());
 			PrimitiveComponent->RegisterComponentWithWorld(World);
 		}
 	}
+
+	if (IsBatchActor()) //액터별로 관리해야하는데 지금 토폴로지별이라 임시
+	{
+		URenderer* Renderer = UEngine::Get().GetRenderer();
+		Renderer->ResizeBatchVertexBuffer(Topology);
+	}
+
 }
 
 void AActor::Tick(float DeltaTime)

@@ -8,7 +8,8 @@ AWorldGrid::AWorldGrid()
 {
     bCanEverTick = true;
     bCanPick = false;
-
+    bIsBatch = true;
+    
     FVector4 GridColor = FVector4(0.5f, 0.5f, 0.5f, 1.0f);
     
     for (int i=-500; i<=500; i++)
@@ -18,6 +19,7 @@ AWorldGrid::AWorldGrid()
         XLineComponent->SetRelativeTransform(FTransform(FVector(0.f, static_cast<float>(i), 0.0f), FVector(0.f, 0.f, 0.f), FVector(500.f, 1.f, 1.f)));
         XLineComponent->SetColor(GridColor);
         XLineComponent->bCustomColor = true;
+        
         
         ULineComp* YLineComponent = AddComponent<ULineComp>();
         YLineComponent->SetupAttachment(RootComponent);

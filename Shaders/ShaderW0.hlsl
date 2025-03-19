@@ -1,7 +1,9 @@
 // ShaderW0.hlsl
 cbuffer constants : register(b0)
 {
-    matrix MVP;
+    matrix M;
+    matrix V;
+    matrix P;
     // float4 CustomColor;
     // uint bUseVertexColor;
 }
@@ -42,9 +44,10 @@ struct PS_OUTPUT
 PS_INPUT mainVS(VS_INPUT input)
 {
     PS_INPUT output;
-
     
-    output.position = mul(input.position, MVP);
+    output.position = mul(input.position, M);
+    output.position = mul(output.position, V);
+    output.position = mul(output.position, P);
     // output.depthPosition = output.position;
     // output.position = input.position;
     
