@@ -122,7 +122,24 @@ void UWorld::RenderMainTexture(URenderer& Renderer)
 
 	for (auto& RenderComponent : RenderComponents)
 	{
-		RenderComponent->Render();
+		if (!FEditorManager::Get().IsShowFlagSet((EEngineShowFlags::SF_Primitives)))
+		{
+			if (RenderComponent->IsCanPick()) continue;
+		}
+
+		if (UTextComponent* TextComponent = Cast<UTextComponent>(RenderComponent))
+		{
+			if (!FEditorManager::Get().IsShowFlagSet(EEngineShowFlags::SF_BillboardText))
+				continue;
+
+			 //TextComponent->RenderText(Renderer, TextComponent->GetText(),
+			 //TextComponent->GetComponentTransformMatrix().GetTranslation(),
+			 //TextComponent->GetTextSize());
+		}
+		else
+		{
+			RenderComponent->Render();
+		}
 	}
 
 	// for (auto& RenderComponent : TextRenderComponents)

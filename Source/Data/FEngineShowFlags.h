@@ -10,7 +10,9 @@ enum class EEngineShowFlags : uint64
 
 class FEngineShowFlags {
 public:
-	FEngineShowFlags() : Flags(static_cast<uint64_t>(EEngineShowFlags::SF_Primitives)) {}
+	FEngineShowFlags() : Flags(static_cast<uint64_t>(EEngineShowFlags::SF_Primitives) |
+		static_cast<uint64_t>(EEngineShowFlags::SF_BillboardText)) {
+	}
 
 	bool IsSet(EEngineShowFlags Flag) const {
 		return (Flags & static_cast<uint64_t>(Flag)) != 0;
