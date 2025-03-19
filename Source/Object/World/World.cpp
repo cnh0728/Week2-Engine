@@ -73,7 +73,7 @@ void UWorld::Render()
 	Renderer->UpdateViewMatrix(cam->GetActorRelativeTransform());
 	Renderer->UpdateProjectionMatrix(cam);
 
-	Renderer->UpdateConstant();
+	// Renderer->UpdateConstant(TODO);
 	// if (APlayerInput::Get().GetMouseDown(false))
 	// {
 	// 	RenderPickingTexture(*Renderer);
@@ -90,7 +90,6 @@ void UWorld::RenderPickingTexture(URenderer& Renderer)
 	Renderer.PreparePicking();
 	Renderer.PreparePickingShader();
 
-	Renderer.Render();
 	
 	// for (auto& RenderComponent : RenderComponents)
 	// {
@@ -118,45 +117,27 @@ void UWorld::RenderMainTexture(URenderer& Renderer)
 	Renderer.PrepareMain();
 	Renderer.PrepareMainShader();
 
-	//TODO: 현재 ZIgnoreRender 구현안돼있음 하고 구현하기
-
-	//여기서 새로운 버텍스정보 만들어주기 때문에 그전에 비워주기
-	Renderer.ClearVertex();
-	for (auto& RenderComponent  : RenderComponents)
-	{
-		if (RenderComponent->GetCanBeRendered() == false)
-		{
-			continue;
-		}
-		if (!FEditorManager::Get().IsShowFlagSet(EEngineShowFlags::SF_Primitives))
-			continue;
-
-		// RenderComponent->UpdateConstantDepth(Renderer, depth);
-
-		//여기서 위치정해줌 ㅇㅇ
-		Renderer.AddVertices(RenderComponent);
-	}
-	
-	Renderer.Render();
+	Renderer.RenderBatch();
 
 	for (auto& RenderComponent : RenderComponents)
 	{
 		if (UTextComponent* TextComponent = dynamic_cast<UTextComponent*>(RenderComponent))
 		{
-			TextComponent->RenderText(Renderer, TextComponent->GetText(),
-				TextComponent->GetComponentTransformMatrix().GetTranslation(),
-				TextComponent->GetTextSize());
+			// TextComponent->RenderText(Renderer, TextComponent->GetText(),
+			// 	TextComponent->GetComponentTransformMatrix().GetTranslation(),
+			// 	TextComponent->GetTextSize());
+		}else
+		{
+			RenderComponent->Render();
 		}
 	}
-
-	//Renderer.RenderText();
 	
-	// Renderer.PrepareZIgnore();
-	// for (auto& RenderComponent: ZIgnoreRenderComponents)
-	// {
-	// 	uint32 depth = RenderComponent->GetOwner()->GetDepth();
-	// 	RenderComponent->Render();
-	// }
+	Renderer.PrepareZIgnore();
+	for (auto& RenderComponent: ZIgnoreRenderComponents)
+	{
+		uint32 depth = RenderComponent->GetOwner()->GetDepth();
+		RenderComponent->Render();
+	}
 }
 
 void UWorld::DisplayPickingTexture(URenderer& Renderer)

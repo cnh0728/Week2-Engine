@@ -28,15 +28,18 @@ bool USettingsLoader::LoadConfig()
 		}
 	}
 
-	if (ConfigData.find(FString("GridSpacing")) != ConfigData.end())
+	if (WorldGrid)
 	{
-		try
+		if (ConfigData.find(FString("GridSpacing")) != ConfigData.end())
 		{
-			float GridSpacing = std::stof(std::string(*(ConfigData[FString("GridSpacing")])));
-			WorldGrid->SetSpacing(GridSpacing);
-		}catch (...)
-		{
-			WorldGrid->SetSpacing(1.0f);
+			try
+			{
+				float GridSpacing = std::stof(std::string(*(ConfigData[FString("GridSpacing")])));
+				WorldGrid->SetSpacing(GridSpacing);
+			}catch (...)
+			{
+				WorldGrid->SetSpacing(1.0f);
+			}
 		}
 	}
 
@@ -46,7 +49,11 @@ bool USettingsLoader::LoadConfig()
 bool USettingsLoader::SaveConfig()
 {
 	ConfigData[FString("CameraSensitivity")] = FString(std::to_string(Camera->GetCameraSensitivity()));
-	ConfigData[FString("GridSpacing")] = FString(std::to_string(WorldGrid->GetSpacing()));
+
+	if (WorldGrid)
+	{
+		ConfigData[FString("GridSpacing")] = FString(std::to_string(WorldGrid->GetSpacing()));
+	}
 
 	std::ofstream OutFile(*ConfigFilename);
 	if (!OutFile.is_open())

@@ -12,6 +12,7 @@
 #include "Primitive/PrimitiveVertices.h"
 #include "Core/Math/Plane.h"
 #include "Core/Math/Transform.h"
+#include "Object/USceneComponent.h"
 #include "Text/Text.h"
 
 
@@ -94,7 +95,9 @@ class URenderer
 private:
     struct alignas(16) FConstants
     {
-        FMatrix VP;
+        FMatrix M;
+    	FMatrix V;
+    	FMatrix P;
         // FVector4 Color;
 		// true인 경우 Vertex Color를 사용하고, false인 경우 Color를 사용합니다.
         // uint32 bUseVertexColor;
@@ -146,34 +149,36 @@ public:
 
     /** 셰이더를 준비 합니다. */
     void PrepareShader() const;
-    void Render();
-    void CreateVertexBuffer(D3D11_PRIMITIVE_TOPOLOGY Topology, VertexBufferInfo BufferInfo);
+    void RenderBatch();
 
-    /**
-     * 정점 데이터로 Vertex Buffer를 생성합니다.
-     * @return 생성된 버텍스 버퍼에 대한 ID3D11Buffer 포인터, 실패 시 nullptr
-     *
-     * @note 이 함수는 D3D11_USAGE_IMMUTABLE 사용법으로 버퍼를 생성합니다.
-     */
-    void ClearVertex();
-	void AddVertices(UPrimitiveComponent* Component);
-    void ResizeVertexBuffer(D3D11_PRIMITIVE_TOPOLOGY Topology);
-    void InsertNewVerticesIntoVertexBuffer(D3D11_PRIMITIVE_TOPOLOGY Topology);
-    void UpdateVertexBuffer();
+    void CreateVertexBuffer(EPrimitiveType VertexType, VertexBufferInfo BufferInfo);
+    void CreateBatchVertexBuffer(D3D11_PRIMITIVE_TOPOLOGY Topology, VertexBufferInfo BufferInfo);
+    void ClearBatchVertex();
+	void AddBatchVertices(UPrimitiveComponent* Component);
+    VertexBufferInfo ResizeBatchVertexBuffer(D3D11_PRIMITIVE_TOPOLOGY Topology);
+    void UpdateBatchVertexBuffer();
     TMap<D3D11_PRIMITIVE_TOPOLOGY, bool> CheckChangedVertexCount();
 
-	VertexBufferInfo GetVertexBufferInfo(D3D11_PRIMITIVE_TOPOLOGY Topology) { return BatchVertexBuffers[Topology];}
-	void SetVertexBufferInfo(D3D11_PRIMITIVE_TOPOLOGY Topology, VertexBufferInfo BufferInfo)
+	VertexBufferInfo GetBatchVertexBufferInfo(D3D11_PRIMITIVE_TOPOLOGY Topology) { return BatchVertexBuffers[Topology];}
+	void SetBatchVertexBufferInfo(D3D11_PRIMITIVE_TOPOLOGY Topology, VertexBufferInfo BufferInfo)
 	{
 		if (BatchVertexBuffers.Contains(Topology)){ BatchVertexBuffers[Topology] = BufferInfo;}
 		else							{    BatchVertexBuffers.Add(Topology, BufferInfo);}
 	}
+
+	VertexBufferInfo GetVertexBufferInfo(EPrimitiveType VertexType) { return VertexBuffers[VertexType];}
+	void SetVertexBufferInfo(EPrimitiveType VertexType, VertexBufferInfo BufferInfo)
+	{
+		if (VertexBuffers.Contains(VertexType)){ VertexBuffers[VertexType] = BufferInfo; }
+		else									{ VertexBuffers.Add(VertexType, BufferInfo); }
+	}
 	
     /** Buffer를 해제합니다. */
 	void ReleaseVertexBuffer(D3D11_PRIMITIVE_TOPOLOGY Topology);
+    void RenderPrimtivie(UPrimitiveComponent* Component);
     void ReleaseAllVertexBuffer();
     /** Constant Data를 업데이트 합니다. */
-    void UpdateConstant() const;
+    void UpdateConstant(USceneComponent* Component) const;
 
     ID3D11Device* GetDevice() const;
     ID3D11DeviceContext* GetDeviceContext() const;
@@ -248,6 +253,7 @@ protected:
     ID3D11RasterizerState* RasterizerState = nullptr;       // 래스터라이저 상태(컬링, 채우기 모드 등 정의)
     ID3D11Buffer* ConstantBuffer = nullptr;                 // 쉐이더에 데이터를 전달하기 위한 상수 버퍼
 	TMap<D3D11_PRIMITIVE_TOPOLOGY, VertexBufferInfo> BatchVertexBuffers;
+	TMap<EPrimitiveType, VertexBufferInfo> VertexBuffers;
 	
     FLOAT ClearColor[4] = { 0.025f, 0.025f, 0.025f, 1.0f }; // 화면을 초기화(clear)할 때 사용할 색상 (RGBA)
     D3D11_VIEWPORT ViewportInfo = {};                       // 렌더링 영역을 정의하는 뷰포트 정보
