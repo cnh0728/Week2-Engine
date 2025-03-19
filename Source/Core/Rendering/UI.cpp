@@ -343,10 +343,19 @@ void UI::RenderViewMode() {
 }
 
 void UI::RenderShowFlag() {
+    ImGui::Text("Show Flag");
     bool bShowPrimitives = FEditorManager::Get().IsShowFlagSet(EEngineShowFlags::SF_Primitives);
     if (ImGui::Checkbox("Show Primtives", &bShowPrimitives))
     {
         FEditorManager::Get().SetShowFlag(EEngineShowFlags::SF_Primitives, bShowPrimitives);
+        if (!bShowPrimitives)
+            FEditorManager::Get().SelectActor(nullptr);
+    }
+
+    bool bShowTextBillboard = FEditorManager::Get().IsShowFlagSet(EEngineShowFlags::SF_BillboardText);
+    if (ImGui::Checkbox("Show Billboard Text", &bShowTextBillboard))
+    {
+        FEditorManager::Get().SetShowFlag(EEngineShowFlags::SF_BillboardText, bShowTextBillboard);
     }
 }
 
