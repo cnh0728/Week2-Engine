@@ -496,6 +496,8 @@ void UI::RenderComponentsByActor()
     const TArray<AActor*>& ActorArray = UEngine::Get().GetWorld()->GetActors();
     uint32 NumActors = ActorArray.Num();
 
+    SetWindowLayout(0.3f, 0.2f, 1.f, 0.4f);
+
     if (NumActors > 0) {
         static int selected = -1;
         ImGui::Begin("Components Tree");
@@ -523,6 +525,8 @@ void UI::RenderComponentsByActor()
 
 void UI::RenderFNameResolver()
 {
+    SetWindowLayout(0.3f, 0.1f, 1.f, 0.6f);
+
     ImGui::Begin("FName Resolver");
 
     static char id[8];
