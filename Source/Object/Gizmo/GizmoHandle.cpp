@@ -10,6 +10,7 @@
 
 AGizmoHandle::AGizmoHandle()
 {
+	DontDestroy();
 	bIsGizmo = true;
 	const float GizmoSize = 0.1f;
 	const float GizmoSizeMultiplier = 1 / GizmoSize;

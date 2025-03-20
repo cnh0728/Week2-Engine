@@ -172,7 +172,7 @@ void UWorld::ClearWorld()
 	TArray CopyActors = Actors;
 	for (AActor* Actor : CopyActors)
 	{
-		if (!Actor->IsCanPick())
+		if (Actor->IsDontDestroy() == false)
 		{
 			DestroyActor(Actor);
 		}
@@ -252,27 +252,27 @@ void UWorld::LoadWorld(const char* SceneName)
 
 		AActor* Actor = nullptr;
 		
-		if (ObjectInfo->ObjectType == "Actor")
+		if (ObjectInfo->ObjectType == "AActor")
 		{
 			Actor = SpawnActor<AActor>();
 		}
-		else if (ObjectInfo->ObjectType == "Sphere")
+		else if (ObjectInfo->ObjectType == "ASphere")
 		{
 			Actor = SpawnActor<ASphere>();
 		}
-		else if (ObjectInfo->ObjectType == "Cube")
+		else if (ObjectInfo->ObjectType == "ACube")
 		{
 			Actor = SpawnActor<ACube>();
 		}
-		else if (ObjectInfo->ObjectType == "Arrow")
+		else if (ObjectInfo->ObjectType == "AArrow")
 		{
 			Actor = SpawnActor<AArrow>();
 		}
-		else if (ObjectInfo->ObjectType == "Cylinder")
+		else if (ObjectInfo->ObjectType == "ACylinder")
 		{
 			Actor = SpawnActor<ACylinder>();
 		}
-		else if (ObjectInfo->ObjectType == "Cone")
+		else if (ObjectInfo->ObjectType == "ACone")
 		{
 			Actor = SpawnActor<ACone>();
 		}
@@ -291,7 +291,7 @@ UWorldInfo UWorld::GetWorldInfo() const
 	uint32 i = 0;
 	for (auto& actor : Actors)
 	{
-		if (actor->IsCanPick())
+		if (actor->IsDontDestroy())
 		{
 			WorldInfo.ActorCount--;
 			continue;

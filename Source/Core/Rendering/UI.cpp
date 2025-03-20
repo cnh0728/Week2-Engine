@@ -466,8 +466,8 @@ void UI::RenderSceneManager()
             }
         }
         selectedBefore = selected;
+        ImGui::End();
     }
-    ImGui::End();
 }
 
 void ShowComponentsRecursive(USceneComponent* Component, uint32 uniqueID)
@@ -517,10 +517,10 @@ void UI::RenderComponentsByActor()
                 ImGui::PopID();
 
             }
-        ImGui::TreePop();
+            ImGui::TreePop();
         }
+        ImGui::End();
     }
-    ImGui::End();
 }
 
 void UI::RenderFNameResolver()
