@@ -151,14 +151,14 @@ void AGizmoHandle::Tick(float DeltaTime)
 	{
 		for (auto BoundingBox : SelectedActorBoundingBox)
 		{
-			BoundingBox->SetCanBeRendered(true);
+			BoundingBox->SetIsDefaultRendered(true);
 		}
 	}
 	else
 	{
 		for (auto BoundingBox : SelectedActorBoundingBox)
 		{
-			BoundingBox->SetCanBeRendered(false);
+			BoundingBox->SetIsDefaultRendered(false);
 		}
 	}
 }
@@ -170,7 +170,7 @@ void AGizmoHandle::SetActive(bool bActive)
 	{
 		if (UPrimitiveComponent* PrimitiveComponent = Cast<UPrimitiveComponent>(Component))
 		{
-			PrimitiveComponent->SetCanBeRendered(bActive);
+			PrimitiveComponent->SetIsDefaultRendered(bActive);
 		}
 	}
 	
@@ -281,15 +281,15 @@ void AGizmoHandle::UpdateGizmoPrimitives()
 	bool isRotate = (GizmoType == EGizmoType::Rotate);
 	bool isScale = (GizmoType == EGizmoType::Scale);
 
-	GizmoCube->SetCanBeRendered(true);
+	GizmoCube->SetIsDefaultRendered(true);
 
 	// Translation
-	XArrowBody->SetCanBeRendered(isTranslate || isScale);
-	XArrowHead->SetCanBeRendered(isTranslate);
-	YArrowBody->SetCanBeRendered(isTranslate || isScale);
-	YArrowHead->SetCanBeRendered(isTranslate);
-	ZArrowBody->SetCanBeRendered(isTranslate || isScale);
-	ZArrowHead->SetCanBeRendered(isTranslate);
+	XArrowBody->SetIsDefaultRendered(isTranslate || isScale);
+	XArrowHead->SetIsDefaultRendered(isTranslate);
+	YArrowBody->SetIsDefaultRendered(isTranslate || isScale);
+	YArrowHead->SetIsDefaultRendered(isTranslate);
+	ZArrowBody->SetIsDefaultRendered(isTranslate || isScale);
+	ZArrowHead->SetIsDefaultRendered(isTranslate);
 
 	XArrowBody->SetCanPick(isTranslate || isScale);
 	XArrowHead->SetCanPick(isTranslate);
@@ -299,24 +299,24 @@ void AGizmoHandle::UpdateGizmoPrimitives()
 	ZArrowHead->SetCanPick(isTranslate);
 
 	// Rotation
-	XRing->SetCanBeRendered(isRotate);
-	YRing->SetCanBeRendered(isRotate);
-	ZRing->SetCanBeRendered(isRotate);
+	XRing->SetIsDefaultRendered(isRotate);
+	YRing->SetIsDefaultRendered(isRotate);
+	ZRing->SetIsDefaultRendered(isRotate);
 
 	XRing->SetCanPick(isRotate);
 	YRing->SetCanPick(isRotate);
 	ZRing->SetCanPick(isRotate);
 
-	XRodHead->SetCanBeRendered(isScale);
+	XRodHead->SetIsDefaultRendered(isScale);
 	XRodHead->SetCanPick(isScale);
-	YRodHead->SetCanBeRendered(isScale);
+	YRodHead->SetIsDefaultRendered(isScale);
 	YRodHead->SetCanPick(isScale);
-	ZRodHead->SetCanBeRendered(isScale);
+	ZRodHead->SetIsDefaultRendered(isScale);
 	ZRodHead->SetCanPick(isScale);
 
 
 	GizmoCube->SetCanPick(isTranslate || isScale);
-	GizmoCube->SetCanBeRendered(isTranslate || isScale);
+	GizmoCube->SetIsDefaultRendered(isTranslate || isScale);
 
 }
 

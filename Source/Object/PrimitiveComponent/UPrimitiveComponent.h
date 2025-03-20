@@ -39,7 +39,7 @@ public:
 	virtual void RegisterComponentWithWorld(class UWorld* World);
 
 public:
-	void SetCanBeRendered(bool bRender) { bIsDefaultRendered = bRender; }
+	void SetIsDefaultRendered(bool bRender) { bIsDefaultRendered = bRender; }
 	bool GetIsDefaultRendered() const { return bIsDefaultRendered; }
 	
 	void SetIsOrthoGraphic(bool IsOrtho) { bIsOrthoGraphic = IsOrtho; }

@@ -10,15 +10,15 @@ ASpotlight::ASpotlight()
 
 	USpotlightComp* SpotlightComp = AddComponent<USpotlightComp>();
 
-	RootComponent = SpotlightComp;
-
 	SetActorRelatvieTransform(FTransform());
 
 	UBillBoardComponent* BillBoardComponent = AddComponent<UBillBoardComponent>();
-	BillBoardComponent->SetupAttachment(RootComponent);
+
+	RootComponent = BillBoardComponent;
+	SpotlightComp->SetupAttachment(RootComponent);
 	BillBoardComponent->SetRelativeTransform(FTransform(FVector(0.0f, 0.0f, 0.0f), FVector(), FVector().One()));
 
-	BillBoardComponent->SetCanBeRendered(false);	
+	BillBoardComponent->SetIsDefaultRendered(false);	
 	UEngine::Get().GetWorld()->AddBillBoardComponent(BillBoardComponent);
 }
 
