@@ -20,24 +20,12 @@ AWorldGrid::AWorldGrid()
         XLineComponent->SetColor(GridColor);
         XLineComponent->bCustomColor = true;
         
-        
         ULineComp* YLineComponent = AddComponent<ULineComp>();
         YLineComponent->SetupAttachment(RootComponent);
         YLineComponent->SetRelativeTransform(FTransform(FVector(static_cast<float>(i), 0.f, 0.0f), FVector(0.f, 0.f, 90.f), FVector(500.f, 1.f, 1.f)));
         YLineComponent->SetColor(GridColor);
         YLineComponent->bCustomColor = true;
-    
-        
-        // ULineComp* YLineComponent = AddComponent<ULineComp>();
     }
-
-     //UConeComp* ConeComp1 = AddComponent<UConeComp>();
-     //ConeComp1->SetRelativeTransform(FTransform(FVector(0.0f,2.0f, 1.0f), FQuat(0, 0.3, 0.7, 1), FVector(1.f, 1.f, 1.f)));
-	   
-     //RootComponent = CylinderComp;
-     //ConeComp->SetupAttachment(CylinderComp);
-     //ConeComp1->SetupAttachment(ConeComp);
-    
 }
 
 void AWorldGrid::SetSpacing(float InSpacing)
@@ -61,8 +49,7 @@ void AWorldGrid::Tick(float DeltaTime)
 
     FVector CameraLocation = FEditorManager::Get().GetCamera()->GetActorRelativeTransform().GetPosition();
     FVector GridLocation = GridTransform.GetPosition();
-    float GridScale = GridTransform.GetScale().X; //X,Y,Z 같으니까 임의로 한개
-    float Threshold = 30.f;
+     float Threshold = 30.f;
     
     if (GridLocation.X + Threshold < CameraLocation.X) //카메라가 그리드위치보다 30정도 더가면
     {

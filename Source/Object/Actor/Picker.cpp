@@ -245,15 +245,17 @@ void APicker::UpdateRayInfo()
     // View 공간으로 변환
     FMatrix InvProjMat = UEngine::Get().GetRenderer()->GetProjectionMatrix().Inverse();
     RayOrigin = InvProjMat.TransformVector4(RayOrigin);
+    RayOrigin.W = 1;
     RayEnd = InvProjMat.TransformVector4(RayEnd);
     RayEnd *= FEditorManager::Get().GetCamera()->GetFar();
-			 
+    RayEnd.W = 1;
+
     // 마우스 포인터의 월드 위치와 방향
     FMatrix InvViewMat = FEditorManager::Get().GetCamera()->GetViewMatrix().Inverse();
     RayOrigin = InvViewMat.TransformVector4(RayOrigin);
+    RayOrigin /= RayOrigin.W = 1;
     RayEnd = InvViewMat.TransformVector4(RayEnd);
-    RayOrigin /= RayOrigin.W;
-    RayEnd /= RayEnd.W;
+    RayEnd /= RayEnd.W = 1;
     
     RayDir = (RayEnd - RayOrigin).GetSafeNormal();
 }
