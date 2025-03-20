@@ -267,6 +267,7 @@ void URenderer::RenderBatch()
     //Pending으로 돌면서 버텍스 갯수 달라졌으면 resize, 같으면 동적할당으로 버텍스버퍼 업데이트
 
     //TODO: 배치 액터별로 하고 바꾸기 지금은 그리드만 있으니까 임시용
+    
     UpdateConstant(FEditorManager::Get().GetWorldGrid()->GetRootComponent());
     
     for (auto& Pair : BatchVertexBuffers)

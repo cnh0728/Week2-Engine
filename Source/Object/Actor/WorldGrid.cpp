@@ -6,6 +6,7 @@
 
 AWorldGrid::AWorldGrid()
 {
+    DontDestroy();
     bCanEverTick = true;
     bCanPick = false;
     bIsBatch = true;

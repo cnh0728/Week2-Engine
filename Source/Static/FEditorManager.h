@@ -33,10 +33,10 @@ public:
     void PrintShowFlags() const { EngineShowFlags.Print(); }
     
 private:
-    ACamera* Camera = nullptr;
     AActor* SelectedActor = nullptr;
     UPrimitiveComponent* SelectedComponent = nullptr;
     
+    ACamera* Camera = nullptr;
     AGizmoHandle* GizmoHandle = nullptr;
     AWorldGrid* WorldGrid = nullptr;
     FEngineShowFlags EngineShowFlags;

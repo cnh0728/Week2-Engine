@@ -11,7 +11,8 @@
 #include "Object/Actor/Camera.h"
 
 APicker::APicker()
-{    
+{
+    DontDestroy();
     bCanPick = false;
 }
 

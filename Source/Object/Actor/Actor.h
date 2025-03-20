@@ -50,6 +50,9 @@ public:
 	bool IsGizmoActor() const { return bIsGizmo; }
 	bool IsCanPick() const { return bCanPick; }
 	bool IsBatchActor() const { return bIsBatch; }
+
+	void DontDestroy() { bDontDestroy = true; }
+	bool IsDontDestroy() const { return bDontDestroy; }
 	
 	virtual void SetUUIDTextCanBeRendered(bool bRender);
 	
@@ -117,9 +120,10 @@ public:
 
 protected:
 	bool bCanEverTick = true;
-	USceneComponent* RootComponent = nullptr;
 	bool bCanPick = true;
 	bool bIsGizmo = false;
+	bool bDontDestroy = false;
+	USceneComponent* RootComponent = nullptr;
 	UTextComponent* UUIDTextComponent = nullptr;
 
 	bool bIsBatch = false;

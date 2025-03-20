@@ -6,6 +6,7 @@
 
 ACamera::ACamera()
 {
+    DontDestroy();
     bCanPick = false;
     
     Near = 0.1f;

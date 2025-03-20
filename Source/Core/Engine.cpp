@@ -103,8 +103,7 @@ void UEngine::Run()
 
     LARGE_INTEGER StartTime;
     QueryPerformanceCounter(&StartTime);
-
-
+    
     IsRunning = true;
     while (IsRunning)
     {
@@ -134,6 +133,12 @@ void UEngine::Run()
             }
 
         }
+
+        if (World == nullptr)
+        {
+            continue;
+        }
+        
 		// Renderer Update
         Renderer->Prepare();
         Renderer->PrepareShader();
