@@ -1,4 +1,5 @@
 ﻿#include "UBoundingBox.h"
+#include "BillBoardComponent.h"
 
 void UBoundingBoxComponent::Tick(float DeltaTime)
 {
@@ -26,11 +27,31 @@ void UBoundingBoxComponent::UpdateMinMax()
 	{
 		return;
 	}
-	FMatrix TargetTransformMatrix = TargetPrimitive->GetComponentTransformMatrix();
-
-	BBox = FBox(OriginVertices[TargetPrimitive->GetType()], TargetTransformMatrix);
-	if (BBox.IsValid())
+	if (TargetPrimitive->IsA(UBillBoardComponent::StaticClass()))
 	{
-		this->OverrideBoxTransform = FTransform(BBox.GetCenter(), FQuat(), BBox.GetExtent());
+		BBox = FBox();
+		return;
+	}
+
+	//if (UBillBoardComponent* BillBoard = Cast<UBillBoardComponent>(TargetPrimitive))
+	//{
+	//	FMatrix BillboardTransformMatrix = BillBoard->GetComponentTransformMatrix();
+
+	//	TArray<FVector> BillboardVertices = { { }}
+	//	BBox = FBox(, BillboardTransformMatrix);
+	//	if (BBox.IsValid())
+	//	{
+	//		this->OverrideBoxTransform = FTransform(BBox.GetCenter(), FQuat(), BBox.GetExtent());
+	//	}
+	//}
+	//else
+	{
+		FMatrix TargetTransformMatrix = TargetPrimitive->GetComponentTransformMatrix();
+
+		BBox = FBox(OriginVertices[TargetPrimitive->GetType()], TargetTransformMatrix);
+		if (BBox.IsValid())
+		{
+			this->OverrideBoxTransform = FTransform(BBox.GetCenter(), FQuat(), BBox.GetExtent());
+		}
 	}
 }

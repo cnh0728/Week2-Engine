@@ -3,6 +3,7 @@
 #include "Object/Actor/Camera.h"
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
+#include "Object/PrimitiveComponent/BillBoardComponent.h"
 #include "Object/World/World.h"
 #include "Static/FEditorManager.h"
 #include <Core/Input/PlayerInput.h>
@@ -198,6 +199,7 @@ void AGizmoHandle::SetActive(bool bActive)
 					// 선택될 수 있는 primitive만 bounding box를 생성(text는 생성 안함)
 					if (SelectedActorPrimitive->IsCanPick())
 					{
+						if (SelectedActorPrimitive->IsA(UBillBoardComponent::StaticClass())) continue;
 						auto BoundingBox = AddComponent<UBoundingBoxComponent>();
 						SelectedActorBoundingBox.Add(BoundingBox);
 						BoundingBox->SetupAttachment(this->RootComponent);

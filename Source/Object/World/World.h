@@ -46,13 +46,16 @@ public:
 	void AddTextComponent(UPrimitiveComponent* InComponent);
 	void AddBillBoardComponent(UPrimitiveComponent* InComponent);
 	void RemoveZIgnoreComponent(UPrimitiveComponent* InComponent) {ZIgnoreRenderComponents.Remove(InComponent); }
+	void RemoveTextComponent(UPrimitiveComponent* InComponent){TextRenderComponents.Remove(InComponent); }
 	bool ContainsZIgnoreComponent(UPrimitiveComponent* InComponent) {return ZIgnoreRenderComponents.Find(InComponent) != -1; }
 	
 	// render
 	void AddRenderComponent(UPrimitiveComponent* Component) { RenderComponents.Add(Component); }
 	void RemoveRenderComponent(UPrimitiveComponent* Component) { RenderComponents.Remove(Component); }
+	void RemoveBillboardRenderComponent(UPrimitiveComponent* Component) { BillBoardRenderComponents.Remove(Component); }
 
 	TSet<UPrimitiveComponent*> GetRenderComponents(){ return RenderComponents; }
+	TArray<UPrimitiveComponent*> GetBillBoardRenderComponents() { return BillBoardRenderComponents; }
 
 	const TArray<AActor*>& GetActors() const { return Actors;  }
 	

@@ -2,4 +2,5 @@
 
 UBillBoardComponent::UBillBoardComponent()
 {
+	bCanPick = true;
 }

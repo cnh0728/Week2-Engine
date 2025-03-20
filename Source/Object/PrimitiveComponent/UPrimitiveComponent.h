@@ -172,7 +172,7 @@ public:
 	USpotlightComp()
 	{
 		bIsDefaultRendered = true;
-		bCanPick = false;
+		bCanPick = true;
 	}
 	virtual ~USpotlightComp() = default;
 	EPrimitiveType GetType()override

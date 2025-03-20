@@ -7,9 +7,6 @@
     <FxCompile Include="Shaders\ShaderW0.hlsl">
       <Filter>Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="Shaders\ShaderParticle.hlsl">
-      <Filter>Shaders</Filter>
-    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -169,6 +166,10 @@
     <ClCompile Include="Source\Data\SettingsLoader.cpp">
       <Filter>Data</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Object\Class\Class.cpp" />
+    <ClCompile Include="Source\Core\Rendering\Texture\TextureRenderer.cpp" />
+    <ClCompile Include="Source\Object\PrimitiveComponent\BillBoardComponent.cpp" />
+    <ClCompile Include="Source\Object\Actor\Spotlight.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Core\AbstractClass\Singleton.h">
@@ -372,6 +373,10 @@
     <ClInclude Include="Source\Data\SettingsLoader.h">
       <Filter>Data</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Object\Class\Class.h" />
+    <ClInclude Include="Source\Core\Rendering\Texture\TextureRenderer.h" />
+    <ClInclude Include="Source\Object\Actor\Spotlight.h" />
+    <ClInclude Include="Source\Object\PrimitiveComponent\BillBoardComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\ThirdParty\DirectXTex\Include\DirectXTex.inl">
@@ -463,6 +468,7 @@
     <Image Include="Source\Core\Rendering\Particle\ice003.tga">
       <Filter>Core\Rendering\Particle</Filter>
     </Image>
+    <Image Include="light_bulb_texture.tga" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Source\Core\Rendering\Text\font01.txt">

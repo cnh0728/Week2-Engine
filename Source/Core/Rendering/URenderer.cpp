@@ -1198,6 +1198,13 @@ void URenderer::RenderParticle(float DeltaTime)
     CurrentTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
     DeviceContext->IASetPrimitiveTopology(CurrentTopology);
 
+    // 텍스트의 WorldMatrix 결정
+    ACamera* Camera = FEditorManager::Get().GetCamera();
+    // 스케일 * 회전
+    FMatrix WorldMatrix = FMatrix::GetScaleMatrix(1) *
+        FMatrix::GetRotateMatrix(FQuat(Camera->GetActorRelativeTransform().GetRotation())).Inverse();
+    // 이동은 스케일의 영향을 받지 않게 따로
+    WorldMatrix.SetTranslateMatrix(0);
 
     TurnOnAlphaBlending(EAlphaBlendingState::Particle);
     TurnZBufferOff();

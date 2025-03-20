@@ -5,6 +5,7 @@
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Static/FEditorManager.h"
 #include "Object/PrimitiveComponent/TextComponent.h"
+#include "Object/PrimitiveComponent/BillBoardComponent.h"
 
 AActor::AActor() : Depth{ 0 }
 {
@@ -69,6 +70,14 @@ void AActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 				World->RemoveZIgnoreComponent(PrimitiveComp);
 			}
 			
+			if (UTextComponent* TextComp = dynamic_cast<UTextComponent*>(PrimitiveComp)) {
+				World->RemoveTextComponent(PrimitiveComp);
+			}
+
+			if (UBillBoardComponent* BillComp = dynamic_cast<UBillBoardComponent*>(PrimitiveComp)) {
+				World->RemoveTextComponent(PrimitiveComp);
+			}
+
 			GetWorld()->RemoveRenderComponent(PrimitiveComp);
 		}
 		if (FEditorManager::Get().GetSelectedActor() == this)
