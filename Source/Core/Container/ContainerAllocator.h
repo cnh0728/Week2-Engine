@@ -20,12 +20,22 @@
  * 
  * 지원되지 않는 IndexSize를 전달하면 컴파일 타임에 static_assert를 통해 에러를 발생시킵니다.
  */
-template <int IndexSize>
+template <int IndexSize, typename Enable = void>
 struct TBitsToSizeType
 {
-    // ReSharper disable once CppStaticAssertFailure
-    // IndexSize가 8, 16, 32, 64중에 하나가 아니라면 컴파일 에러
-    static_assert(false, "Unsupported allocator index size.");
+    static_assert(IndexSize == 8 || IndexSize == 16 || IndexSize == 32 || IndexSize == 64,
+        "Unsupported allocator index size.");
+};
+
+// 특수화된 버전 (정상적인 IndexSize만 허용)
+template <int IndexSize>
+struct TBitsToSizeType<IndexSize, std::enable_if_t<IndexSize == 8 || IndexSize == 16 || IndexSize == 32 || IndexSize == 64>>
+{
+    using Type = std::conditional_t<IndexSize == 8, int8_t,
+        std::conditional_t<IndexSize == 16, int16_t,
+        std::conditional_t<IndexSize == 32, int32_t,
+        std::conditional_t<IndexSize == 64, int64_t,
+        void>>>>;
 };
 
 template <> struct TBitsToSizeType<8>  { using Type = int8; };

@@ -1,8 +1,13 @@
 ﻿#pragma once
 #include <atomic>
 #include <iostream>
-
 #include "Core/HAL/PlatformType.h"
+template <typename T>
+constexpr int UnsupportedAllocationType()
+{
+    static_assert(sizeof(T) == 0, "Unsupported character type!");
+    return 0;
+}
 
 enum EAllocationType : uint8
 {
@@ -68,7 +73,7 @@ void FPlatformMemory::IncrementStats(size_t Size)
     }
     else
     {
-        static_assert(false, "Unknown allocation type");
+        return UnsupportedAllocationType<AllocType>();
     }
 }
 
@@ -91,7 +96,7 @@ void FPlatformMemory::DecrementStats(size_t Size)
     }
     else
     {
-        static_assert(false, "Unknown allocation type");
+        return UnsupportedAllocationType<AllocType>();
     }
 }
 
@@ -150,8 +155,7 @@ uint64 FPlatformMemory::GetAllocationBytes()
     }
     else
     {
-        static_assert(false, "Unknown AllocationType");
-        return -1;
+        return UnsupportedAllocationType<AllocType>();
     }
 }
 
@@ -168,8 +172,7 @@ uint64 FPlatformMemory::GetAllocationCount()
     }
     else
     {
-        static_assert(false, "Unknown AllocationType");
-        return -1;
+        return UnsupportedAllocationType<AllocType>();
     }
 }
 

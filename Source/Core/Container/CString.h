@@ -4,6 +4,13 @@
 #include <cctype>
 #include <type_traits>
 
+template <typename T>
+constexpr int UnsupportedCharacterType()
+{
+    static_assert(sizeof(T) == 0, "Unsupported character type!");
+    return 0;
+}
+
 
 template <typename T>
 struct TCString
@@ -26,8 +33,7 @@ public:
         }
         else
         {
-            static_assert(false, "Unsupported character type!");
-            return 0;
+            return UnsupportedCharacterType<CharType>();
         }
     }
 
@@ -43,8 +49,7 @@ public:
         }
         else
         {
-            static_assert(false, "Unsupported character type!");
-            return nullptr;
+            return UnsupportedCharacterType<CharType>();
         }
     }
 
@@ -60,8 +65,7 @@ public:
         }
         else
         {
-            static_assert(false, "Unsupported character type!");
-            return nullptr;
+            return UnsupportedCharacterType<CharType>();
         }
     }
 
@@ -77,8 +81,7 @@ public:
         }
         else
         {
-            static_assert(false, "Unsupported character type!");
-            return nullptr;
+            return UnsupportedCharacterType<CharType>();
         }
     }
 
@@ -105,8 +108,7 @@ public:
         }
         else
         {
-            static_assert(false, "Unsupported character type!");
-            return 0;
+            return UnsupportedCharacterType<CharType>();
         }
     }
 
@@ -122,8 +124,7 @@ public:
         }
         else
         {
-            static_assert(false, "Unsupported character type!");
-            return 0;
+            return UnsupportedCharacterType<CharType>();
         }
     }
 
