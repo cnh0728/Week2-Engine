@@ -7,6 +7,8 @@
 #include "Object/ActorComponent/ActorComponent.h"
 #include "Static/Enum.h"
 
+#include "Object/ObjectMacros.h"
+
 class USceneComponent : public UActorComponent
 {
 	friend class AActor;

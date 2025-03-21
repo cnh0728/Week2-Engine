@@ -17,6 +17,8 @@
 #include <Object/PrimitiveComponent/BillBoardComponent.h>
 
 #include "Object/Actor/Texture.h"
+#include "Object/Cast.h"
+#include "Debug/DebugConsole.h"
 
 void UWorld::BeginPlay()
 {
@@ -303,11 +305,15 @@ UWorldInfo UWorld::GetWorldInfo() const
 	WorldInfo.SceneName = *SceneName;
 	WorldInfo.Version = 1;
 	uint32 i = 0;
-	for (auto& actor : Actors)
+	for (auto& Actor : Actors)
 	{
-		if (Cast<ACamera>(actor) == nullptr) //카메라빼고 전부
+		/*UE_LOG("Actor TypeName = %s | ClassName = %s",
+			Actor->GetTypeName(),
+			Actor->GetClass() ? *(Actor->GetClass()->GetName().GetString()) : "nullptr");*/
+		//if (Cast<ACamera>(Actor) == nullptr) //카메라빼고 전부
+		if (!Actor->IsA(ACamera::StaticClass())) //카메라빼고 전부
 		{
-			if (actor->IsDontDestroy())
+			if (Actor->IsDontDestroy())
 			{
 				WorldInfo.ActorCount--;
 				continue;
@@ -315,13 +321,13 @@ UWorldInfo UWorld::GetWorldInfo() const
 		}
 		
 		WorldInfo.ObjctInfos[i] = new UObjectInfo();
-		const FTransform& Transform = actor->GetActorRelativeTransform();
+		const FTransform& Transform = Actor->GetActorRelativeTransform();
 		WorldInfo.ObjctInfos[i]->Location = Transform.GetPosition();
 		WorldInfo.ObjctInfos[i]->Rotation = Transform.GetRotation();
 		WorldInfo.ObjctInfos[i]->Scale = Transform.GetScale();
-		WorldInfo.ObjctInfos[i]->ObjectType = actor->GetTypeName();
+		WorldInfo.ObjctInfos[i]->ObjectType = Actor->GetClass() ? *(Actor->GetClass()->GetName().GetString()) : "nullptr";
 
-		WorldInfo.ObjctInfos[i]->UUID = actor->GetUUID();
+		WorldInfo.ObjctInfos[i]->UUID = Actor->GetUUID();
 		i++;
 	}
 	return WorldInfo;

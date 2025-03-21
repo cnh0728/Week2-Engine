@@ -16,6 +16,7 @@ public:
      */
     template<typename T>
         requires std::derived_from<T, UObject>
+
     static T* ConstructObject()
     {
         UE_LOG("DEBUG: Construct %s Object", *(T::StaticClass()->GetName().GetString()));
@@ -30,6 +31,7 @@ public:
             FPlatformMemory::Free<EAT_Object>(Obj, ObjectSize);
         });
         NewObject->UUID = UEngineStatics::GenUUID();
+        NewObject->ClassPrivate = T::StaticClass();
 
         // Object 제거시 Index가 달라지기 때문에 임시 주석처리 <- RemoveSwap으로 해결 가능
         // NewObject->InternalIndex = UEngine::Get().GObjects.Add(NewObject);

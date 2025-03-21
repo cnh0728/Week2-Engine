@@ -4,7 +4,7 @@
 #include "Object/USceneComponent.h"
 #include "Primitive/PrimitiveVertices.h"
 #include "Core/Math/Plane.h"
-
+#include "Object/ObjectMacros.h"
 
 class UPrimitiveComponent : public USceneComponent
 {

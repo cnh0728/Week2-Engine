@@ -1,7 +1,7 @@
 ﻿#include "UPrimitiveComponent.h"
 #include "Object/World/World.h"
 #include "Object/Actor/Actor.h"
-
+#include"Object/Cast.h"
 
 void UPrimitiveComponent::BeginPlay()
 {

@@ -219,7 +219,9 @@
     <ClCompile Include="Source\ThirdParty\ImGui\imgui_impl_win32.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui_tables.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui_widgets.cpp" />
-    <ClCompile Include="Source\Object\UObject.cpp" />
+    <ClCompile Include="Source\Object\UObject.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Source\Object\USceneComponent.cpp" />
     <ClCompile Include="Source\Object\PrimitiveComponent\UPrimitiveComponent.cpp" />
     <ClCompile Include="Source\Object\World\World.cpp" />
@@ -228,6 +230,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Object\Actor\Texture.h" />
+    <ClInclude Include="ObjectMacros.h" />
+    <ClInclude Include="Source\Object\Cast.h" />
     <ClInclude Include="Source\Object\Class\Class.h" />
     <ClInclude Include="Source\Core\Math\Box.h" />
     <ClInclude Include="Source\Core\Container\Name.h" />

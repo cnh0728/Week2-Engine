@@ -2,8 +2,9 @@
 #include <memory>
 #include "Core/HAL/PlatformType.h"
 #include "Core/Container/Name.h"
-#include "Object/Class/Class.h"
-#include "Cast.h"
+
+
+class UClass;
 
 // TODO: RTTI 구현하면 enable_shared_from_this 제거
 class UObject : public std::enable_shared_from_this<UObject>
@@ -17,27 +18,27 @@ public:
 	UObject();
 	virtual ~UObject();
 	FName Name;
+	UClass* ClassPrivate;
+	static UClass* StaticClass();
+
+private:
+	friend class FObjectFactory;
+	friend class UClass;
+
 
 public:
 	uint32 GetUUID() const { return UUID; }
 	uint32 GetInternalIndex() const { return InternalIndex; }
 
 public:
-	FORCEINLINE virtual UClass* GetClass() const
-	{
-		return StaticClass();
-	}
+	virtual UClass* GetClass() const { return ClassPrivate; }
 
-	static UClass* StaticClass(); // 각 클래스마다 하나씩
-	FORCEINLINE bool IsA(UClass* TargetClass) const
+	/** this가 SomeBase인지, SomeBase의 자식 클래스인지 확인합니다. */
+	bool IsA(const UClass* SomeBase) const;
+
+	template<typename T>
+	bool IsA() const
 	{
-		UClass* CurrentClass = GetClass();
-		while (CurrentClass) {
-			if (CurrentClass == TargetClass)
-				return true;
-			CurrentClass = CurrentClass->SuperClass;
-		}
-		return false;
+		return IsA(T::StaticClass());
 	}
-	FORCEINLINE virtual const char* GetTypeName() { return "UObject"; }
 };
