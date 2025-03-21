@@ -124,15 +124,14 @@ void AGizmoHandle::Tick(float DeltaTime)
 		FVector SelectedActorPosition = SelectedActor->GetRootComponent()->GetComponentTransform().GetPosition();
 		FTransform GizmoTransform = this->GetRootComponent()->GetRelativeTransform();
 		GizmoTransform.SetPosition(SelectedActorPosition);
-		if (GizmoType == EGizmoType::Scale)
-		{
+		
 			GizmoTransform.SetRotation(SelectedActor->GetRootComponent()->GetComponentTransform().GetRotation());
-		}
-		else
+		
+		/*else
 		{
 			GizmoTransform.SetRotation(FVector());
-		}
-		GizmoTransform.SetScale((CamPos - SelectedActorPosition).Length() / 4);
+		}*/
+		//GizmoTransform.SetScale((CamPos - SelectedActorPosition).Length() / 4);
 		this->GetRootComponent()->SetRelativeTransform(GizmoTransform);
 	}
 
@@ -223,21 +222,31 @@ void AGizmoHandle::SetActive(bool bActive)
 void AGizmoHandle::DoTransform(FTransform& AT, FVector Result, AActor* Actor )
 {
 	const FVector& AP = AT.GetPosition();
+	FVector WorldDelta = Result - AP;  // 이동할 월드 기준 벡터
+
+	FVector LocalDelta;
+	LocalDelta.X = FVector::DotProduct(WorldDelta, AT.GetForward());  // 로컬 X축 이동량
+	LocalDelta.Y = FVector::DotProduct(WorldDelta, AT.GetWorldRight());    // 로컬 Y축 이동량
+	LocalDelta.Z = FVector::DotProduct(WorldDelta, AT.GetWorldUp());       // 로컬 Z축 이동량
+
+
+	float MoveSpeedFactor = 0.1f;  // 이동 속도 조절
+
 
 	if (SelectedAxis == ESelectedAxis::X)
 	{
 		switch (GizmoType)
 		{
 		case EGizmoType::Translate:
-			AT.SetPosition({ Result.X, AP.Y, AP.Z });
+			AT.MoveLocal(FVector(LocalDelta.X * MoveSpeedFactor, 0, 0));
 			break;
 		case EGizmoType::Rotate:
 			//AT.RotatePitch(Result.X);
-			AT.RotateRoll(Result.Y);
+			AT.RotateRoll(Result.X);
 
 			break;
 		case EGizmoType::Scale:
-			AT.AddScale({ Result.X * .1f, 0, AP.Z * .1f });
+			AT.AddScale({ Result.X * .1f, 0, 0});
 			break;
 		}
 	}
@@ -246,10 +255,10 @@ void AGizmoHandle::DoTransform(FTransform& AT, FVector Result, AActor* Actor )
 		switch (GizmoType)
 		{
 		case EGizmoType::Translate:
-			AT.SetPosition({ AP.X, Result.Y, AP.Z });
+			AT.MoveLocal(FVector(0, LocalDelta.Y * MoveSpeedFactor, 0));
 			break;
 		case EGizmoType::Rotate:
-			AT.RotatePitch(-Result.X);
+			AT.RotatePitch(-Result.Y);
 			break;
 		case EGizmoType::Scale:
 			AT.AddScale({ 0, Result.Y * .1f, 0 });
@@ -261,7 +270,7 @@ void AGizmoHandle::DoTransform(FTransform& AT, FVector Result, AActor* Actor )
 		switch (GizmoType)
 		{
 		case EGizmoType::Translate:
-			AT.SetPosition({ AP.X, AP.Y, Result.Z });
+			AT.MoveLocal(FVector(0, 0, LocalDelta.Z * MoveSpeedFactor));
 			break;
 		case EGizmoType::Rotate:
 			AT.RotateYaw(-Result.Z);

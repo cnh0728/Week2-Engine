@@ -135,6 +135,16 @@ public:
 		return Up.GetSafeNormal();
 	}
 
+	FVector GetWorldRight() const
+	{
+		return FVector::CrossProduct(FVector(0, 0, 1), GetForward()).GetSafeNormal();
+	}
+
+	FVector GetWorldUp() const {
+		return FVector::CrossProduct(GetForward(), GetRight()).GetSafeNormal();
+
+	}
+
 	void Translate(const FVector& InTranslation)
 	{
 		Position += InTranslation;
@@ -151,7 +161,7 @@ public:
 	void RotateYaw(float Angle)
 	{
 		FVector Axis = FVector(0, 0, 1);
-		Rotation = FQuat::MultiplyQuaternions(Rotation, FQuat(Axis, Angle));
+		Rotation = FQuat::MultiplyQuaternions(FQuat(Axis, Angle), Rotation);
 
 		//Rotation = FQuat::MultiplyQuaternions(Rotation, FQuat(0, 0, sin(Angle * TORAD / 2), cos(Angle * TORAD / 2)));
 	}
@@ -159,13 +169,23 @@ public:
 	void RotatePitch(float Angle)
 	{
 		FVector Axis = FVector(0, 1, 0).GetSafeNormal();
-		Rotation = FQuat::MultiplyQuaternions(Rotation, FQuat(Axis, Angle));
+		Rotation = FQuat::MultiplyQuaternions(FQuat(Axis, Angle),Rotation);
 	}
 
 	void RotateRoll(float Angle)
 	{
 		FVector Axis = FVector(1, 0, 0).GetSafeNormal();
-		Rotation = FQuat::MultiplyQuaternions(Rotation, FQuat(Axis, Angle));
+		Rotation = FQuat::MultiplyQuaternions(FQuat(Axis, Angle), Rotation);
 	}
+	void MoveLocal(const FVector& LocalDelta)
+	{
+		// 현재 변환 행렬 (Scale * Rotation * Translation)
+		FMatrix TransformMatrix = GetMatrix();
 
+		// 로컬 이동 벡터를 월드 이동 벡터로 변환
+		FVector WorldDelta = TransformMatrix.TransformVector(LocalDelta);
+
+		// 최종적으로 이동 적용
+		Position += WorldDelta;
+	}
 };
