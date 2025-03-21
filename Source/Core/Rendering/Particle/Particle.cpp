@@ -481,7 +481,7 @@ bool UParticle::LoadTexture(ID3D11Device* Device, ID3D11DeviceContext* DeviceCon
 {
 	bool Result;
 
-	Texture = new UTexture();
+	Texture = new LegacyTexture();
 	Result = Texture->Create(Device, TextureFileName);
 	if (FAILED(Result))
 	{

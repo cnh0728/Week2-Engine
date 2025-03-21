@@ -18,11 +18,13 @@
 #include "Object/Actor/Cylinder.h"
 #include "Object/Actor/WorldGrid.h"
 #include "Object/Actor/Spotlight.h"
+#include "Object/Actor/Texture.h"
 #include "Static/FEditorManager.h"
 #include "Object/World/World.h"
 #include "Object/Gizmo/GizmoHandle.h"
 #include "Core/Rendering/Particle/Particle.h"
 #include "Object/Gizmo/Axis.h"
+#include "Static/Enum.h"
 
 void UI::Initialize(HWND hWnd, URenderer& Renderer, UINT ScreenWidth, UINT ScreenHeight)
 {
@@ -166,44 +168,43 @@ void UI::RenderMemoryUsage()
 
 void UI::RenderPrimitiveSelection()
 {
-    
-    
-    const char* items[] = { "Sphere", "Cube", "Cylinder", "Cone", "Spotlight"};
+    const char* PrimitiveItems[] = {"Sphere", "Cube", "Cylinder", "Cone", "Spotlight"};
 
-    ImGui::Combo("Primitive", &currentItem, items, IM_ARRAYSIZE(items));
+    ImGui::Combo("Primitive", reinterpret_cast<int*>(&CurrentPrimitiveItem), PrimitiveItems, ARRAYSIZE(PrimitiveItems));
 
     if (ImGui::Button("Spawn"))
     {
         UParticle::Get().Reload(Renderer->GetDevice(), Renderer->GetDeviceContext());
         UWorld* World = UEngine::Get().GetWorld();
-        for (int i = 0 ;  i < NumOfSpawn; i++)
+
+        for (int i = 0; i < NumOfSpawn; i++)
         {
-            if (strcmp(items[currentItem], "Sphere") == 0)
+            switch (CurrentPrimitiveItem)
             {
+            case Sphere:
                 World->SpawnActor<ASphere>();
-            }
-            else if (strcmp(items[currentItem], "Cube") == 0)
-            {
-                ACube* NewCube = World->SpawnActor<ACube>();
-            }
-            else if (strcmp(items[currentItem], "Cylinder") == 0)
-            {
+                break;
+            case Cube:
+                World->SpawnActor<ACube>();
+                break;
+            case Cylinder:
                 World->SpawnActor<ACylinder>();
-            }
-            else if (strcmp(items[currentItem], "Cone") == 0)
-            {
+                break;
+            case Cone:
                 World->SpawnActor<ACone>();
-            }
-            else if (strcmp(items[currentItem], "Spotlight") == 0)
-            {
+                break;
+            case Spotlight:
                 World->SpawnActor<ASpotlight>();
+                break;
+            case Texture:
+                World->SpawnActor<ATexture>();
+                    break;
+            default:
+                break;
             }
-            //else if (strcmp(items[currentItem], "Triangle") == 0)
-            //{
-            //    Actor->AddComponent<UTriangleComp>();   
-            //}
         }
     }
+    
     ImGui::SameLine();
     ImGui::InputInt("Number of spawn", &NumOfSpawn, 0);
 
@@ -298,7 +299,7 @@ void UI::RenderCameraSettings()
     {
         FTransform Trans = Camera->GetActorRelativeTransform();
         Trans.SetPosition(CameraPosition);
-        Camera->SetActorRelatvieTransform(Trans);
+        Camera->SetActorRelativeTransform(Trans);
     }
 
     FVector PrevEulerAngle = Camera->GetActorRelativeTransform().GetRotation().GetEuler();
@@ -312,7 +313,7 @@ void UI::RenderCameraSettings()
         
         UIEulerAngle.Y = FMath::Clamp(UIEulerAngle.Y, -Camera->MaxYDegree, Camera->MaxYDegree);
         Transform.SetRotation(UIEulerAngle);
-        Camera->SetActorRelatvieTransform(Transform);
+        Camera->SetActorRelativeTransform(Transform);
     }
     if (ImGui::DragFloat("Camera Speed", &Camera->CameraSpeed, 0.1f))
     {
@@ -377,7 +378,7 @@ void UI::RenderPropertyWindow()
         if (ImGui::DragFloat3("Translation", position, 0.1f))
         {
             selectedTransform.SetPosition(position[0], position[1], position[2]);
-            selectedActor->SetActorRelatvieTransform(selectedTransform);
+            selectedActor->SetActorRelativeTransform(selectedTransform);
         }
 
         FVector PrevEulerAngle = selectedTransform.GetRotation().GetEuler();
@@ -388,12 +389,12 @@ void UI::RenderPropertyWindow()
 
             selectedTransform.Rotate(DeltaEulerAngle);
             //UE_LOG("Rotation: %.2f, %.2f, %.2f", DeltaEulerAngle.X, DeltaEulerAngle.Y, DeltaEulerAngle.Z);
-            selectedActor->SetActorRelatvieTransform(selectedTransform);
+            selectedActor->SetActorRelativeTransform(selectedTransform);
         }
         if (ImGui::DragFloat3("Scale", scale, 0.1f))
         {
             selectedTransform.SetScale(scale[0], scale[1], scale[2]);
-            selectedActor->SetActorRelatvieTransform(selectedTransform);
+            selectedActor->SetActorRelativeTransform(selectedTransform);
         }
         if (FEditorManager::Get().GetGizmoHandle() != nullptr)
         {
@@ -425,6 +426,17 @@ void UI::RenderPropertyWindow()
             if (ImGui::Checkbox("Show Primitive", &bRender))
             {
                 selectedComponent->SetIsDefaultRendered(bRender);
+            }
+        }
+
+        if (selectedComponent->IsA(UTextureComp::StaticClass()))
+        {
+            UTextureComp* TextureComponent = dynamic_cast<UTextureComp*>(selectedComponent);
+            const char* TextureItems[] = {"cat", "earth"};
+            
+            if (ImGui::Combo("Texture", reinterpret_cast<int*>(&CurrentTextureItem), TextureItems, ARRAYSIZE(TextureItems)))
+            {
+                TextureComponent->SetTextureResource(CurrentTextureItem);
             }
         }
     }

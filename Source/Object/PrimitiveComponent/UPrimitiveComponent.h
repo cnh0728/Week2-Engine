@@ -49,13 +49,25 @@ public:
 protected:
 	bool bCanPick = false;
 	bool bIsDefaultRendered = false;
-	bool bUseVertexColor = true;
 	bool bIsOrthoGraphic = false;
 	FVector4 CustomColor = FVector4(1.0f, 1.0f, 1.0f, 1.0f);
 
 public:
 	// UScenecomponent중에 PrimitiveComponent만 추출
 	static TSet<UPrimitiveComponent*> FilterPrimitiveComponents(TSet<UActorComponent*>& Components);
+	
+	void SetColor(FVector4 Color);
+	FVector4 GetColor() const { return Color; }
+
+	void SetTextureResource(ETextureResource ER);
+	ETextureResource GetTextureResource() const { return TextureResource; }
+
+	EPixelType GetPixelType() const { return PixelType; }
+	
+private:
+	FVector4 Color = FVector4::One();
+	EPixelType PixelType = EDefalutColor;
+	ETextureResource TextureResource = cat;
 };
 
 class UCubeComp : public UPrimitiveComponent
@@ -196,5 +208,23 @@ public:
 	EPrimitiveType GetType()override
 	{
 		return EPrimitiveType::EPT_Ring;
+	}
+};
+
+class UTextureComp : public UPrimitiveComponent
+{
+	using Super = UPrimitiveComponent;
+	DECLARE_CLASS(UTextureComp, UPrimitiveComponent)
+
+public:
+	UTextureComp()
+	{
+		bIsDefaultRendered = true;
+		bCanPick = true;
+	}
+	virtual ~UTextureComp() = default;
+	EPrimitiveType GetType()override
+	{
+		return EPrimitiveType::EPT_Texture;
 	}
 };

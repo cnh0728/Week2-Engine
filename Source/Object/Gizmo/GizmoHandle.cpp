@@ -282,7 +282,7 @@ void AGizmoHandle::DoTransform(FTransform& AT, FVector Result, AActor* Actor )
 			break;
 		}
 	}
-	Actor->SetActorRelatvieTransform(AT);
+	Actor->SetActorRelativeTransform(AT);
 }
 
 void AGizmoHandle::UpdateGizmoPrimitives()

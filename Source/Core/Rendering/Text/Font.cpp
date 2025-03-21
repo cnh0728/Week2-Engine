@@ -13,7 +13,7 @@ UFont::~UFont()
 
 bool UFont::Create(ID3D11Device* Device, const wchar_t* FontFileName, const wchar_t* TextureFileName)
 {
-	Texture = new UTexture();
+	Texture = new LegacyTexture();
 	bool result;
 	result = LoadFontData(FontFileName);
 	if (!result)

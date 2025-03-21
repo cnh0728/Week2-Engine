@@ -104,7 +104,7 @@ public:
 	FTransform GetActorRelativeTransform() const;
 	FMatrix GetActorRelativeTransformMatrix() const;
 
-	void SetActorRelatvieTransform(const FTransform& InTransform);
+	void SetActorRelativeTransform(const FTransform& InTransform);
 	bool CanEverTick() const { return bCanEverTick; }
 	//virtual const char* GetTypeName();
 

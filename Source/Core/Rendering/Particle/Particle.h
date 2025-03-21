@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "Core/Math/Matrix.h"
 #include "Core/Math/Vector.h"
-#include "Core/Rendering/Texture.h"
+#include "Core/Rendering/LegacyTexture.h"
 #include "Core/AbstractClass/Singleton.h"
 #include <d3d11.h>
 #include <fstream>
@@ -59,7 +59,7 @@ private:
 	ID3D11Buffer* VertexBuffer, * IndexBuffer;
 	ParticleType* ParticleList;
 	VertexType* Vertices;
-	UTexture* Texture;
+	LegacyTexture* Texture;
 	uint32 VertexCount, IndexCount;
 	const wchar_t* ConfigFileName;
 	uint32 MaxParticles;

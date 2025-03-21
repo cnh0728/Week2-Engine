@@ -84,3 +84,15 @@ TSet<UPrimitiveComponent*> UPrimitiveComponent::FilterPrimitiveComponents(TSet<U
 	}
 	return NewSet;
 }
+
+void UPrimitiveComponent::SetColor(FVector4 Color)
+{
+	this->Color = Color;
+	PixelType = ECustomColor;
+}
+
+void UPrimitiveComponent::SetTextureResource(ETextureResource ER)
+{
+	this->TextureResource = ER;
+	PixelType = ETexture;
+}

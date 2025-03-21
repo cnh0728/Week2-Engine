@@ -16,7 +16,7 @@
 #include "Object/PrimitiveComponent/TextComponent.h"
 #include <Object/PrimitiveComponent/BillBoardComponent.h>
 
-
+#include "Object/Actor/Texture.h"
 #include "Object/Cast.h"
 #include "Debug/DebugConsole.h"
 
@@ -75,26 +75,18 @@ void UWorld::Render(float DeltaTime)
 		return;
 	}
 
+	
 	ACamera* cam = FEditorManager::Get().GetCamera();
 	Renderer->UpdateViewMatrix(cam->GetActorRelativeTransform());
 	Renderer->UpdateProjectionMatrix(cam);
-
-	// Renderer->UpdateConstant(TODO);
-	// if (APlayerInput::Get().GetMouseDown(false))
-	// {
-	// 	RenderPickingTexture(*Renderer);
-	// }
 	
 	RenderMainTexture(*Renderer, DeltaTime);
-	
-	// DisplayPickingTexture(*Renderer);
-
 }
 
 void UWorld::RenderPickingTexture(URenderer& Renderer)
 {
-	Renderer.PreparePicking();
-	Renderer.PreparePickingShader();
+	// Renderer.PreparePicking();
+	// Renderer.PreparePickingShader();
 
 	
 	// for (auto& RenderComponent : RenderComponents)
@@ -121,10 +113,15 @@ void UWorld::RenderPickingTexture(URenderer& Renderer)
 void UWorld::RenderMainTexture(URenderer& Renderer, float DeltaTime)
 {
 	Renderer.PrepareMain();
-	Renderer.PrepareMainShader();
 
 	Renderer.RenderBatch();
 
+//prepare texture하고 loadtexture 하고 텍스쳐렌더 돌면서
+	
+	// Renderer.LoadTexture(TODO, "Texture.png");
+
+	Renderer.PrepareMainShader();
+	
 	for (auto& RenderComponent : RenderComponents)
 	{
 		if (!FEditorManager::Get().IsShowFlagSet((EEngineShowFlags::SF_Primitives)))
@@ -132,6 +129,12 @@ void UWorld::RenderMainTexture(URenderer& Renderer, float DeltaTime)
 			if (RenderComponent->IsCanPick()) continue;
 		}
 		{
+			//분기해주고 로드텍스쳐까지
+			if (RenderComponent->IsA(UTextureComp::StaticClass()))
+			{
+				UTextureComp* TextureComponent = dynamic_cast<UTextureComp*>(RenderComponent);
+				Renderer.PrepareTextureResource(TextureComponent->GetTextureResource());
+			}
 			RenderComponent->Render();
 		}
 	}
@@ -185,7 +188,7 @@ void UWorld::ClearWorld()
 	ACamera* Camera = FEditorManager::Get().GetCamera();
 	if (Camera)
 	{
-		Camera->SetActorRelatvieTransform(Camera->GetSpawnTransform());
+		Camera->SetActorRelativeTransform(Camera->GetSpawnTransform());
 	}
 
 	UE_LOG("Clear World");
@@ -243,6 +246,19 @@ void UWorld::LoadWorld(const char* SceneName)
 	if (SceneName == nullptr || strcmp(SceneName, "") == 0){
 		return;
 	}
+
+	if (ActorFactoryMap.empty())
+	{
+		ActorFactoryMap = {
+			{ "AActor",    [this]() { return SpawnActor<AActor>(); } },
+			{ "ASphere",   [this]() { return SpawnActor<ASphere>(); } },
+			{ "ACube",     [this]() { return SpawnActor<ACube>(); } },
+			{ "AArrow",    [this]() { return SpawnActor<AArrow>(); } },
+			{ "ACylinder", [this]() { return SpawnActor<ACylinder>(); } },
+			{ "ACone",     [this]() { return SpawnActor<ACone>(); } },
+			{ "ATexture",  [this]() { return SpawnActor<ATexture>(); } }
+		};
+	}
 	
 	UWorldInfo* WorldInfo = JsonSaveHelper::LoadScene(SceneName);
 	if (WorldInfo == nullptr) return;
@@ -260,16 +276,8 @@ void UWorld::LoadWorld(const char* SceneName)
 		FTransform Transform = FTransform(ObjectInfo->Location, ObjectInfo->Rotation, ObjectInfo->Scale);
 
 		AActor* Actor = nullptr;
-		
-		if (ObjectInfo->ObjectType == "UObject") {
-			continue;
-		}
 
-		if (ObjectInfo->ObjectType == "AActor")
-		{
-			Actor = SpawnActor<AActor>();
-		}
-		else if (ObjectInfo->ObjectType == "ACamera")
+		if (ObjectInfo->ObjectType == "ACamera")
 		{
 			ACamera* Camera = FEditorManager::Get().GetCamera();
 			if (Camera == nullptr) //지금 없으면 스폰 있으면 스폰할필요 없음
@@ -278,29 +286,14 @@ void UWorld::LoadWorld(const char* SceneName)
 				FEditorManager::Get().SetCamera(Camera);
 			}
 			Actor = Camera;
-		}
-		else if (ObjectInfo->ObjectType == "ASphere")
+		}else
 		{
-			Actor = SpawnActor<ASphere>();
+			static_cast<void*>(ActorFactoryMap[ObjectInfo->ObjectType]());
 		}
-		else if (ObjectInfo->ObjectType == "ACube")
+		if (Actor)
 		{
-			Actor = SpawnActor<ACube>();
+			Actor->SetActorRelativeTransform(Transform);
 		}
-		else if (ObjectInfo->ObjectType == "AArrow")
-		{
-			Actor = SpawnActor<AArrow>();
-		}
-		else if (ObjectInfo->ObjectType == "ACylinder")
-		{
-			Actor = SpawnActor<ACylinder>();
-		}
-		else if (ObjectInfo->ObjectType == "ACone")
-		{
-			Actor = SpawnActor<ACone>();
-		}
-		
-		Actor->SetActorRelatvieTransform(Transform);
 	}
 }
 

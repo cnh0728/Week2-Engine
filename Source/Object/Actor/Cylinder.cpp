@@ -8,7 +8,7 @@ ACylinder::ACylinder()
     UCylinderComp* CylinderComponent = AddComponent<UCylinderComp>();
     RootComponent = CylinderComponent;
 	
-    SetActorRelatvieTransform(FTransform());
+    SetActorRelativeTransform(FTransform());
 
 }
 

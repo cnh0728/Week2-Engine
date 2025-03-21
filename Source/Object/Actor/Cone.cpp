@@ -8,7 +8,7 @@ ACone::ACone()
     UConeComp* ConeComponent = AddComponent<UConeComp>();
     RootComponent = ConeComponent;
 
-    SetActorRelatvieTransform(FTransform());
+    SetActorRelativeTransform(FTransform());
 
 }
 

@@ -21,7 +21,7 @@ struct FVertexSimple
 		Z = Position.Z / Position.W;
 	}
 
-	void SetColor(const FVector4 Color)
+	void SetVertexColor(const FVector4 Color)
 	{
 		R = Color.X;
 		G = Color.Y;

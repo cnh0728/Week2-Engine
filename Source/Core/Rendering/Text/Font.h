@@ -3,9 +3,8 @@
 #include "Core/HAL/PlatformType.h"
 #include <d3d11.h>
 #include "Core/Math/Vector.h"
-#include "Core/Rendering/Texture.h"
+#include "Core/Rendering/LegacyTexture.h"
 #include "Core/Container/String.h"
-
 
 class UFont {
 private:
@@ -35,5 +34,5 @@ private:
 
 private:
 	FontType* Font;
-	UTexture* Texture;
+	LegacyTexture* Texture;
 };
