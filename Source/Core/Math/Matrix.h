@@ -43,6 +43,7 @@ struct alignas(16) FMatrix
 	FVector GetRotation() const;
 
 	FVector4 TransformVector4(const FVector4& Vector) const;
+	FVector TransformVector(const FVector& Vector)const;
 
 	float GetElement(int Row, int Column) const;
 	
