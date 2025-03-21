@@ -40,7 +40,7 @@ public:
 
 	void ClearWorld();
 	void LoadWorld(const char* SceneName);
-	void SaveWorld();
+	void SaveWorld(const std::string& SceneName);
 
 	void AddZIgnoreComponent(UPrimitiveComponent* InComponent);
 	void AddTextComponent(UPrimitiveComponent* InComponent);
@@ -58,11 +58,14 @@ public:
 	TArray<UPrimitiveComponent*> GetBillBoardRenderComponents() { return BillBoardRenderComponents; }
 
 	const TArray<AActor*>& GetActors() const { return Actors;  }
+
 	
 private:
 	UWorldInfo GetWorldInfo() const;
 
 public:
+	FString DebugDefaultSceneName = "DebugDefaultScene";
+	FString ReleaseDefaultSceneName = "DefaultScene";
 	FString SceneName;
 	uint32 Version = 1;
 	

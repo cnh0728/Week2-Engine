@@ -225,7 +225,7 @@ void UI::RenderPrimitiveSelection()
     }
     if (ImGui::Button("Save Scene"))
     {
-        World->SaveWorld();   
+        World->SaveWorld(*World->SceneName);   
     }
     if (ImGui::Button("Load Scene"))
     {

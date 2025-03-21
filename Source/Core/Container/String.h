@@ -139,9 +139,8 @@ public:
     /** TCHAR* 로 반환하는 연산자 */
     FORCEINLINE const TCHAR* operator*() const;
 
-    //FORCEINLINE FString operator+(const FString& SubStr) const;
+    friend FString operator+(const FString& Lhs, const FString& Rhs); // 비멤버 
     FORCEINLINE FString& operator+=(const FString& SubStr);
-    FORCEINLINE friend FString operator+(const FString& Lhs, const FString& Rhs);
 
     FORCEINLINE bool operator==(const FString& Rhs) const;
     FORCEINLINE bool operator==(const TCHAR* Rhs) const;
@@ -215,12 +214,6 @@ FORCEINLINE const TCHAR* FString::operator*() const
     return PrivateString.c_str();
 }
 
-FString operator+(const FString& Lhs, const FString& Rhs)
-{
-    FString CopyLhs{Lhs};
-    return CopyLhs += Rhs;
-}
-
 FORCEINLINE bool FString::operator==(const FString& Rhs) const
 {
     return Equals(Rhs, ESearchCase::CaseSensitive); // FName 구현위해선 casesensitive여야함
@@ -252,6 +245,12 @@ inline FString FString::ToLower() const
 FORCEINLINE inline size_t FString::GetHash() const
 {
     return std::hash<BaseStringType>()(PrivateString);
+}
+
+inline FString operator+(const FString& Lhs, const FString& Rhs)
+{
+    FString CopyLhs{Lhs};
+    return CopyLhs += Rhs;
 }
 
 FORCEINLINE FString& FString::operator+=(const FString& SubStr)

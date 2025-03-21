@@ -178,6 +178,12 @@ void UWorld::ClearWorld()
 		}
 	}
 
+	ACamera* Camera = FEditorManager::Get().GetCamera();
+	if (Camera)
+	{
+		Camera->SetActorRelatvieTransform(Camera->GetSpawnTransform());
+	}
+
 	UE_LOG("Clear World");
 }
 
@@ -206,10 +212,10 @@ bool UWorld::DestroyActor(AActor* InActor)
 	return true;
 }
 
-void UWorld::SaveWorld()
+void UWorld::SaveWorld(const std::string& SceneName)
 {
 	const UWorldInfo& WorldInfo = GetWorldInfo();
-	JsonSaveHelper::SaveScene(WorldInfo);
+	JsonSaveHelper::SaveScene(WorldInfo, SceneName);
 }
 
 void UWorld::AddZIgnoreComponent(UPrimitiveComponent* InComponent)
@@ -247,14 +253,23 @@ void UWorld::LoadWorld(const char* SceneName)
 	for (uint32 i = 0; i < ActorCount; i++)
 	{
 		UObjectInfo* ObjectInfo = WorldInfo->ObjctInfos[i];
-		FTransform Transform = FTransform(ObjectInfo->Location, FQuat(), ObjectInfo->Scale);
-		Transform.Rotate(ObjectInfo->Rotation);
+		FTransform Transform = FTransform(ObjectInfo->Location, ObjectInfo->Rotation, ObjectInfo->Scale);
 
 		AActor* Actor = nullptr;
 		
 		if (ObjectInfo->ObjectType == "AActor")
 		{
 			Actor = SpawnActor<AActor>();
+		}
+		else if (ObjectInfo->ObjectType == "ACamera")
+		{
+			ACamera* Camera = FEditorManager::Get().GetCamera();
+			if (Camera == nullptr) //지금 없으면 스폰 있으면 스폰할필요 없음
+			{
+				Camera = SpawnActor<ACamera>();
+				FEditorManager::Get().SetCamera(Camera);
+			}
+			Actor = Camera;
 		}
 		else if (ObjectInfo->ObjectType == "ASphere")
 		{
@@ -291,11 +306,15 @@ UWorldInfo UWorld::GetWorldInfo() const
 	uint32 i = 0;
 	for (auto& actor : Actors)
 	{
-		if (actor->IsDontDestroy())
+		if (Cast<ACamera>(actor) == nullptr) //카메라빼고 전부
 		{
-			WorldInfo.ActorCount--;
-			continue;
+			if (actor->IsDontDestroy())
+			{
+				WorldInfo.ActorCount--;
+				continue;
+			}
 		}
+		
 		WorldInfo.ObjctInfos[i] = new UObjectInfo();
 		const FTransform& Transform = actor->GetActorRelativeTransform();
 		WorldInfo.ObjctInfos[i]->Location = Transform.GetPosition();
