@@ -81,7 +81,13 @@ void UWorld::Render(float DeltaTime)
 	// 	RenderPickingTexture(*Renderer);
 	// }
 	
-	RenderMainTexture(*Renderer, DeltaTime);
+
+	for (int i = 0; i < 4; i++)
+	{
+		Renderer->SetMultiViewport(i);
+		Renderer->PrepareShader();
+		RenderMainTexture(*Renderer, DeltaTime);
+	}
 	
 	// DisplayPickingTexture(*Renderer);
 
