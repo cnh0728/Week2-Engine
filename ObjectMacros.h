@@ -25,4 +25,3 @@ public: \
         } \
         return StaticClassInfo.get(); \
     } \
-    virtual const char* GetTypeName() const override { return #TClass; }

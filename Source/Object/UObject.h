@@ -41,5 +41,4 @@ public:
 	{
 		return IsA(T::StaticClass());
 	}
-	FORCEINLINE virtual const char* GetTypeName() const { return "UObject"; }
 };
