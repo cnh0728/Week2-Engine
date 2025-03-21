@@ -1,28 +1,20 @@
 // ShaderW0.hlsl
+Texture2D texDiffuse : register(t0);
+SamplerState samLinear : register(s0);
+
 cbuffer constants : register(b0)
 {
-    matrix M;
-    matrix V;
-    matrix P;
-    float4 Color;
-    int bUseCustomColor;
-}
-
-cbuffer UUIDColor : register(b1){
-    float4 UUIDColor;
-}
-
-cbuffer Depth : register(b2){
-    int depth;
-    int nearPlane;
-    int farPlane;
+    matrix MVP;
+    float4 CustomColor;
+    int PixelType;
 }
 
 struct VS_INPUT
 {
     float4 position : POSITION; // Input position from vertex buffer
     float4 color : COLOR;       // Input color from vertex buffer
-
+    float3 normal : NORMAL;
+    float2 uv : UV;
     // matrix MVP;
 };
 
@@ -44,41 +36,35 @@ struct PS_OUTPUT
 PS_INPUT mainVS(VS_INPUT input)
 {
     PS_INPUT output;
-    
-    output.position = mul(input.position, M);
-    output.position = mul(output.position, V);
-    output.position = mul(output.position, P);
-    // output.depthPosition = output.position;
-    // output.position = input.position;
-    
-    output.color = bUseCustomColor == 1 ? Color : input.color;
-    return output;
-}
 
-
-PS_OUTPUT mainPS(PS_INPUT input) : SV_TARGET
-{
-    PS_OUTPUT output;
-
-    // 기본 깊이 값 계산 (0.0~1.0)
-    // float baseDepth = input.depthPosition.z / input.depthPosition.w;
-
-    // 색상 설정 (예: 흰색)
     output.color = input.color;
-    // output.depth = saturate(depth);
-    // output.color = float4(depth, depth, depth, 1.0f);
+    output.position = mul(input.position, MVP);
+    output.normal = input.normal;
+    output.uv = input.uv;
+
     
     return output;
 }
 
-float4 outlinePS(PS_INPUT input) : SV_TARGET
+float4 mainPS(PS_INPUT input) : SV_TARGET
 {
-    // Output the color directly
-    return float4(1.0f, 0.647f, 0.0f, 0.1f);
-}
+    float4 color;
 
-PS_OUTPUT PickingPS(PS_INPUT input):SV_TARGET{
-    PS_OUTPUT output;
-    output.color = UUIDColor;
-    return output;
+    color = input.color;
+        
+    switch (PixelType)
+    {
+    case 1: //CustomColor
+        color = CustomColor;
+        break;
+    case 2: //Texture
+        color = texDiffuse.Sample(samLinear, input.uv);
+        float avg = (color.r + color.g + color.b) / 3.0f;
+        clip(avg < 0.01f ? -1 : 1);
+        break;
+    default:
+        break;
+    }
+    
+    return color;
 }

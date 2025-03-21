@@ -9,7 +9,7 @@ ASphere::ASphere()
 
 	RootComponent = SphereComponent;
 
-	SetActorRelatvieTransform(FTransform());
+	SetActorRelativeTransform(FTransform());
 }
 
 void ASphere::BeginPlay()

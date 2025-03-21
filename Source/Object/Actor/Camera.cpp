@@ -14,7 +14,7 @@ ACamera::ACamera()
     FieldOfView = 45.f;
     ProjectionMode = ECameraProjectionMode::Perspective;
     
-    SetActorRelatvieTransform(GetSpawnTransform());
+    SetActorRelativeTransform(GetSpawnTransform());
 }
 
 void ACamera::SetFieldOfView(float Fov)

@@ -5,6 +5,7 @@
 #include "Core/Math/Transform.h"
 #include "Core/Math/Matrix.h"
 #include "Object/ActorComponent/ActorComponent.h"
+#include "Static/Enum.h"
 
 class USceneComponent : public UActorComponent
 {
@@ -46,8 +47,6 @@ public:
 
 	bool IsAttachedTo(const USceneComponent* TestComp) const;
 
-
-
 protected:
 // 추후 Getter Setter 추가 예정
 	USceneComponent* Parent = nullptr;
@@ -59,10 +58,5 @@ protected:
 	// debug
 protected:
 	bool bIsPicked = false;
-	FVector4 Color = FVector4::One();
 
-public:
-	bool bCustomColor = false;
-	void SetColor(FVector4 Color);
-	FVector4 GetColor() const { return Color; }
 };

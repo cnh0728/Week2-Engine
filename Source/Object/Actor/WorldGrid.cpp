@@ -19,13 +19,11 @@ AWorldGrid::AWorldGrid()
         XLineComponent->SetupAttachment(RootComponent);
         XLineComponent->SetRelativeTransform(FTransform(FVector(0.f, static_cast<float>(i), 0.0f), FVector(0.f, 0.f, 0.f), FVector(500.f, 1.f, 1.f)));
         XLineComponent->SetColor(GridColor);
-        XLineComponent->bCustomColor = true;
         
         ULineComp* YLineComponent = AddComponent<ULineComp>();
         YLineComponent->SetupAttachment(RootComponent);
         YLineComponent->SetRelativeTransform(FTransform(FVector(static_cast<float>(i), 0.f, 0.0f), FVector(0.f, 0.f, 90.f), FVector(500.f, 1.f, 1.f)));
         YLineComponent->SetColor(GridColor);
-        YLineComponent->bCustomColor = true;
     }
 }
 
@@ -34,7 +32,7 @@ void AWorldGrid::SetSpacing(float InSpacing)
     Spacing = InSpacing;
     FTransform Transform = GetActorRelativeTransform();
     Transform.SetScale(InSpacing, InSpacing, InSpacing);
-    SetActorRelatvieTransform(Transform);
+    SetActorRelativeTransform(Transform);
 }
 
 void AWorldGrid::BeginPlay()
@@ -69,5 +67,5 @@ void AWorldGrid::Tick(float DeltaTime)
     }
 
     GridTransform.SetPosition(GridLocation);
-    SetActorRelatvieTransform(GridTransform);
+    SetActorRelativeTransform(GridTransform);
 }

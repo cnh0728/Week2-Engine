@@ -238,6 +238,8 @@ void UEngine::InitRenderer()
 	Renderer->Create(WindowHandle);
 	Renderer->CreateShader();
 	Renderer->CreateConstantBuffer();
+    
+    CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 }
 
 void UEngine::InitWorld()
@@ -254,6 +256,7 @@ void UEngine::InitWorld()
     World->LoadWorld(*World->ReleaseDefaultSceneName);
 #endif
 
+    
     //// Test
     // World->SpawnActor<AArrow>();
     // World->SpawnActor<ASphere>();

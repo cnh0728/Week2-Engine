@@ -1,16 +1,16 @@
-﻿#include "Texture.h"
+﻿#include "LegacyTexture.h"
 #include "ThirdParty/DirectXTex/Include/DirectXTex.h"
 
-UTexture::UTexture()
+LegacyTexture::LegacyTexture()
 {
 	Texture = nullptr;
 }
 
-UTexture::~UTexture()
+LegacyTexture::~LegacyTexture()
 {
 }
 
-SubUV UTexture::GetSubUV(int CharacterIndex, int AtlasWidth, int AtlasHeight, int CharWidth, int CharHeight)
+SubUV LegacyTexture::GetSubUV(int CharacterIndex, int AtlasWidth, int AtlasHeight, int CharWidth, int CharHeight)
 {
 	int Columns = AtlasWidth / CharWidth;
 	int Rows = AtlasHeight / CharHeight;
@@ -45,7 +45,7 @@ void PrintErrorMessage(HRESULT hr)
 	}
 }
 
-bool UTexture::Create(ID3D11Device* Device, const wchar_t* TextureFileName)
+bool LegacyTexture::Create(ID3D11Device* Device, const wchar_t* TextureFileName)
 {
 	HRESULT Result;
  	DirectX::ScratchImage Image;
@@ -90,7 +90,7 @@ bool UTexture::Create(ID3D11Device* Device, const wchar_t* TextureFileName)
 
 }
 
-void UTexture::Release()
+void LegacyTexture::Release()
 {
 	if (Texture)
 	{
@@ -99,7 +99,7 @@ void UTexture::Release()
 	}
 }
 
-void UTexture::Render(ID3D11Device* Device, ID3D11DeviceContext* DeviceContext)
+void LegacyTexture::Render(ID3D11Device* Device, ID3D11DeviceContext* DeviceContext)
 {
 
 	D3D11_MAPPED_SUBRESOURCE MappedResource;

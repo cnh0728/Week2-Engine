@@ -135,7 +135,7 @@ FMatrix AActor::GetActorRelativeTransformMatrix() const
 }
 
 // actor의 root component는 actor의 (아직은) 월드상 좌표입니다.
-void AActor::SetActorRelatvieTransform(const FTransform& InTransform)
+void AActor::SetActorRelativeTransform(const FTransform& InTransform)
 {
 	// InTransform은 월드 기준임
 	if (RootComponent)

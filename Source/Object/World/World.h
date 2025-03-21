@@ -77,6 +77,8 @@ protected:
 	TArray<AActor*> ActorsToSpawn;
 	TArray<AActor*> PendingDestroyActors; // TODO: 추후에 TQueue로 변경
 	TSet<UPrimitiveComponent*> RenderComponents;
+
+	std::unordered_map<std::string, std::function<AActor*()>> ActorFactoryMap;
 };
 
 template <typename T>

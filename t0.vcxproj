@@ -172,6 +172,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Object\Actor\Texture.cpp" />
     <ClCompile Include="Source\Object\Class\Class.cpp" />
     <ClCompile Include="Source\Core\Math\Box.cpp" />
     <ClCompile Include="Source\Core\Container\Name.cpp" />
@@ -180,7 +181,7 @@
     <ClCompile Include="Source\Core\Rendering\Particle\ParticleShader.cpp" />
     <ClCompile Include="Source\Core\Rendering\Texture\TextureRenderer.cpp" />
     <ClCompile Include="Source\Object\Actor\WorldGrid.cpp" />
-    <ClCompile Include="Source\Core\Rendering\Texture.cpp" />
+    <ClCompile Include="Source\Core\Rendering\LegacyTexture.cpp" />
     <ClCompile Include="Source\Core\Rendering\Text\Font.cpp" />
     <ClCompile Include="Source\Core\Rendering\Text\FontShader.cpp" />
     <ClCompile Include="Source\Core\Rendering\Text\Text.cpp" />
@@ -226,17 +227,19 @@
     <ClCompile Include="Source\Object\Actor\Spotlight.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Object\Actor\Texture.h" />
     <ClInclude Include="Source\Object\Class\Class.h" />
     <ClInclude Include="Source\Core\Math\Box.h" />
     <ClInclude Include="Source\Core\Container\Name.h" />
     <ClInclude Include="Source\Core\Rendering\Particle\Particle.h" />
     <ClInclude Include="Source\Core\Rendering\Particle\ParticleShader.h" />
-    <ClInclude Include="Source\Core\Rendering\Texture.h" />
+    <ClInclude Include="Source\Core\Rendering\LegacyTexture.h" />
     <ClInclude Include="Source\Core\Rendering\Texture\TextureRenderer.h" />
     <ClInclude Include="Source\Core\Rendering\Text\Font.h" />
     <ClInclude Include="Source\Core\Rendering\Text\FontShader.h" />
     <ClInclude Include="Source\Core\Rendering\Text\Text.h" />
     <ClInclude Include="Source\Object\Actor\Spotlight.h" />
+    <ClInclude Include="Source\Static\Enum.h" />
     <ClInclude Include="Unsupported.h" />
   </ItemGroup>
   <ItemGroup>

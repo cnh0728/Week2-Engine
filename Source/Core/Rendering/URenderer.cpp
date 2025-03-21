@@ -6,6 +6,7 @@
 #include "Object/Actor/WorldGrid.h"
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Static/FEditorManager.h"
+#include "directxtk/WICTextureLoader.h"
 
 void VertexBufferInfo::AddVertices(TArray<FVertexSimple> InVertices, TArray<uint32_t> InIndices)
 {
@@ -38,7 +39,8 @@ void URenderer::Create(HWND hWindow)
     // CreateBufferCache();
     CreateDepthStencilBuffer();
     CreateDepthStencilState();
-
+    CreateSampleState();
+    
     CreatePickingTexture(hWindow);
     
     FVertexSimple::CreateOriginVertices();
@@ -47,7 +49,7 @@ void URenderer::Create(HWND hWindow)
 	CreateAlphaBlendingState();
 
     InitMatrix();
-
+    LoadTextures();
 	CreateParticle(hWindow);
     CreateTexture(hWindow);
 }
@@ -62,6 +64,8 @@ void URenderer::Release()
     ReleaseFrameBuffer();
     ReleaseDepthStencilBuffer();
     ReleaseDeviceAndSwapChain();
+    ReleaseSampleState();
+    ReleaseTextureResources();
     ReleaseAllVertexBuffer();
     ReleaseAlphaBlendingState();
 }
@@ -81,26 +85,22 @@ void URenderer::CreateShader()
          */
     ID3DBlob* VertexShaderCSO;
     ID3DBlob* PixelShaderCSO;
-
-    ID3DBlob* PickingShaderCSO;
+    
+    ID3DBlob* TexShaderCSO;
     
 	ID3DBlob* ErrorMsg = nullptr;
     // 셰이더 컴파일 및 생성
     D3DCompileFromFile(L"Shaders/ShaderW0.hlsl", nullptr, nullptr, "mainVS", "vs_5_0", 0, 0, &VertexShaderCSO, &ErrorMsg);
-
     Device->CreateVertexShader(VertexShaderCSO->GetBufferPointer(), VertexShaderCSO->GetBufferSize(), nullptr, &SimpleVertexShader);
 
     D3DCompileFromFile(L"Shaders/ShaderW0.hlsl", nullptr, nullptr, "mainPS", "ps_5_0", 0, 0, &PixelShaderCSO, &ErrorMsg);
-    Device->CreatePixelShader(PixelShaderCSO->GetBufferPointer(), PixelShaderCSO->GetBufferSize(), nullptr, &SimplePixelShader);
+    Device->CreatePixelShader(PixelShaderCSO->GetBufferPointer(), PixelShaderCSO->GetBufferSize(), nullptr, &PixelShaders[EPixelShaderType::Default]);
 
-    D3DCompileFromFile(L"Shaders/ShaderW0.hlsl", nullptr, nullptr, "PickingPS", "ps_5_0", 0, 0, &PickingShaderCSO, nullptr);
-    Device->CreatePixelShader(PickingShaderCSO->GetBufferPointer(), PickingShaderCSO->GetBufferSize(), nullptr, &PickingPixelShader);
+    if (ErrorMsg)
+    {
+        std::cout << (char*)ErrorMsg->GetBufferPointer() << std::endl;
+    }
     
-	if (ErrorMsg)
-	{
-		std::cout << (char*)ErrorMsg->GetBufferPointer() << std::endl;
-		ErrorMsg->Release();
-	}
 
     // 입력 레이아웃 정의 및 생성
     D3D11_INPUT_ELEMENT_DESC Layout[] =
@@ -121,10 +121,26 @@ void URenderer::CreateShader()
 
     VertexShaderCSO->Release();
     PixelShaderCSO->Release();
-    PickingShaderCSO->Release();
-
+    
     // 정점 하나의 크기를 설정 (바이트 단위)
     Stride = sizeof(FVertexSimple);
+}
+
+void URenderer::CreateSampleState()
+{
+    D3D11_SAMPLER_DESC samplerDesc = {};
+    samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+    samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+    samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+    samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+
+    Device->CreateSamplerState(&samplerDesc, &samplerState);
+}
+
+void URenderer::ReleaseSampleState()
+{
+    samplerState->Release();
+    samplerState = nullptr;
 }
 
 void URenderer::ReleaseShader()
@@ -135,17 +151,18 @@ void URenderer::ReleaseShader()
         SimpleInputLayout = nullptr;
     }
 
-    if (SimplePixelShader)
-    {
-        SimplePixelShader->Release();
-        SimplePixelShader = nullptr;
-    }
-
     if (SimpleVertexShader)
     {
         SimpleVertexShader->Release();
         SimpleVertexShader = nullptr;
     }
+
+    for (auto& [Key, PS] : PixelShaders)
+    {
+        PS->Release();
+    }
+
+    PixelShaders.Empty();
 }
 
 void URenderer::CreateConstantBuffer()
@@ -215,6 +232,7 @@ void URenderer::Prepare()
     DeviceContext->RSSetViewports(1, &ViewportInfo);
     DeviceContext->RSSetState(RasterizerState);
 
+    DeviceContext->PSSetSamplers(0, 1, &samplerState);
     /**
      * OutputMerger 설정
      * 렌더링 파이프라인의 최종 단계로써, 어디에 그릴지(렌더 타겟)와 어떻게 그릴지(블렌딩)를 지정
@@ -227,13 +245,14 @@ void URenderer::PrepareShader() const
 {
     // 기본 셰이더랑 InputLayout을 설정
     DeviceContext->VSSetShader(SimpleVertexShader, nullptr, 0);
-    DeviceContext->PSSetShader(SimplePixelShader, nullptr, 0);
+    DeviceContext->PSSetShader(PixelShaders[EPixelShaderType::Default], nullptr, 0);
     DeviceContext->IASetInputLayout(SimpleInputLayout);
 
     // 버텍스 쉐이더에 상수 버퍼를 설정
     if (ConstantBuffer)
     {
         DeviceContext->VSSetConstantBuffers(0, 1, &ConstantBuffer);
+        DeviceContext->PSSetConstantBuffers(0, 1, &ConstantBuffer);
     }
 }
 
@@ -357,6 +376,23 @@ void URenderer::CreateVertexBuffer(EPrimitiveType VertexType, VertexBufferInfo B
     SetVertexBufferInfo(VertexType, NewBufferInfo);
 }
 
+void URenderer::LoadTextures()
+{
+    std::string TextureDir = "Textures/";
+    
+    LoadTexture(ETextureResource::cat, TextureDir + "cat.png");
+    LoadTexture(ETextureResource::earth, TextureDir + "earth.png");
+}
+
+void URenderer::ReleaseTextureResources()
+{
+    for (auto& [Key, Texture] : TextureResources)
+    {
+        Texture->Release();
+    }
+    TextureResources.Empty();
+}
+
 void URenderer::CreateBatchVertexBuffer(D3D11_PRIMITIVE_TOPOLOGY Topology, VertexBufferInfo BufferInfo)
 {
     TArray<FVertexSimple> Vertices = BufferInfo.GetVertices();
@@ -442,10 +478,10 @@ void URenderer::AddBatchVertices(UPrimitiveComponent* Component)
     for (FVertexSimple& Vertex : Vertices)
     {
         Vertex.SetPos(ComponentWorldMatrix);
-        if (Component->bCustomColor)
+        if (Component->GetPixelType())
         {
             FVector4 Color = Component->GetColor();
-            Vertex.SetColor(Color);
+            Vertex.SetVertexColor(Color);
         }
     }
 
@@ -558,20 +594,29 @@ void URenderer::UpdateConstant(USceneComponent* Component) const
 
     D3D11_MAPPED_SUBRESOURCE ConstantBufferMSR;
 
-    FMatrix M = FMatrix::Transpose(Component->GetComponentTransformMatrix());
-    FMatrix V = FMatrix::Transpose(ViewMatrix);
-    FMatrix P = FMatrix::Transpose(ProjectionMatrix);
+    FMatrix MVP =
+        FMatrix::Transpose(ProjectionMatrix)
+        * FMatrix::Transpose(ViewMatrix)
+        * FMatrix::Transpose(Component->GetComponentTransformMatrix());
 
+    FVector4 Color = FVector4();
+    EPixelType PixelType = EDefalutColor;
+
+    if (Component->IsA(UPrimitiveComponent::StaticClass()))
+    {
+        UPrimitiveComponent* PrimitiveComp = dynamic_cast<UPrimitiveComponent*>(Component);
+        Color = PrimitiveComp->GetColor();
+        PixelType = PrimitiveComp->GetPixelType();
+    }
+    
     // D3D11_MAP_WRITE_DISCARD는 이전 내용을 무시하고 새로운 데이터로 덮어쓰기 위해 사용
     DeviceContext->Map(ConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &ConstantBufferMSR);
     {
         // 매핑된 메모리를 FConstants 구조체로 캐스팅
         FConstants* Constants = static_cast<FConstants*>(ConstantBufferMSR.pData);
-        Constants->M = M;
-        Constants->V = V;
-        Constants->P = P;
-		Constants->Color = Component->GetColor();
-        Constants->bUseCustomColor = Component->bCustomColor;
+        Constants->MVP = MVP;
+		Constants->Color = Color;
+        Constants->PixelType = PixelType;
     }
     DeviceContext->Unmap(ConstantBuffer, 0);
 }
@@ -823,6 +868,24 @@ void URenderer::InitMatrix()
 	ProjectionMatrix = FMatrix::Identity();
 }
 
+void URenderer::LoadTexture(ETextureResource ETR, std::string TexturePath)
+{
+    //string으로 png파일 셰이더 리소스뷰에 넣어주는 역할
+    //"Texture.png"
+    int size_needed = MultiByteToWideChar(CP_UTF8, 0, &TexturePath[0], (int)TexturePath.size(), NULL, 0);
+    std::wstring wstr(size_needed, 0);
+    MultiByteToWideChar(CP_UTF8, 0, &TexturePath[0], (int)TexturePath.size(), &wstr[0], size_needed);
+    const wchar_t* TexturePathWCHAR = wstr.c_str();
+
+    DirectX::CreateWICTextureFromFile(Device, DeviceContext, TexturePathWCHAR, nullptr, &TextureResources[ETR]);
+}
+
+void URenderer::PrepareTextureResource(ETextureResource ETR)
+{
+    // DeviceContext->PSSetShader(PixelShaders[EPixelShaderType::Texture], nullptr, 0); //필수
+    DeviceContext->PSSetShaderResources(0, 1, &TextureResources[ETR]); //필수
+}
+
 void URenderer::ReleasePickingFrameBuffer()
 {
 	if (PickingFrameBuffer)
@@ -869,25 +932,25 @@ void URenderer::PrepareZIgnore()
     DeviceContext->OMSetDepthStencilState(IgnoreDepthStencilState, 0);
 }
 
-void URenderer::PreparePicking()
-{
-    // 렌더 타겟 바인딩
-    DeviceContext->OMSetRenderTargets(1, &PickingFrameBufferRTV, nullptr);
-    DeviceContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
-    DeviceContext->OMSetDepthStencilState(DepthStencilState, 0);                // DepthStencil 상태 설정. StencilRef: 스텐실 테스트 결과의 레퍼런스
+// void URenderer::PreparePicking()
+// {
+//     // 렌더 타겟 바인딩
+//     DeviceContext->OMSetRenderTargets(1, &PickingFrameBufferRTV, nullptr);
+//     DeviceContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
+//     DeviceContext->OMSetDepthStencilState(DepthStencilState, 0);                // DepthStencil 상태 설정. StencilRef: 스텐실 테스트 결과의 레퍼런스
+//
+//     DeviceContext->ClearRenderTargetView(PickingFrameBufferRTV, PickingClearColor);
+// }
 
-    DeviceContext->ClearRenderTargetView(PickingFrameBufferRTV, PickingClearColor);
-}
-
-void URenderer::PreparePickingShader() const
-{
-    DeviceContext->PSSetShader(PickingPixelShader, nullptr, 0);
-
-    if (ConstantPickingBuffer)
-    {
-        DeviceContext->PSSetConstantBuffers(1, 1, &ConstantPickingBuffer);
-    }
-}
+// void URenderer::PreparePickingShader() const
+// {
+//     DeviceContext->PSSetShader(PickingPixelShader, nullptr, 0);
+//
+//     if (ConstantPickingBuffer)
+//     {
+//         DeviceContext->PSSetConstantBuffers(1, 1, &ConstantPickingBuffer);
+//     }
+// }
 
 void URenderer::UpdateConstantPicking(FVector4 UUIDColor) const
 {
@@ -933,7 +996,7 @@ void URenderer::PrepareMain()
 void URenderer::PrepareMainShader()
 {
     DeviceContext->VSSetShader(SimpleVertexShader, nullptr, 0);
-    DeviceContext->PSSetShader(SimplePixelShader, nullptr, 0);
+    DeviceContext->PSSetShader(PixelShaders[EPixelShaderType::Default], nullptr, 0);
     DeviceContext->IASetInputLayout(SimpleInputLayout);
 }
 
@@ -1220,7 +1283,7 @@ void URenderer::RenderParticle(float DeltaTime)
 
 void URenderer::CreateTexture(HWND hWindow) 
 {
-	Texture = new UTexture();
+	Texture = new LegacyTexture();
     TextureRenderer = new UTextureRenderer();
     TextureRenderer->Create(Device, hWindow);
 	Texture->Create(Device, L"light_bulb_texture.tga");

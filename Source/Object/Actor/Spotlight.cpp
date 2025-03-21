@@ -1,6 +1,6 @@
 ﻿#include "Spotlight.h"
-#include <Object/PrimitiveComponent/UPrimitiveComponent.h>
-#include <Object/PrimitiveComponent/UBoundingBox.h>
+#include "Object/PrimitiveComponent/UPrimitiveComponent.h"
+#include "Object/PrimitiveComponent/UBoundingBox.h"
 #include "Object/PrimitiveComponent/BillBoardComponent.h"
 #include "Object/World/World.h"
 
@@ -10,7 +10,7 @@ ASpotlight::ASpotlight()
 
 	USpotlightComp* SpotlightComp = AddComponent<USpotlightComp>();
 
-	SetActorRelatvieTransform(FTransform());
+	SetActorRelativeTransform(FTransform());
 
 	UBillBoardComponent* BillBoardComponent = AddComponent<UBillBoardComponent>();
 
