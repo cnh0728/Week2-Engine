@@ -6,6 +6,8 @@
 #include "Core/Math/Matrix.h"
 #include "Object/ActorComponent/ActorComponent.h"
 
+#include "Object/ObjectMacros.h"
+
 class USceneComponent : public UActorComponent
 {
 	friend class AActor;

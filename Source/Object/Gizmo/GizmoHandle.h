@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "Object/Actor/Actor.h"
 #include "Object/PrimitiveComponent/UBoundingBox.h"
+#include "Object/ObjectMacros.h"
 
 enum class ESelectedAxis : uint8
 {

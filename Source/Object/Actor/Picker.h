@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "Actor.h"
+#include "Object/ObjectMacros.h"
 
 namespace std {
     template<>

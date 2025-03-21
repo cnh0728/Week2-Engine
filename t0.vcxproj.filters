@@ -377,6 +377,11 @@
     <ClInclude Include="Source\Core\Rendering\Texture\TextureRenderer.h" />
     <ClInclude Include="Source\Object\Actor\Spotlight.h" />
     <ClInclude Include="Source\Object\PrimitiveComponent\BillBoardComponent.h" />
+    <ClInclude Include="Unsupported.h" />
+    <ClInclude Include="ObjectMacros.h">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Object\Cast.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\ThirdParty\DirectXTex\Include\DirectXTex.inl">
