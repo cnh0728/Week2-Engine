@@ -9,6 +9,8 @@
 #include "Static/FEditorManager.h"
 
 #include "Object/Actor/Camera.h"
+#include "Object/Cast.h"
+
 
 APicker::APicker()
 {

@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "Actor.h"
-
+#include "Object/ObjectMacros.h"
 class UUUIDTextComponent;
 
 class ACube : public AActor

@@ -5,7 +5,7 @@
 #include "Core/Math/Transform.h"
 #include "Core/Math/Vector.h"
 #include "Object/Actor/Actor.h"
-
+#include "Object/ObjectMacros.h"
 namespace ECameraProjectionMode
 {
     enum Type : uint8

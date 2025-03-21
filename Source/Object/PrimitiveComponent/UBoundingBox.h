@@ -1,12 +1,12 @@
 ﻿#pragma once
 #include "UPrimitiveComponent.h"
 #include "Core/Math/Box.h"
-
+#include "Object/ObjectMacros.h"
 // Parent Component의 BoundingBox를 계산하고, 렌더합니다.
 class UBoundingBoxComponent :
     public UPrimitiveComponent
 {
-	using Super = USceneComponent;
+	//using Super = USceneComponent;
 	DECLARE_CLASS(UBoundingBoxComponent, UPrimitiveComponent)
 public:
 	UBoundingBoxComponent()

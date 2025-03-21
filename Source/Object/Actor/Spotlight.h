@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Actor.h"
+#include "Object/ObjectMacros.h"
 class ASpotlight : public AActor
 {
 	using Super = AActor;

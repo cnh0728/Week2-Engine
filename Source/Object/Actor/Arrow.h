@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "Object/Actor/Actor.h"
-
+#include "Object/ObjectMacros.h"
 class AArrow : public AActor
 {
 	using Super = AActor;

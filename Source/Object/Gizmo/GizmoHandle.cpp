@@ -7,6 +7,7 @@
 #include "Object/World/World.h"
 #include "Static/FEditorManager.h"
 #include <Core/Input/PlayerInput.h>
+#include "Object/Cast.h"
 
 AGizmoHandle::AGizmoHandle()
 {

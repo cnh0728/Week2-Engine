@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
-
+#include "Object/ObjectMacros.h"
 class URenderer;
 class UText;
 

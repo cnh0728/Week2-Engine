@@ -7,6 +7,7 @@
 #include "Object/ObjectFactory.h"
 #include "Object/USceneComponent.h"
 #include "Object/PrimitiveComponent/TextComponent.h"
+#include "Object/ObjectMacros.h"
 
 class UWorld;
 
