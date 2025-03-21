@@ -182,6 +182,13 @@ void UEngine::Shutdown()
     Renderer->Release();
     
     ConfigManager::Get().SaveAllConfigs();
+
+#ifdef _DEBUG
+    World->SaveWorld(*World->DebugDefaultSceneName);
+#else
+    World->SaveWorld(*World->DefaultSceneName)
+#endif
+
     ShutdownWindow();
 }
 
@@ -239,7 +246,13 @@ void UEngine::InitWorld()
 
     FEditorManager::Get().SetCamera(World->SpawnActor<ACamera>());
     FEditorManager::Get().SetWorldGrid(World->SpawnActor<AWorldGrid>());
+
     ConfigManager::Get().LoadAllConfigs();
+#ifdef _DEBUG
+    World->LoadWorld(*World->DebugDefaultSceneName);
+#else
+    World->LoadWorld(*World->ReleaseDefaultSceneName);
+#endif
 
     //// Test
     // World->SpawnActor<AArrow>();

@@ -2,13 +2,15 @@
 
 #include <string>
 
+#include "Core/Container/String.h"
 #include "Core/HAL/PlatformType.h"
+#include "Core/Math/Plane.h"
 #include "Core/Math/Vector.h"
 
 struct UObjectInfo
 {
     FVector Location; 
-    FVector Rotation;
+    FQuat Rotation;
     FVector Scale;
     std::string ObjectType;
 
@@ -28,5 +30,5 @@ class JsonSaveHelper
 public:
     // SceneName - 확장자 제외
     static UWorldInfo* LoadScene(std::string SceneName);
-    static void SaveScene(const UWorldInfo& WorldInfo);
+    static void SaveScene(const UWorldInfo& WorldInfo, const std::string& SceneName);
 };

@@ -5,19 +5,22 @@
 #include "Core/EngineStatics.h"
 #include "Debug/DebugConsole.h"
 #include "SimpleJSON/Json.hpp"
+#include "Core/Container/String.h"
 
 using json::JSON;
 
 // SceneName - 확장자 제외
 UWorldInfo* JsonSaveHelper::LoadScene(std::string SceneName)
 {
-    std::ifstream Input(SceneName + ".scene");
+    std::string SceneDir = "Scene/";
+    std::ifstream Input(SceneDir + SceneName + ".scene");
 
     if (!Input.is_open())
     {
         UE_LOG("Scene file not found");
         return nullptr;
     }
+    
     std::string Contents;
     Input.seekg( 0, std::ios::end );
     Contents.reserve( Input.tellg() );
@@ -50,7 +53,7 @@ UWorldInfo* JsonSaveHelper::LoadScene(std::string SceneName)
         JSON Rotation = Json["Actors"][UUID]["Rotation"];
         JSON Scale = Json["Actors"][UUID]["Scale"];
         ObjectInfo->Location = FVector(Location[0].ToFloat(), Location[1].ToFloat(), Location[2].ToFloat());
-        ObjectInfo->Rotation = FVector(Rotation[0].ToFloat(), Rotation[1].ToFloat(), Rotation[2].ToFloat());
+        ObjectInfo->Rotation = FQuat(Rotation[0].ToFloat(), Rotation[1].ToFloat(), Rotation[2].ToFloat(), Rotation[3].ToFloat());
         ObjectInfo->Scale = FVector(Scale[0].ToFloat(), Scale[1].ToFloat(), Scale[2].ToFloat());
 
         ObjectInfo->ObjectType = Json["Actors"][UUID]["Type"].ToString();
@@ -60,16 +63,18 @@ UWorldInfo* JsonSaveHelper::LoadScene(std::string SceneName)
     return WorldInfo;
 }
 
-void JsonSaveHelper::SaveScene(const UWorldInfo& WorldInfo)
+void JsonSaveHelper::SaveScene(const UWorldInfo& WorldInfo, const std::string& SceneName)
 {
-    if (WorldInfo.SceneName.empty())
+    if (SceneName.empty())
         return;
     JSON Json;
+
+    std::string SceneDir = "Scene/";
     
     Json["Version"] = WorldInfo.Version;
     Json["NextUUID"] = UEngineStatics::NextUUID;
     Json["ActorCount"] = WorldInfo.ActorCount;
-    Json["SceneName"] = WorldInfo.SceneName;
+    Json["SceneName"] = SceneName;
 
     for (uint32 i = 0; i < WorldInfo.ActorCount; i++)
     {
@@ -77,12 +82,12 @@ void JsonSaveHelper::SaveScene(const UWorldInfo& WorldInfo)
         std::string Uuid = std::to_string(ObjectInfo->UUID);
         
         Json["Actors"][Uuid]["Location"].append(ObjectInfo->Location.X, ObjectInfo->Location.Y, ObjectInfo->Location.Z);
-        Json["Actors"][Uuid]["Rotation"].append(ObjectInfo->Rotation.X, ObjectInfo->Rotation.Y, ObjectInfo->Rotation.Z);
+        Json["Actors"][Uuid]["Rotation"].append(ObjectInfo->Rotation.X, ObjectInfo->Rotation.Y, ObjectInfo->Rotation.Z, ObjectInfo->Rotation.W);
         Json["Actors"][Uuid]["Scale"].append(ObjectInfo->Scale.X, ObjectInfo->Scale.Y, ObjectInfo->Scale.Z);
         Json["Actors"][Uuid]["Type"] = ObjectInfo->ObjectType;
     }
-     
-    std::ofstream Output(WorldInfo.SceneName + ".scene");
+    
+    std::ofstream Output(SceneDir + SceneName + ".scene");
     
     if (Output.is_open())
     {

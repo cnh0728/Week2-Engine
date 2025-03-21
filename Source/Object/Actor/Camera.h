@@ -49,7 +49,13 @@ public:
     float GetFar() const;
     float GetCameraSensitivity() const;
 
-        
+    FTransform GetSpawnTransform()
+    {
+        FTransform SpawnTransform = FTransform();
+        SpawnTransform.SetPosition(FVector(-5, 0, 1));
+        return SpawnTransform;
+    }
+    
     FVector GetForward() const
     {
         return GetActorRelativeTransform().GetForward();
