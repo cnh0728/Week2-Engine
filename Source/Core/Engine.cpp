@@ -12,6 +12,7 @@
 #include "Object/Actor/WorldGrid.h"
 #include "Static/FEditorManager.h"
 #include"Data/ConfigManager.h"
+#include "../FSlateApplication.h"
 
 class AArrow;
 class APicker;
@@ -87,7 +88,7 @@ void UEngine::Initialize(
     InitializedScreenHeight = ScreenHeight;
     
     ui.Initialize(WindowHandle, *Renderer, ScreenWidth, ScreenHeight);
-    
+    FSlateApplication::Get().Initialize();
 	UE_LOG("Engine Initialized!");
 }
 
@@ -155,6 +156,7 @@ void UEngine::Run()
         APlayerInput::Get().TickPlayerInput(); //잘못된 위치. 위에 달린 주석대로 처리해야 정상 플레이어 액터 내에서만 처리해야할것같다.
         
         // TickPlayerInput
+        FSlateApplication::Get().Tick();
         APlayerController::Get().ProcessPlayerInput(DeltaTime);
         
 		// ui Update
@@ -188,7 +190,7 @@ void UEngine::Shutdown()
 #else
     World->SaveWorld(*World->DefaultSceneName)
 #endif
-
+    FSlateApplication::Get().ShutDown();
     ShutdownWindow();
 }
 

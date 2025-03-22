@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "SWindow.h"
+
 class SSplitter :
     public SWindow
 {
@@ -8,6 +9,7 @@ public:
     SWindow* SideLT;
     SWindow* SideRB;
 };
+
 
 class SSplitter2x2 : public SWindow
 {

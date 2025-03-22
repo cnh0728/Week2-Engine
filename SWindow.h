@@ -5,7 +5,7 @@ class SWindow
 public:
 	SWindow();
 	SWindow(FRect _rect);
-	~SWindow();
+	virtual ~SWindow();
 	FRect Rect;
 	virtual bool isHover(FVector2 coord) const;
 private:

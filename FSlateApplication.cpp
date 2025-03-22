@@ -1,6 +1,6 @@
 ﻿#include "FSlateApplication.h"
 #include "Source/Core/Rendering/URenderer.h"
-
+#include "Source/Static/FEditorManager.h"
 void FSlateApplication::Initialize()
 {
 	URenderer* Renderer = UEngine::Get().GetRenderer();
@@ -15,18 +15,18 @@ void FSlateApplication::Initialize()
 	windows.Add(windowLT);
 
 	SWindow* windowRT = new SWindow();
-	windowLT->Rect.Min = FVector2(halfWidth, 0);
-	windowLT->Rect.Max = FVector2(halfWidth*2, halfHeight);
+	windowRT->Rect.Min = FVector2(halfWidth, 0);
+	windowRT->Rect.Max = FVector2(halfWidth*2, halfHeight);
 	windows.Add(windowRT);
 
 	SWindow* windowLB = new SWindow();
-	windowLT->Rect.Min = FVector2(0, halfHeight);
-	windowLT->Rect.Max = FVector2(halfWidth, halfHeight*2);
+	windowLB->Rect.Min = FVector2(0, halfHeight);
+	windowLB->Rect.Max = FVector2(halfWidth, halfHeight*2);
 	windows.Add(windowLB);
 
 	SWindow* windowRB = new SWindow();
-	windowLT->Rect.Min = FVector2(halfWidth, halfHeight);
-	windowLT->Rect.Max = FVector2(halfWidth*2, halfHeight*2);
+	windowRB->Rect.Min = FVector2(halfWidth, halfHeight);
+	windowRB->Rect.Max = FVector2(halfWidth*2, halfHeight*2);
 	windows.Add(windowRB);
 	
 	SSplitter2x2* sspliter2by2 = new SSplitter2x2();
@@ -47,11 +47,16 @@ void FSlateApplication::Tick()
 
 void FSlateApplication::ShutDown()
 {
-	for (int i=0;i<windows.Len();i++)
+	for (int i=0;i<windows.Num();i++)
 	{
 		SWindow* window = windows[i];
 		delete window;
 	}
+}
+
+FRect FSlateApplication::GetCurrentWindow()
+{
+	return currentWindow->Rect;
 }
 
 void FSlateApplication::ProcessMouseButtonDownEvent()
@@ -69,9 +74,12 @@ void FSlateApplication::ProcessIsHover()
 	GetCursorPos(&pt);
 	ScreenToClient(UEngine::Get().GetWindowHandle(), &pt);
 	FVector2 mouse(pt.x, pt.y);
-
-	for (int i = 0; i < windows.Len(); i++)
+	for (int i = 0; i < windows.Num(); i++)
 	{
-		windows[i]->isHover(mouse);
+		if (windows[i]->isHover(mouse))
+		{
+			currentWindow = windows[i];
+			FEditorManager::Get().SetCameraIndex(i);
+		}
 	}
 }

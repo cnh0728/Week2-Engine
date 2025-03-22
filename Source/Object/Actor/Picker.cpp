@@ -9,7 +9,7 @@
 #include "Static/FEditorManager.h"
 
 #include "Object/Actor/Camera.h"
-
+#include "../FSlateApplication.h"
 APicker::APicker()
 {
     DontDestroy();
@@ -266,6 +266,8 @@ void APicker::UpdateRayInfo()
     GetClientRect(UEngine::Get().GetWindowHandle(), &Rect);
     int ScreenWidth = Rect.right - Rect.left;
     int ScreenHeight = Rect.bottom - Rect.top;
+
+    FRect windowRect = FSlateApplication::Get().GetCurrentWindow();
 
     // 커서 위치를 NDC로 변경
     float PosX = 2.0f * pt.x / ScreenWidth - 1.0f;

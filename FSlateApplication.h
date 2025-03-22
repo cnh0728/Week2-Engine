@@ -10,11 +10,13 @@ public:
 	void Initialize();
 	void Tick();
 	void ShutDown();
+	FRect GetCurrentWindow();
 private:
 	void ProcessMouseButtonDownEvent();
 	void ProcessKeyDownEvent();
 	void ProcessIsHover();
 
 	TArray<SWindow*> windows;
+	SWindow* currentWindow;
 };
 
