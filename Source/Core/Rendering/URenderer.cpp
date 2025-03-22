@@ -6,6 +6,7 @@
 #include "Object/Actor/WorldGrid.h"
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Static/FEditorManager.h"
+#include "../FSlateApplication.h"
 
 void VertexBufferInfo::AddVertices(TArray<FVertexSimple> InVertices, TArray<uint32_t> InIndices)
 {
@@ -64,6 +65,7 @@ void URenderer::Release()
 	ReleaseDeviceAndSwapChain();
 	ReleaseAllVertexBuffer();
 	ReleaseAlphaBlendingState();
+	ReleaseMultiViewport();
 }
 
 void URenderer::CreateShader()
@@ -850,6 +852,39 @@ void URenderer::CreateMultipleViewports()
 	// 오른쪽 하단
 	viewports[3] = { halfWidth, halfHeight, halfWidth, halfHeight, 0.0f, 1.0f };
 
+	FRect rectLT;
+	rectLT.Min = FVector2(0, 0);
+	rectLT.Max = FVector2(halfWidth, halfHeight);
+	FViewport* viewportLT = new FViewport();
+	viewportLT->SetSWindow(FSlateApplication::Get().SNEW(rectLT));
+	viewportLT->UpdateSWindowSize();
+	MultiFViewports.Add(viewportLT);
+
+	FRect rectRT;
+	rectRT.Min = FVector2(halfWidth, 0);
+	rectRT.Max = FVector2(fullWidth, halfHeight);
+	FViewport* viewportRT = new FViewport();
+	viewportRT->SetSWindow(FSlateApplication::Get().SNEW(rectRT));
+	viewportRT->UpdateSWindowSize();
+	MultiFViewports.Add(viewportRT);
+
+	FRect rectLB;
+	rectLB.Min = FVector2(0, halfHeight);
+	rectLB.Max = FVector2(halfWidth, fullHeight);
+	FViewport* viewportLB = new FViewport();
+	viewportLB->SetSWindow(FSlateApplication::Get().SNEW(rectLB));
+	viewportLB->UpdateSWindowSize();
+	MultiFViewports.Add(viewportLB);
+
+	FRect rectRB;
+	rectRB.Min = FVector2(halfWidth, halfHeight);
+	rectRB.Max = FVector2(fullWidth, fullHeight);
+	FViewport* viewportRB = new FViewport();
+	viewportRB->SetSWindow(FSlateApplication::Get().SNEW(rectRB));
+	viewportRB->UpdateSWindowSize();
+	MultiFViewports.Add(viewportRB);
+
+
 	MulitViewports.Add(viewports[0]);
 	MulitViewports.Add(viewports[1]);
 	MulitViewports.Add(viewports[2]);
@@ -859,70 +894,17 @@ void URenderer::CreateMultipleViewports()
 	//DeviceContext->RSSetViewports(4, viewports);
 }
 
-
-void URenderer::UpdateMultiViewProjectionMatrix(int index, ACamera* Camera)
-{
-	float AspectRatio = UEngine::Get().GetScreenRatio();
-
-	float FOV = FMath::DegreesToRadians(Camera->GetFieldOfView());
-	float Near = Camera->GetNear();
-	float Far = Camera->GetFar();
-
-	D3D11_VIEWPORT currentViewport = MulitViewports[index];
-	AspectRatio = currentViewport.Width / currentViewport.Height;
-	if (Camera->ProjectionMode == ECameraProjectionMode::Perspective)
-	{
-		ProjectionMatrix = FMatrix::PerspectiveFovLH(FOV, AspectRatio, Near, Far);
-	}
-	else if (Camera->ProjectionMode == ECameraProjectionMode::Perspective)
-	{
-		ProjectionMatrix = FMatrix::PerspectiveFovLH(FOV, AspectRatio, Near, Far);
-
-		// TODO: 추가 필요.
-		// ProjectionMatrix = FMatrix::OrthoForLH(FOV, AspectRatio, Near, Far);
-	}
-
-	FMatrix ortho = FMatrix::OrthoLH(FOV, AspectRatio, Near, Far);
-	if (index == 0) {
-		FVector CameraPosition = FVector(0, 0, 10); // 높은 위치
-		FVector TargetPosition = FVector(0, 0, 0);   // 원점
-		FVector UpVector = FVector(0, 1, 0);         // Y 축을 위로
-
-		ViewMatrix = FMatrix::LookAtLH(CameraPosition, TargetPosition, UpVector);
-		ProjectionMatrix = ortho;
-	}
-	else if (index == 1)
-	{
-		FVector CameraPosition = FVector(10, 0, 0); // 높은 위치
-		FVector TargetPosition = FVector(0, 0, 0);   // 원점
-		FVector UpVector = FVector(0, 0, 1);         // Y 축을 위로
-
-		ViewMatrix = FMatrix::LookAtLH(CameraPosition, TargetPosition, UpVector);
-		ProjectionMatrix = ortho;
-	}
-	else if (index == 2)
-	{
-		FVector CameraPosition = FVector(0, 0, 10); // 높은 위치
-		FVector TargetPosition = FVector(0, 0, 0);   // 원점
-		FVector UpVector = FVector(1, 0, 0);         // Y 축을 위로
-
-		ViewMatrix = FMatrix::LookAtLH(CameraPosition, TargetPosition, UpVector);
-		ProjectionMatrix = ortho;
-	}
-	else if (index == 3)
-	{
-		FVector CameraPosition = FVector(-10, 0, 0); // 높은 위치
-		FVector TargetPosition = FVector(0, 0, 0);   // 원점
-		FVector UpVector = FVector(0, 0, 1);         // Y 축을 위로
-
-		ViewMatrix = FMatrix::LookAtLH(CameraPosition, TargetPosition, UpVector);
-		ProjectionMatrix = ortho;
-	}
-}
-
 void URenderer::SetMultiViewport(int index)
 {
 	DeviceContext->RSSetViewports(1, &MulitViewports[index]);
+}
+
+void URenderer::ReleaseMultiViewport()
+{
+	for (int i = 0; i < MultiFViewports.Num(); i++)
+	{
+		delete MultiFViewports[i];
+	}
 }
 
 

@@ -11,6 +11,7 @@ public:
 	void Tick();
 	void ShutDown();
 	FRect GetCurrentWindow();
+	SWindow* SNEW(FRect _rect);
 private:
 	void ProcessMouseButtonDownEvent();
 	void ProcessKeyDownEvent();

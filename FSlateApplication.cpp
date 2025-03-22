@@ -63,6 +63,14 @@ FRect FSlateApplication::GetCurrentWindow()
 	return resultRect;
 }
 
+SWindow* FSlateApplication::SNEW(FRect _rect)
+{
+	SWindow* window = new SWindow();
+	window->Rect = _rect;
+	windows.Add(window);
+	return window;
+}
+
 void FSlateApplication::ProcessMouseButtonDownEvent()
 {
 }
