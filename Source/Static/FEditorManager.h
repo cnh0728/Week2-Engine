@@ -44,5 +44,4 @@ private:
     AWorldGrid* WorldGrid = nullptr;
     FEngineShowFlags EngineShowFlags;
 
-    
 };

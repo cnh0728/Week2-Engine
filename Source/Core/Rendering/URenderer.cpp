@@ -1356,6 +1356,17 @@ void URenderer::RenderTexture(const FVector& InPos)
 	TurnZBufferOn();
 }
 
+FVector2 URenderer::GetSwapChainSize()
+{
+	DXGI_SWAP_CHAIN_DESC swapChainDesc;
+	SwapChain->GetDesc(&swapChainDesc);
+
+	float fullWidth = static_cast<float>(swapChainDesc.BufferDesc.Width);
+	float fullHeight = static_cast<float>(swapChainDesc.BufferDesc.Height);
+
+	return FVector2(fullWidth,fullHeight);
+}
+
 
 void URenderer::SetViewMode(EViewModeIndex viewMode)
 {

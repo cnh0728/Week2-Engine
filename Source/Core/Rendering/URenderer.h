@@ -225,6 +225,8 @@ public:
 
 	void RenderTexture(const FVector& InPos);
 
+	FVector2 GetSwapChainSize();
+
 	void UpdateMultiViewProjectionMatrix(int index, ACamera* Camera);
 
 	void SetMultiViewport(int index);

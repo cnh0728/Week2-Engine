@@ -84,6 +84,8 @@ void UWorld::Render(float DeltaTime)
 	
 
 	//FEditorManager::Get().SetCameraIndex(0);
+
+	FEditorManager::Get().SetCameraIndex(1);
 	for (int i = 0; i < 4; i++)
 	{
 		Renderer->SetMultiViewport(i);
@@ -95,7 +97,7 @@ void UWorld::Render(float DeltaTime)
 		Renderer->PrepareShader();
 		RenderMainTexture(*Renderer, DeltaTime);
 	}
-	FEditorManager::Get().SetCameraIndex(0);
+	FEditorManager::Get().SetCameraIndex(1);
 	// DisplayPickingTexture(*Renderer);
 
 }

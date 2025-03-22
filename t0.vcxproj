@@ -172,6 +172,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="FSlateApplication.cpp" />
+    <ClCompile Include="FViewport.cpp" />
+    <ClCompile Include="Source\Core\Math\FRect.cpp" />
     <ClCompile Include="Source\Object\Class\Class.cpp" />
     <ClCompile Include="Source\Core\Math\Box.cpp" />
     <ClCompile Include="Source\Core\Container\Name.cpp" />
@@ -224,8 +227,13 @@
     <ClCompile Include="Source\Object\World\World.cpp" />
     <ClCompile Include="Source\Object\Actor\Sphere.cpp" />
     <ClCompile Include="Source\Object\Actor\Spotlight.cpp" />
+    <ClCompile Include="SSplitter.cpp" />
+    <ClCompile Include="SWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="FSlateApplication.h" />
+    <ClInclude Include="FViewport.h" />
+    <ClInclude Include="Source\Core\Math\FRect.h" />
     <ClInclude Include="Source\Object\Class\Class.h" />
     <ClInclude Include="Source\Core\Math\Box.h" />
     <ClInclude Include="Source\Core\Container\Name.h" />
@@ -237,6 +245,8 @@
     <ClInclude Include="Source\Core\Rendering\Text\FontShader.h" />
     <ClInclude Include="Source\Core\Rendering\Text\Text.h" />
     <ClInclude Include="Source\Object\Actor\Spotlight.h" />
+    <ClInclude Include="SSplitter.h" />
+    <ClInclude Include="SWindow.h" />
     <ClInclude Include="Unsupported.h" />
   </ItemGroup>
   <ItemGroup>
