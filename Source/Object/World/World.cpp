@@ -71,9 +71,6 @@ void UWorld::Render(float DeltaTime)
 		return;
 	}
 
-	ACamera* cam = FEditorManager::Get().GetCamera();
-	Renderer->UpdateViewMatrix(cam->GetActorRelativeTransform());
-	Renderer->UpdateProjectionMatrix(cam);
 
 	// Renderer->UpdateConstant(TODO);
 	// if (APlayerInput::Get().GetMouseDown(false))
@@ -84,7 +81,12 @@ void UWorld::Render(float DeltaTime)
 
 	for (int i = 0; i < 4; i++)
 	{
+		ACamera* cam = FEditorManager::Get().GetCamera();
+		Renderer->UpdateViewMatrix(cam->GetActorRelativeTransform());
+		Renderer->UpdateProjectionMatrix(cam);
+
 		Renderer->SetMultiViewport(i);
+		//Renderer->UpdateMultiViewProjectionMatrix(i, cam);
 		Renderer->PrepareShader();
 		RenderMainTexture(*Renderer, DeltaTime);
 	}

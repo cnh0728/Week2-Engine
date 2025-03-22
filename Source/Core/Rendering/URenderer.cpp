@@ -881,6 +881,43 @@ void URenderer::UpdateMultiViewProjectionMatrix(int index, ACamera* Camera)
 		// TODO: 추가 필요.
 		// ProjectionMatrix = FMatrix::OrthoForLH(FOV, AspectRatio, Near, Far);
 	}
+
+	FMatrix ortho = FMatrix::OrthoLH(FOV, AspectRatio, Near, Far);
+	if (index == 0) {
+		FVector CameraPosition = FVector(0, 0, 10); // 높은 위치
+		FVector TargetPosition = FVector(0, 0, 0);   // 원점
+		FVector UpVector = FVector(0, 1, 0);         // Y 축을 위로
+
+		ViewMatrix = FMatrix::LookAtLH(CameraPosition, TargetPosition, UpVector);
+		ProjectionMatrix = ortho;
+	}
+	else if (index == 1)
+	{
+		FVector CameraPosition = FVector(10, 0, 0); // 높은 위치
+		FVector TargetPosition = FVector(0, 0, 0);   // 원점
+		FVector UpVector = FVector(0, 0, 1);         // Y 축을 위로
+
+		ViewMatrix = FMatrix::LookAtLH(CameraPosition, TargetPosition, UpVector);
+		ProjectionMatrix = ortho;
+	}
+	else if (index == 2)
+	{
+		FVector CameraPosition = FVector(0, 0, 10); // 높은 위치
+		FVector TargetPosition = FVector(0, 0, 0);   // 원점
+		FVector UpVector = FVector(1, 0, 0);         // Y 축을 위로
+
+		ViewMatrix = FMatrix::LookAtLH(CameraPosition, TargetPosition, UpVector);
+		ProjectionMatrix = ortho;
+	}
+	else if (index == 3)
+	{
+		FVector CameraPosition = FVector(-10, 0, 0); // 높은 위치
+		FVector TargetPosition = FVector(0, 0, 0);   // 원점
+		FVector UpVector = FVector(0, 0, 1);         // Y 축을 위로
+
+		ViewMatrix = FMatrix::LookAtLH(CameraPosition, TargetPosition, UpVector);
+		ProjectionMatrix = ortho;
+	}
 }
 
 void URenderer::SetMultiViewport(int index)
