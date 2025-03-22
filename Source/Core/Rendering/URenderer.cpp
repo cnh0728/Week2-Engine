@@ -2,7 +2,7 @@
 #include <d3dcompiler.h>
 #include "Core/Math/Transform.h"
 #include <Object/Actor/Camera.h>
-
+#include "Static/ResourceManager.h"
 #include "Object/Actor/WorldGrid.h"
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Static/FEditorManager.h"
@@ -49,7 +49,7 @@ void URenderer::Create(HWND hWindow)
 	CreateAlphaBlendingState();
 
     InitMatrix();
-    LoadTextures();
+   // LoadTextures();
 	CreateParticle(hWindow);
     CreateTexture(hWindow);
 }
@@ -65,7 +65,7 @@ void URenderer::Release()
     ReleaseDepthStencilBuffer();
     ReleaseDeviceAndSwapChain();
     ReleaseSampleState();
-    ReleaseTextureResources();
+   // ReleaseTextureResources();
     ReleaseAllVertexBuffer();
     ReleaseAlphaBlendingState();
 }
@@ -376,22 +376,7 @@ void URenderer::CreateVertexBuffer(EPrimitiveType VertexType, VertexBufferInfo B
     SetVertexBufferInfo(VertexType, NewBufferInfo);
 }
 
-void URenderer::LoadTextures()
-{
-    std::string TextureDir = "Textures/";
-    
-    LoadTexture(ETextureResource::cat, TextureDir + "cat.png");
-    LoadTexture(ETextureResource::earth, TextureDir + "earth.png");
-}
 
-void URenderer::ReleaseTextureResources()
-{
-    for (auto& [Key, Texture] : TextureResources)
-    {
-        Texture->Release();
-    }
-    TextureResources.Empty();
-}
 
 void URenderer::CreateBatchVertexBuffer(D3D11_PRIMITIVE_TOPOLOGY Topology, VertexBufferInfo BufferInfo)
 {
@@ -868,23 +853,17 @@ void URenderer::InitMatrix()
 	ProjectionMatrix = FMatrix::Identity();
 }
 
-void URenderer::LoadTexture(ETextureResource ETR, std::string TexturePath)
-{
-    //string으로 png파일 셰이더 리소스뷰에 넣어주는 역할
-    //"Texture.png"
-    int size_needed = MultiByteToWideChar(CP_UTF8, 0, &TexturePath[0], (int)TexturePath.size(), NULL, 0);
-    std::wstring wstr(size_needed, 0);
-    MultiByteToWideChar(CP_UTF8, 0, &TexturePath[0], (int)TexturePath.size(), &wstr[0], size_needed);
-    const wchar_t* TexturePathWCHAR = wstr.c_str();
 
-    DirectX::CreateWICTextureFromFile(Device, DeviceContext, TexturePathWCHAR, nullptr, &TextureResources[ETR]);
-}
 
 void URenderer::PrepareTextureResource(ETextureResource ETR)
 {
-    // DeviceContext->PSSetShader(PixelShaders[EPixelShaderType::Texture], nullptr, 0); //필수
-    DeviceContext->PSSetShaderResources(0, 1, &TextureResources[ETR]); //필수
+    ID3D11ShaderResourceView* SRV = UResourceManager::Get().GetTexture(ETR);
+    if (SRV)
+    {
+        DeviceContext->PSSetShaderResources(0, 1, &SRV);
+    }
 }
+
 
 void URenderer::ReleasePickingFrameBuffer()
 {

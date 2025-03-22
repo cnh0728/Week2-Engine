@@ -168,7 +168,7 @@ void UI::RenderMemoryUsage()
 
 void UI::RenderPrimitiveSelection()
 {
-    const char* PrimitiveItems[] = {"Sphere", "Cube", "Cylinder", "Cone", "Spotlight"};
+    const char* PrimitiveItems[] = {"Sphere", "Cube", "Cylinder", "Cone", "Spotlight", "Texture"};
 
     ImGui::Combo("Primitive", reinterpret_cast<int*>(&CurrentPrimitiveItem), PrimitiveItems, ARRAYSIZE(PrimitiveItems));
 

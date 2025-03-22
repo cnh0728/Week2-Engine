@@ -12,6 +12,8 @@
 class UObject;
 class UWorld;
 
+
+
 enum class EScreenMode : uint8
 {
     Windowed,    // 창 모드
@@ -91,6 +93,11 @@ private:
 
 private:
 	std::unique_ptr<URenderer> Renderer;
+
+    std::vector<std::pair<ETextureResource, std::string>> TexturesToLoad = {
+    {ETextureResource::cat, "Textures/cat.png"},
+    {ETextureResource::earth, "Textures/earth.png"},
+    };
 
 private:
 	UI ui;

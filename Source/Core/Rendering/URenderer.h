@@ -167,8 +167,7 @@ public:
 
 	void CreateVertexBuffer(EPrimitiveType VertexType, VertexBufferInfo BufferInfo);
 
-	void LoadTextures();
-    void ReleaseTextureResources();
+
 
 #pragma region batch
     void RenderBatch();
@@ -188,7 +187,6 @@ public:
 
 #pragma region Texture
 	//텍스쳐 리소스
-	void LoadTexture(ETextureResource ETR, std::string TexturePath);
     void PrepareTextureResource(ETextureResource ETR);
 
 #pragma endregion
@@ -296,7 +294,6 @@ protected:
     // Shader를 렌더링할 때 사용되는 변수들
     ID3D11VertexShader* SimpleVertexShader = nullptr;       // Vertex 데이터를 처리하는 Vertex 셰이더
 	TMap<EPixelShaderType, ID3D11PixelShader*> PixelShaders;
-	TMap<ETextureResource, ID3D11ShaderResourceView*> TextureResources;
 	ID3D11ShaderResourceView* Tempsrc;
 	
     ID3D11InputLayout* SimpleInputLayout = nullptr;         // Vertex 셰이더 입력 레이아웃 정의

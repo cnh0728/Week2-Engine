@@ -64,9 +64,6 @@
     <ClCompile Include="Source\Core\Rendering\Text\Text.cpp">
       <Filter>Core\Rendering\Text</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Core\Rendering\Texture.cpp">
-      <Filter>Core\Rendering</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Core\Rendering\UI.cpp">
       <Filter>Core\Rendering</Filter>
     </ClCompile>
@@ -170,6 +167,11 @@
     <ClCompile Include="Source\Core\Rendering\Texture\TextureRenderer.cpp" />
     <ClCompile Include="Source\Object\PrimitiveComponent\BillBoardComponent.cpp" />
     <ClCompile Include="Source\Object\Actor\Spotlight.cpp" />
+    <ClCompile Include="Source\Object\Actor\Texture.cpp" />
+    <ClCompile Include="Source\Core\Rendering\LegacyTexture.cpp" />
+    <ClCompile Include="Source\Static\ResourceManager.cpp">
+      <Filter>Static</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Core\AbstractClass\Singleton.h">
@@ -264,9 +266,6 @@
     </ClInclude>
     <ClInclude Include="Source\Core\Rendering\Text\Text.h">
       <Filter>Core\Rendering\Text</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Core\Rendering\Texture.h">
-      <Filter>Core\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Source\Core\Rendering\UI.h">
       <Filter>Core\Rendering</Filter>
@@ -378,10 +377,14 @@
     <ClInclude Include="Source\Object\Actor\Spotlight.h" />
     <ClInclude Include="Source\Object\PrimitiveComponent\BillBoardComponent.h" />
     <ClInclude Include="Unsupported.h" />
-    <ClInclude Include="ObjectMacros.h">
-      <Filter>Object</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Object\Cast.h" />
+    <ClInclude Include="Source\Object\Actor\Texture.h" />
+    <ClInclude Include="Source\Core\Rendering\LegacyTexture.h" />
+    <ClInclude Include="Source\Static\Enum.h" />
+    <ClInclude Include="Source\Static\ResourceManager.h">
+      <Filter>Static</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Object\ObjectMacros.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\ThirdParty\DirectXTex\Include\DirectXTex.inl">
