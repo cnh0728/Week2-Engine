@@ -56,7 +56,11 @@ void FSlateApplication::ShutDown()
 
 FRect FSlateApplication::GetCurrentWindow()
 {
-	return currentWindow->Rect;
+	FRect resultRect;
+	resultRect.Max = FVector2(0, 0);
+	resultRect.Min = FVector2(0, 0);
+	if (currentWindow) resultRect = currentWindow->Rect;
+	return resultRect;
 }
 
 void FSlateApplication::ProcessMouseButtonDownEvent()

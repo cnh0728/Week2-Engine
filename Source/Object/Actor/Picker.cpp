@@ -159,6 +159,12 @@ void APicker::Tick(float DeltaTime)
         int ScreenWidth = Rect.right - Rect.left;
         int ScreenHeight = Rect.bottom - Rect.top;
 
+        FRect windowRect = FSlateApplication::Get().GetCurrentWindow();
+        ScreenWidth = windowRect.Max.X - windowRect.Min.X;
+        ScreenHeight = windowRect.Max.Y - windowRect.Min.Y;
+        pt.x -= windowRect.Min.X;
+        pt.y -= windowRect.Min.Y;
+
         // 커서 위치를 NDC로 변경
         float PosX = 2.0f * pt.x / ScreenWidth - 1.0f;
         float PosY = -2.0f * pt.y / ScreenHeight + 1.0f;
@@ -268,6 +274,10 @@ void APicker::UpdateRayInfo()
     int ScreenHeight = Rect.bottom - Rect.top;
 
     FRect windowRect = FSlateApplication::Get().GetCurrentWindow();
+    ScreenWidth = windowRect.Max.X - windowRect.Min.X;
+    ScreenHeight = windowRect.Max.Y - windowRect.Min.Y;
+    pt.x -= windowRect.Min.X;
+    pt.y -= windowRect.Min.Y;
 
     // 커서 위치를 NDC로 변경
     float PosX = 2.0f * pt.x / ScreenWidth - 1.0f;
