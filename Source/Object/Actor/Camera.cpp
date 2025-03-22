@@ -38,6 +38,38 @@ void ACamera::SetCameraSensitivity(float sensitivity)
     this->CameraSensitivity = clampedSensitivity;
 }
 
+void ACamera::SetCameraViewMode(ECameraViewMode::Type cameraViewMode)
+{
+    FVector Position = GetActorRelativeTransform().GetPosition();
+    FQuat Rotation;
+    switch (cameraViewMode)
+    {
+    case ECameraViewMode::Type::Front:
+        Rotation = FQuat::AxisAngleToQuaternion(FVector(0, 0, 1), 180);
+        break;
+    case ECameraViewMode::Type::Back:
+        Rotation = FQuat::AxisAngleToQuaternion(FVector(0, 0, 1), 0);
+        break;
+    case ECameraViewMode::Type::Top:
+        Rotation = FQuat::AxisAngleToQuaternion(FVector(0, 1, 0), 90);
+        break;
+    case ECameraViewMode::Type::Bottom:
+        Rotation = FQuat::AxisAngleToQuaternion(FVector(0, 1, 0), -90);
+        break;
+    case ECameraViewMode::Type::Left:
+        Rotation = FQuat::AxisAngleToQuaternion(FVector(0, 0, 1), 90);
+        break;
+    case ECameraViewMode::Type::Right:
+        Rotation = FQuat::AxisAngleToQuaternion(FVector(0, 0, 1), -90);
+        break;
+    default:
+        break;
+    }        
+    FTransform frontTransform = GetActorRelativeTransform();
+    frontTransform.SetRotation(Rotation);
+    SetActorRelatvieTransform(frontTransform);
+}
+
 float ACamera::GetFieldOfView() const
 {
     return  FieldOfView;

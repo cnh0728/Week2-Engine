@@ -15,6 +15,19 @@ namespace ECameraProjectionMode
     };
 }
 
+namespace ECameraViewMode
+{
+    enum Type : uint8
+    {
+        Front,
+        Back,
+        Top,
+        Bottom,
+        Left,
+        Right
+    };
+}
+
 class ACamera : public AActor
 {
 
@@ -43,7 +56,7 @@ public:
     void SetFar(float Far);
     void SetNear(float Near);
     void SetCameraSensitivity(float sensitivity);
-    
+    void SetCameraViewMode(ECameraViewMode::Type cameraViewMode);
     float GetFieldOfView() const;
     float GetNear() const;
     float GetFar() const;

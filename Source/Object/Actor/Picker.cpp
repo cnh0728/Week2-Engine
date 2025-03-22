@@ -266,7 +266,7 @@ void APicker::UpdateRayInfo()
     GetClientRect(UEngine::Get().GetWindowHandle(), &Rect);
     int ScreenWidth = Rect.right - Rect.left;
     int ScreenHeight = Rect.bottom - Rect.top;
-			 
+
     // 커서 위치를 NDC로 변경
     float PosX = 2.0f * pt.x / ScreenWidth - 1.0f;
     float PosY = -2.0f * pt.y / ScreenHeight + 1.0f;

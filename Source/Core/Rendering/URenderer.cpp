@@ -1126,9 +1126,9 @@ void URenderer::UpdateProjectionMatrix(ACamera* Camera)
 	{
 		ProjectionMatrix = FMatrix::PerspectiveFovLH(FOV, AspectRatio, Near, Far);
 	}
-	else if (Camera->ProjectionMode == ECameraProjectionMode::Perspective)
+	else if (Camera->ProjectionMode == ECameraProjectionMode::Orthographic)
 	{
-		ProjectionMatrix = FMatrix::PerspectiveFovLH(FOV, AspectRatio, Near, Far);
+		ProjectionMatrix = FMatrix::OrthoLH(FOV, AspectRatio, Near, Far);
 
 		// TODO: 추가 필요.
 		// ProjectionMatrix = FMatrix::OrthoForLH(FOV, AspectRatio, Near, Far);

@@ -88,3 +88,13 @@ void FEditorManager::SetCamera(ACamera* NewCamera)
 {
     Camera = NewCamera;
 }
+
+void FEditorManager::SetCameraIndex(int index)
+{
+	Camera = MultiCamera[index];
+}
+
+void FEditorManager::AddCamera(ACamera* NewMultiCamera)
+{
+	MultiCamera.Add(NewMultiCamera);
+}

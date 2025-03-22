@@ -243,8 +243,39 @@ void UEngine::InitRenderer()
 void UEngine::InitWorld()
 {
     World = FObjectFactory::ConstructObject<UWorld>();
+    
+    
+    ACamera* mainCamera = World->SpawnActor<ACamera>();
+    FEditorManager::Get().AddCamera(mainCamera);
+    FEditorManager::Get().SetCamera(mainCamera);        //메인 카메라 설정
 
-    FEditorManager::Get().SetCamera(World->SpawnActor<ACamera>());
+    float d = 10.0f;
+
+    ACamera* frontCamera = World->SpawnActor<ACamera>();
+    frontCamera->ProjectionMode = ECameraProjectionMode::Type::Orthographic;
+    frontCamera->SetCameraViewMode(ECameraViewMode::Type::Back);
+    FTransform frontTransform = frontCamera->GetActorRelativeTransform();
+    frontTransform.SetPosition(FVector(-d,0,0));
+    frontCamera->SetActorRelatvieTransform(frontTransform);
+    FEditorManager::Get().AddCamera(frontCamera);
+
+
+    ACamera* topCamera = World->SpawnActor<ACamera>();
+    topCamera->ProjectionMode = ECameraProjectionMode::Type::Orthographic;
+    topCamera->SetCameraViewMode(ECameraViewMode::Type::Top);
+    FTransform topTransform = topCamera->GetActorRelativeTransform();
+    topTransform.SetPosition(FVector(0, 0, d));
+    topCamera->SetActorRelatvieTransform(topTransform);
+    FEditorManager::Get().AddCamera(topCamera);
+
+    ACamera* rightCamera = World->SpawnActor<ACamera>();
+    rightCamera->ProjectionMode = ECameraProjectionMode::Type::Orthographic;
+    rightCamera->SetCameraViewMode(ECameraViewMode::Type::Right);
+    FTransform rightTransform = rightCamera->GetActorRelativeTransform();
+    rightTransform.SetPosition(FVector(0, d, 0));
+    rightCamera->SetActorRelatvieTransform(rightTransform);
+    FEditorManager::Get().AddCamera(rightCamera);
+
     FEditorManager::Get().SetWorldGrid(World->SpawnActor<AWorldGrid>());
 
     ConfigManager::Get().LoadAllConfigs();

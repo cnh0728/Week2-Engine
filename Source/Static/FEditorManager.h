@@ -20,6 +20,8 @@ public:
     inline ACamera* GetCamera() const {return Camera;}
 
     void SetCamera(ACamera* NewCamera);
+    void SetCameraIndex(int index);
+    void AddCamera(ACamera* NewMultiCamera);
 
     AGizmoHandle* GetGizmoHandle() const {return GizmoHandle;}
 
@@ -37,6 +39,7 @@ private:
     UPrimitiveComponent* SelectedComponent = nullptr;
     
     ACamera* Camera = nullptr;
+    TArray<ACamera*> MultiCamera;
     AGizmoHandle* GizmoHandle = nullptr;
     AWorldGrid* WorldGrid = nullptr;
     FEngineShowFlags EngineShowFlags;
