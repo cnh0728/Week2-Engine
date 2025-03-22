@@ -12,6 +12,7 @@
 #include "Object/Actor/WorldGrid.h"
 #include "Static/FEditorManager.h"
 #include"Data/ConfigManager.h"
+#include"Static/ResourceManager.h"
 
 class AArrow;
 class APicker;
@@ -80,8 +81,13 @@ void UEngine::Initialize(
 
     InitWindow(InScreenWidth, InScreenWidth);
     InitRenderer();
-
     InitWorld();
+    UResourceManager::Get().Initialize(Renderer->GetDevice(),Renderer->GetDeviceContext());
+    for (auto& [type, path] : TexturesToLoad)
+    {
+        UResourceManager::Get().LoadTexture(type, path);
+    }
+
 
     InitializedScreenWidth = ScreenWidth;
     InitializedScreenHeight = ScreenHeight;
@@ -188,7 +194,7 @@ void UEngine::Shutdown()
 #else
     World->SaveWorld(*World->DefaultSceneName)
 #endif
-
+        UResourceManager::Get().Shutdown();
     ShutdownWindow();
 }
 

@@ -212,6 +212,7 @@
     <ClCompile Include="Source\Object\PrimitiveComponent\BillBoardComponent.cpp" />
     <ClCompile Include="Source\Object\PrimitiveComponent\TextComponent.cpp" />
     <ClCompile Include="Source\Object\PrimitiveComponent\UBoundingBox.cpp" />
+    <ClCompile Include="Source\Static\ResourceManager.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui_demo.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui_draw.cpp" />
@@ -230,7 +231,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Object\Actor\Texture.h" />
-    <ClInclude Include="ObjectMacros.h" />
     <ClInclude Include="Source\Object\Cast.h" />
     <ClInclude Include="Source\Object\Class\Class.h" />
     <ClInclude Include="Source\Core\Math\Box.h" />
@@ -243,7 +243,9 @@
     <ClInclude Include="Source\Core\Rendering\Text\FontShader.h" />
     <ClInclude Include="Source\Core\Rendering\Text\Text.h" />
     <ClInclude Include="Source\Object\Actor\Spotlight.h" />
+    <ClInclude Include="Source\Object\ObjectMacros.h" />
     <ClInclude Include="Source\Static\Enum.h" />
+    <ClInclude Include="Source\Static\ResourceManager.h" />
     <ClInclude Include="Unsupported.h" />
   </ItemGroup>
   <ItemGroup>
