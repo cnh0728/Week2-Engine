@@ -1128,7 +1128,8 @@ void URenderer::UpdateProjectionMatrix(ACamera* Camera)
 	}
 	else if (Camera->ProjectionMode == ECameraProjectionMode::Orthographic)
 	{
-		ProjectionMatrix = FMatrix::OrthoLH(FOV, AspectRatio, Near, Far);
+		ProjectionMatrix = FMatrix::OrthoLH(UEngine::Get().GetScreenWidth(),
+			UEngine::Get().GetScreenHeight(), Near, Far);
 
 		// TODO: 추가 필요.
 		// ProjectionMatrix = FMatrix::OrthoForLH(FOV, AspectRatio, Near, Far);
