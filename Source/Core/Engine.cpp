@@ -12,6 +12,7 @@
 #include "Object/Actor/WorldGrid.h"
 #include "Static/FEditorManager.h"
 #include"Data/ConfigManager.h"
+#include "Data/ObjLoader.h"
 #include"Static/ResourceManager.h"
 
 class AArrow;
@@ -66,6 +67,14 @@ LRESULT UEngine::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     return 0;
 }
 
+void UEngine::InitTextures()
+{
+    for (auto& [type, path] : TexturesToLoad)
+    {
+        UResourceManager::Get().LoadTexture(type, path);
+    }
+}
+
 void UEngine::Initialize(
     HINSTANCE hInstance, const WCHAR* InWindowTitle, const WCHAR* InWindowClassName, int InScreenWidth,
     int InScreenHeight,
@@ -83,12 +92,8 @@ void UEngine::Initialize(
     InitRenderer();
     InitWorld();
     UResourceManager::Get().Initialize(Renderer->GetDevice(),Renderer->GetDeviceContext());
-    for (auto& [type, path] : TexturesToLoad)
-    {
-        UResourceManager::Get().LoadTexture(type, path);
-    }
-
-
+    InitTextures();
+    
     InitializedScreenWidth = ScreenWidth;
     InitializedScreenHeight = ScreenHeight;
     
@@ -262,6 +267,7 @@ void UEngine::InitWorld()
     World->LoadWorld(*World->ReleaseDefaultSceneName);
 #endif
 
+    ObjLoader::Get().LoadFromFile("cube.obj");
     
     //// Test
     // World->SpawnActor<AArrow>();

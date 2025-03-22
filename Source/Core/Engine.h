@@ -26,6 +26,7 @@ class UEngine : public TSingleton<UEngine>
 public:
     // 각종 윈도우 관련 메시지(이벤트)를 처리하는 함수
     static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+    void InitTextures();
 
     /**
      * Application을 초기화 합니다.
@@ -95,8 +96,9 @@ private:
 	std::unique_ptr<URenderer> Renderer;
 
     std::vector<std::pair<ETextureResource, std::string>> TexturesToLoad = {
-    {ETextureResource::cat, "Textures/cat.png"},
-    {ETextureResource::earth, "Textures/earth.png"},
+    {ECat, "Textures/cat.png"},
+    {EEarth, "Textures/earth.png"},
+    {ECustom, "Textures/dice.png"},
     };
 
 private:

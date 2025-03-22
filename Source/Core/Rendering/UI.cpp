@@ -10,7 +10,6 @@
 #include "Debug/DebugConsole.h"
 #include "ImGui/imgui_internal.h"
 #include "Object/Actor/Actor.h"
-#include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Object/Actor/Sphere.h"
 #include "Object/Actor/Cube.h"
 #include "Object/Actor/Arrow.h"
@@ -23,7 +22,9 @@
 #include "Object/World/World.h"
 #include "Object/Gizmo/GizmoHandle.h"
 #include "Core/Rendering/Particle/Particle.h"
+#include "Object/Actor/Custom.h"
 #include "Object/Gizmo/Axis.h"
+#include "Object/PrimitiveComponent/TextureComponent.h"
 #include "Static/Enum.h"
 
 void UI::Initialize(HWND hWnd, URenderer& Renderer, UINT ScreenWidth, UINT ScreenHeight)
@@ -168,7 +169,7 @@ void UI::RenderMemoryUsage()
 
 void UI::RenderPrimitiveSelection()
 {
-    const char* PrimitiveItems[] = {"Sphere", "Cube", "Cylinder", "Cone", "Spotlight", "Texture"};
+    const char* PrimitiveItems[] = {"Sphere", "Cube", "Cylinder", "Cone", "Spotlight", "Texture", "Custom"};
 
     ImGui::Combo("Primitive", reinterpret_cast<int*>(&CurrentPrimitiveItem), PrimitiveItems, ARRAYSIZE(PrimitiveItems));
 
@@ -181,24 +182,27 @@ void UI::RenderPrimitiveSelection()
         {
             switch (CurrentPrimitiveItem)
             {
-            case Sphere:
+            case ESpawnSphere:
                 World->SpawnActor<ASphere>();
                 break;
-            case Cube:
+            case ESpawnCube:
                 World->SpawnActor<ACube>();
                 break;
-            case Cylinder:
+            case ESpawnCylinder:
                 World->SpawnActor<ACylinder>();
                 break;
-            case Cone:
+            case ESpawnCone:
                 World->SpawnActor<ACone>();
                 break;
-            case Spotlight:
+            case ESpawnSpotlight:
                 World->SpawnActor<ASpotlight>();
                 break;
-            case Texture:
+            case ESpawnTexture:
                 World->SpawnActor<ATexture>();
                     break;
+            case ESpawnCustom:
+                World->SpawnActor<ACustom>();
+                break;
             default:
                 break;
             }
@@ -429,9 +433,9 @@ void UI::RenderPropertyWindow()
             }
         }
 
-        if (selectedComponent->IsA(UTextureComp::StaticClass()))
+        if (selectedComponent->IsA(UTextureComponent::StaticClass()))
         {
-            UTextureComp* TextureComponent = dynamic_cast<UTextureComp*>(selectedComponent);
+            UTextureComponent* TextureComponent = dynamic_cast<UTextureComponent*>(selectedComponent);
             const char* TextureItems[] = {"cat", "earth"};
             
             if (ImGui::Combo("Texture", reinterpret_cast<int*>(&CurrentTextureItem), TextureItems, ARRAYSIZE(TextureItems)))

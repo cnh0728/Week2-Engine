@@ -42,7 +42,7 @@ void UPrimitiveComponent::Render()
 	// 		bUseVertexColor = true;
 	// 	}
 	// }
-	Renderer->RenderPrimtivie(this);
+	Renderer->RenderPrimtive(this);
 }
 
 void UPrimitiveComponent::RegisterComponentWithWorld(UWorld* World)

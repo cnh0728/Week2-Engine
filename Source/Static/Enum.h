@@ -9,8 +9,9 @@ enum class EViewModeIndex : uint32
 
 enum ETextureResource : uint32
 {
-    cat = 0,
-    earth = 1,
+    ECat = 0,
+    EEarth = 1,
+    ECustom = 10,
 };
 
 enum EPixelType : uint32

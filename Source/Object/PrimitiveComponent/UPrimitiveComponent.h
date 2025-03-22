@@ -67,7 +67,7 @@ public:
 private:
 	FVector4 Color = FVector4::One();
 	EPixelType PixelType = EDefalutColor;
-	ETextureResource TextureResource = cat;
+	ETextureResource TextureResource = ECat;
 };
 
 class UCubeComp : public UPrimitiveComponent
@@ -208,23 +208,5 @@ public:
 	EPrimitiveType GetType()override
 	{
 		return EPrimitiveType::EPT_Ring;
-	}
-};
-
-class UTextureComp : public UPrimitiveComponent
-{
-	using Super = UPrimitiveComponent;
-	DECLARE_CLASS(UTextureComp, UPrimitiveComponent)
-
-public:
-	UTextureComp()
-	{
-		bIsDefaultRendered = true;
-		bCanPick = true;
-	}
-	virtual ~UTextureComp() = default;
-	EPrimitiveType GetType()override
-	{
-		return EPrimitiveType::EPT_Texture;
 	}
 };

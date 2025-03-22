@@ -11,7 +11,6 @@
 #include "Object/Actor/Cube.h"
 #include "Object/Actor/Cylinder.h"
 #include "Object/Actor/Sphere.h"
-#include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Static/FEditorManager.h"
 #include "Object/PrimitiveComponent/TextComponent.h"
 #include <Object/PrimitiveComponent/BillBoardComponent.h>
@@ -19,6 +18,8 @@
 #include "Object/Actor/Texture.h"
 #include "Object/Cast.h"
 #include "Debug/DebugConsole.h"
+#include "Object/PrimitiveComponent/CustomComponent.h"
+#include "Object/PrimitiveComponent/TextureComponent.h"
 
 void UWorld::BeginPlay()
 {
@@ -130,10 +131,9 @@ void UWorld::RenderMainTexture(URenderer& Renderer, float DeltaTime)
 		}
 		{
 			//분기해주고 로드텍스쳐까지
-			if (RenderComponent->IsA(UTextureComp::StaticClass()))
+			if (RenderComponent->IsA(UTextureComponent::StaticClass()) || RenderComponent->IsA(UCustomComponent::StaticClass()))
 			{
-				UTextureComp* TextureComponent = dynamic_cast<UTextureComp*>(RenderComponent);
-				Renderer.PrepareTextureResource(TextureComponent->GetTextureResource());
+				Renderer.PrepareTextureResource(RenderComponent->GetTextureResource());
 			}
 			RenderComponent->Render();
 		}
@@ -288,7 +288,10 @@ void UWorld::LoadWorld(const char* SceneName)
 			Actor = Camera;
 		}else
 		{
-			static_cast<void*>(ActorFactoryMap[ObjectInfo->ObjectType]());
+			if (ActorFactoryMap.contains(ObjectInfo->ObjectType))
+			{
+				static_cast<void*>(ActorFactoryMap[ObjectInfo->ObjectType]());
+			}
 		}
 		if (Actor)
 		{

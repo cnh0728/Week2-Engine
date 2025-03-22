@@ -1,13 +1,14 @@
 ﻿#include "Texture.h"
-#include "Object/PrimitiveComponent/UPrimitiveComponent.h"
+
+#include "Object/PrimitiveComponent/TextureComponent.h"
 
 ATexture::ATexture()
 {
     bCanEverTick = true;
     
-    UTextureComp* TextureComp = AddComponent<UTextureComp>();
+    UTextureComponent* TextureComp = AddComponent<UTextureComponent>();
     TextureComp->SetupAttachment(RootComponent);
-    TextureComp->SetTextureResource(ETextureResource::cat);
+    TextureComp->SetTextureResource(ECat);
 }
 
 void ATexture::BeginPlay()

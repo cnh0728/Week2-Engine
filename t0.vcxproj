@@ -81,6 +81,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)Binaries\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)Intermediate\Build\$(Platform)\$(Configuration)\</IntDir>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)Binaries\$(Platform)\$(Configuration)\</OutDir>
@@ -135,7 +136,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <AdditionalIncludeDirectories>$(ProjectDir)Source;$(ProjectDir)Source\ThirdParty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Source;$(ProjectDir)Source\ThirdParty;%(AdditionalIncludeDirectories);"$(ProjectDir)inlude"</AdditionalIncludeDirectories>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -172,6 +173,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Data\ObjLoader.cpp" />
+    <ClCompile Include="Source\Object\Actor\Custom.cpp" />
     <ClCompile Include="Source\Object\Actor\Texture.cpp" />
     <ClCompile Include="Source\Object\Class\Class.cpp" />
     <ClCompile Include="Source\Core\Math\Box.cpp" />
@@ -210,7 +213,9 @@
     <ClCompile Include="Source\Core\Math\Vector.cpp" />
     <ClCompile Include="Source\Object\ObjectFactory.cpp" />
     <ClCompile Include="Source\Object\PrimitiveComponent\BillBoardComponent.cpp" />
+    <ClCompile Include="Source\Object\PrimitiveComponent\CustomComponent.cpp" />
     <ClCompile Include="Source\Object\PrimitiveComponent\TextComponent.cpp" />
+    <ClCompile Include="Source\Object\PrimitiveComponent\TextureComponent.cpp" />
     <ClCompile Include="Source\Object\PrimitiveComponent\UBoundingBox.cpp" />
     <ClCompile Include="Source\Static\ResourceManager.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui.cpp" />
@@ -230,6 +235,8 @@
     <ClCompile Include="Source\Object\Actor\Spotlight.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Data\ObjLoader.h" />
+    <ClInclude Include="Source\Object\Actor\Custom.h" />
     <ClInclude Include="Source\Object\Actor\Texture.h" />
     <ClInclude Include="Source\Object\Cast.h" />
     <ClInclude Include="Source\Object\Class\Class.h" />
@@ -244,6 +251,8 @@
     <ClInclude Include="Source\Core\Rendering\Text\Text.h" />
     <ClInclude Include="Source\Object\Actor\Spotlight.h" />
     <ClInclude Include="Source\Object\ObjectMacros.h" />
+    <ClInclude Include="Source\Object\PrimitiveComponent\CustomComponent.h" />
+    <ClInclude Include="Source\Object\PrimitiveComponent\TextureComponent.h" />
     <ClInclude Include="Source\Static\Enum.h" />
     <ClInclude Include="Source\Static\ResourceManager.h" />
     <ClInclude Include="Unsupported.h" />

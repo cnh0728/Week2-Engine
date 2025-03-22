@@ -12,20 +12,20 @@ class URenderer;
 
 enum SpawnType
 {
-	Sphere,
-	Cube,
-	Cylinder,
-	Cone,
-	Spotlight,
-	Texture,
-	Max
+	ESpawnSphere,
+	ESpawnCube,
+	ESpawnCylinder,
+	ESpawnCone,
+	ESpawnSpotlight,
+	ESpawnTexture,
+	ESpawnCustom,
 };
 
 class UI
 {
 public:
-    SpawnType CurrentPrimitiveItem = Sphere;
-	ETextureResource CurrentTextureItem = cat;
+    SpawnType CurrentPrimitiveItem = ESpawnSphere;
+	ETextureResource CurrentTextureItem = ECat;
 	
     int NumOfSpawn = 0;
 	bool bIsInitialized = false;

@@ -318,7 +318,7 @@ void URenderer::RenderBatch()
     }
 }
 
-void URenderer::CreateVertexBuffer(EPrimitiveType VertexType, VertexBufferInfo BufferInfo)
+void URenderer::CreateVertexBuffer(uint32_t VertexType, VertexBufferInfo BufferInfo)
 {
     if (VertexBuffers.Contains(VertexType))
     {
@@ -328,7 +328,7 @@ void URenderer::CreateVertexBuffer(EPrimitiveType VertexType, VertexBufferInfo B
     TArray<FVertexSimple> Vertices = BufferInfo.GetVertices();
     FVertexSimple* RawVertices = Vertices.GetData();
     // D3D11_PRIMITIVE_TOPOLOGY Topology = BufferInfo.GetTopology();
-    D3D11_PRIMITIVE_TOPOLOGY Topology = UPrimitiveComponent::GetTopology(VertexType);
+    D3D11_PRIMITIVE_TOPOLOGY Topology = UPrimitiveComponent::GetTopology(static_cast<EPrimitiveType>(VertexType));
     uint32_t VertexByteWidth = BufferInfo.GetVertexCount() * sizeof(FVertexSimple);
 
     if (VertexByteWidth == 0)
@@ -522,7 +522,7 @@ void URenderer::ReleaseVertexBuffer(D3D11_PRIMITIVE_TOPOLOGY Topology)
     }
 }
 
-void URenderer::RenderPrimtivie(UPrimitiveComponent* Component)
+void URenderer::RenderPrimtive(UPrimitiveComponent* Component)
 {
     if (VertexBuffers.Contains(Component->GetType()) == false)
     {
