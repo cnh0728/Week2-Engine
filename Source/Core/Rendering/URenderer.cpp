@@ -852,6 +852,7 @@ void URenderer::CreateMultipleViewports()
 	// 오른쪽 하단
 	viewports[3] = { halfWidth, halfHeight, halfWidth, halfHeight, 0.0f, 1.0f };
 
+
 	FRect rectLT;
 	rectLT.Min = FVector2(0, 0);
 	rectLT.Max = FVector2(halfWidth, halfHeight);

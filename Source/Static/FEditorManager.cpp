@@ -98,3 +98,8 @@ void FEditorManager::AddCamera(ACamera* NewMultiCamera)
 {
 	MultiCamera.Add(NewMultiCamera);
 }
+
+void FEditorManager::AddOrthoCamera(ACamera* NewMultiCamera)
+{
+	OrthogonalCamera.Add(NewMultiCamera);
+}

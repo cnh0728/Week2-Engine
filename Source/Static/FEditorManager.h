@@ -22,6 +22,7 @@ public:
     void SetCamera(ACamera* NewCamera);
     void SetCameraIndex(int index);
     void AddCamera(ACamera* NewMultiCamera);
+    void AddOrthoCamera(ACamera* NewMultiCamera);
 
     AGizmoHandle* GetGizmoHandle() const {return GizmoHandle;}
 
@@ -40,6 +41,7 @@ private:
     
     ACamera* Camera = nullptr;
     TArray<ACamera*> MultiCamera;
+    TArray<ACamera*> OrthogonalCamera;
     AGizmoHandle* GizmoHandle = nullptr;
     AWorldGrid* WorldGrid = nullptr;
     FEngineShowFlags EngineShowFlags;

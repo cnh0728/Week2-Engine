@@ -3,6 +3,7 @@
 #include "Source/Static/FEditorManager.h"
 void FSlateApplication::Initialize()
 {
+	/*
 	URenderer* Renderer = UEngine::Get().GetRenderer();
 	FVector2 windowSize = Renderer->GetSwapChainSize();
 
@@ -36,6 +37,8 @@ void FSlateApplication::Initialize()
 	sspliter2by2->SideRB = windowRB;
 
 	windows.Add(sspliter2by2);
+	
+	*/
 }
 
 void FSlateApplication::Tick()

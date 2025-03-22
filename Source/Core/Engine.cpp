@@ -253,15 +253,17 @@ void UEngine::InitWorld()
 
     float d = 10.0f;
 
+    //Front
     ACamera* frontCamera = World->SpawnActor<ACamera>();
     frontCamera->ProjectionMode = ECameraProjectionMode::Type::Perspective;
-    frontCamera->SetCameraViewMode(ECameraViewMode::Type::Back);
+    frontCamera->SetCameraViewMode(ECameraViewMode::Type::Front);
     FTransform frontTransform = frontCamera->GetActorRelativeTransform();
-    frontTransform.SetPosition(FVector(-d,0,0));
+    frontTransform.SetPosition(FVector(d,0,0));
     frontCamera->SetActorRelatvieTransform(frontTransform);
     FEditorManager::Get().AddCamera(frontCamera);
+    FEditorManager::Get().AddOrthoCamera(frontCamera);
 
-
+    //Top
     ACamera* topCamera = World->SpawnActor<ACamera>();
     topCamera->ProjectionMode = ECameraProjectionMode::Type::Perspective;
     topCamera->SetCameraViewMode(ECameraViewMode::Type::Top);
@@ -269,7 +271,9 @@ void UEngine::InitWorld()
     topTransform.SetPosition(FVector(0, 0, d));
     topCamera->SetActorRelatvieTransform(topTransform);
     FEditorManager::Get().AddCamera(topCamera);
+    FEditorManager::Get().AddOrthoCamera(topCamera);
 
+    //Right
     ACamera* rightCamera = World->SpawnActor<ACamera>();
     rightCamera->ProjectionMode = ECameraProjectionMode::Type::Perspective;
     rightCamera->SetCameraViewMode(ECameraViewMode::Type::Right);
@@ -277,6 +281,39 @@ void UEngine::InitWorld()
     rightTransform.SetPosition(FVector(0, d, 0));
     rightCamera->SetActorRelatvieTransform(rightTransform);
     FEditorManager::Get().AddCamera(rightCamera);
+    FEditorManager::Get().AddOrthoCamera(rightCamera);
+
+
+    //Back
+    ACamera* backCamera = World->SpawnActor<ACamera>();
+    backCamera->ProjectionMode = ECameraProjectionMode::Type::Perspective;
+    backCamera->SetCameraViewMode(ECameraViewMode::Type::Back);
+    FTransform backTransform = backCamera->GetActorRelativeTransform();
+    backTransform.SetPosition(FVector(-d, 0, 0));
+    backCamera->SetActorRelatvieTransform(backTransform);
+    //FEditorManager::Get().AddCamera(backCamera);
+    FEditorManager::Get().AddOrthoCamera(backCamera);
+
+    //Bottom
+    ACamera* bottomCamera = World->SpawnActor<ACamera>();
+    bottomCamera->ProjectionMode = ECameraProjectionMode::Type::Perspective;
+    bottomCamera->SetCameraViewMode(ECameraViewMode::Type::Top);
+    FTransform bottomTransform = bottomCamera->GetActorRelativeTransform();
+    bottomTransform.SetPosition(FVector(0, 0, -d));
+    bottomCamera->SetActorRelatvieTransform(bottomTransform);
+    //FEditorManager::Get().AddCamera(bottomCamera);
+    FEditorManager::Get().AddOrthoCamera(bottomCamera);
+
+    //Left
+    ACamera* leftCamera = World->SpawnActor<ACamera>();
+    leftCamera->ProjectionMode = ECameraProjectionMode::Type::Perspective;
+    leftCamera->SetCameraViewMode(ECameraViewMode::Type::Right);
+    FTransform leftTransform = leftCamera->GetActorRelativeTransform();
+    leftTransform.SetPosition(FVector(0, -d, 0));
+    leftCamera->SetActorRelatvieTransform(leftTransform);
+    //FEditorManager::Get().AddCamera(leftCamera);
+    FEditorManager::Get().AddOrthoCamera(leftCamera);
+
 
     FEditorManager::Get().SetWorldGrid(World->SpawnActor<AWorldGrid>());
 
