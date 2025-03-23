@@ -173,6 +173,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Data\MtlLoader.cpp" />
     <ClCompile Include="Source\Data\ObjLoader.cpp" />
     <ClCompile Include="Source\Object\Actor\Custom.cpp" />
     <ClCompile Include="Source\Object\Actor\Texture.cpp" />
@@ -235,6 +236,8 @@
     <ClCompile Include="Source\Object\Actor\Spotlight.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Data\MaterialData.h" />
+    <ClInclude Include="Source\Data\MtlLoader.h" />
     <ClInclude Include="Source\Data\ObjLoader.h" />
     <ClInclude Include="Source\Object\Actor\Custom.h" />
     <ClInclude Include="Source\Object\Actor\Texture.h" />

@@ -2,6 +2,7 @@
 #include "MtlLoader.h"
 #include <iostream>
 #include "Static/ResourceManager.h"
+#include "Data//MaterialData.h"
 
 bool MtlLoader::LoadMtlFile(const std::string& mtlPath) {
     std::ifstream file(mtlPath);
