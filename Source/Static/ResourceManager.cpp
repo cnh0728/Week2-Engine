@@ -1,7 +1,7 @@
 ﻿// ResourceManager.cpp
 #include "ResourceManager.h"
 #include "directxtk/WICTextureLoader.h"
-
+#include "Data/MtlLoader.h"
 
 void UResourceManager::Initialize(ID3D11Device* InDevice, ID3D11DeviceContext* InContext)
 {
@@ -53,3 +53,6 @@ void UResourceManager::ReleaseAllTextures()
     }
     TextureResources.Empty();
 }
+
+const FMaterialData* UResourceManager::GetMaterial(const std::string& name) const {
+    return Materials.Find(name);
