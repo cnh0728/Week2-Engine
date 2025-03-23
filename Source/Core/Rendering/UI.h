@@ -23,6 +23,8 @@ enum SpawnType
 
 class UI
 {
+    bool bShowUI = true; 
+
 public:
     SpawnType CurrentPrimitiveItem = ESpawnSphere;
 	ETextureResource CurrentTextureItem = ECat;
