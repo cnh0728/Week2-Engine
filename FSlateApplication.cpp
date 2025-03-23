@@ -2,44 +2,12 @@
 #include "Source/Core/Rendering/URenderer.h"
 #include "Source/Static/FEditorManager.h"
 #include "../FViewport.h"
+#include "Core/Engine.h"
+#include "Source/Core/Input/PlayerInput.h"
+
 void FSlateApplication::Initialize()
 {
-	/*
-	URenderer* Renderer = UEngine::Get().GetRenderer();
-	FVector2 windowSize = Renderer->GetSwapChainSize();
 
-	float halfWidth = windowSize.X / 2.0f;
-	float halfHeight = windowSize.Y / 2.0f;
-
-	SWindow* windowLT = new SWindow();
-	windowLT->Rect.Min = FVector2(0, 0);
-	windowLT->Rect.Max = FVector2(halfWidth, halfHeight);
-	windows.Add(windowLT);
-
-	SWindow* windowRT = new SWindow();
-	windowRT->Rect.Min = FVector2(halfWidth, 0);
-	windowRT->Rect.Max = FVector2(halfWidth*2, halfHeight);
-	windows.Add(windowRT);
-
-	SWindow* windowLB = new SWindow();
-	windowLB->Rect.Min = FVector2(0, halfHeight);
-	windowLB->Rect.Max = FVector2(halfWidth, halfHeight*2);
-	windows.Add(windowLB);
-
-	SWindow* windowRB = new SWindow();
-	windowRB->Rect.Min = FVector2(halfWidth, halfHeight);
-	windowRB->Rect.Max = FVector2(halfWidth*2, halfHeight*2);
-	windows.Add(windowRB);
-	
-	SSplitter2x2* sspliter2by2 = new SSplitter2x2();
-	sspliter2by2->SideLT = windowLT;
-	sspliter2by2->SideRT = windowRT;
-	sspliter2by2->SideLB = windowLB;
-	sspliter2by2->SideRB = windowRB;
-
-	windows.Add(sspliter2by2);
-	
-	*/
 }
 
 void FSlateApplication::Tick()
@@ -77,8 +45,53 @@ FViewport* FSlateApplication::SNEW(FRect _rect)
 	return viewport;
 }
 
+void FSlateApplication::Add(SWindow* _window)
+{
+	windows.Add(_window);
+}
+
 void FSlateApplication::ProcessMouseButtonDownEvent()
 {
+	APlayerInput& Input = APlayerInput::Get();
+	FVector MousePrePos = APlayerInput::Get().GetMousePrePos();
+	FVector MousePos = APlayerInput::Get().GetMousePos();
+	FVector DeltaPos = MousePos - MousePrePos;
+
+	FVector2 MousePos2D(MousePos.X, MousePos.Y);
+	FVector2 MousePrePos2D(MousePrePos.X, MousePrePos.Y);
+	FVector2 DeltaPos2D(DeltaPos.X, DeltaPos.Y);
+	//UE_LOG("MousePrePos %f %f", MousePrePos.X, MousePrePos.Y);
+	//UE_LOG("MousePos %f %f", MousePos.X, MousePos.Y);
+	//UE_LOG("DeltaPos2D %f %f", DeltaPos2D.X, DeltaPos2D.Y);
+
+	if (Input.GetMouseDown(false))
+	{
+		for (int i = 0; i < windows.Num(); i++)
+		{
+			if (windows[i]->isClicked(MousePos2D))
+			{
+				clickedWindow = windows[i];
+			}
+		}
+	}
+	
+	if (Input.IsPressedMouse(false))
+	{
+		if (clickedWindow)
+		{
+			clickedWindow->OnMouseDrag(DeltaPos2D);
+		}
+	}
+	else
+	{
+		if (clickedWindow)
+		{
+			clickedWindow->OnMouseUp();
+			clickedWindow = nullptr;
+		}
+	}
+
+
 }
 
 void FSlateApplication::ProcessKeyDownEvent()
@@ -96,9 +109,14 @@ void FSlateApplication::ProcessIsHover()
 	{
 		if (windows[i]->isHover(mouse))
 		{
+			SWindow* prevWindow = currentWindow;
 			currentWindow = windows[i];
+
+			if (currentWindow != prevWindow)
+			{
+				currentWindow->OnFocus();
+			}
 			//FEditorManager::Get().SetCameraIndex(i);
-			windows[i]->AttachViewportCamera();
 		}
 	}
 }

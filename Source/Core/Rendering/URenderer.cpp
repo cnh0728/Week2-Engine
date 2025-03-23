@@ -844,34 +844,77 @@ void URenderer::CreateMultipleViewports()
 	FRect rectLT;
 	rectLT.Min = FVector2(0, 0);
 	rectLT.Max = FVector2(halfWidth, halfHeight);
+	SWindow* windowLT = CreateViewportWithWindow(rectLT, ECameraViewMode::Type::Front);
+	/*
 	FViewport* viewportLT = FSlateApplication::Get().SNEW(rectLT);
 	viewportLT->SetCamera(ECameraViewMode::Type::Front);
 	MultiFViewports.Add(viewportLT);
+	*/
 
 	FRect rectRT;
 	rectRT.Min = FVector2(halfWidth, 0);
 	rectRT.Max = FVector2(fullWidth, halfHeight);
+	SWindow* windowRT = CreateViewportWithWindow(rectRT, ECameraViewMode::Type::Top);
+	/*
 	FViewport* viewportRT = FSlateApplication::Get().SNEW(rectRT);
 	viewportRT->SetCamera(ECameraViewMode::Type::Top);
 	MultiFViewports.Add(viewportRT);
+	*/
 
 	FRect rectLB;
 	rectLB.Min = FVector2(0, halfHeight);
 	rectLB.Max = FVector2(halfWidth, fullHeight);
+	SWindow* windowLB = CreateViewportWithWindow(rectLB, ECameraViewMode::Type::Back);
+
+	/*
 	FViewport* viewportLB = FSlateApplication::Get().SNEW(rectLB);
 	viewportLB->SetCamera(ECameraViewMode::Type::Back);
 	MultiFViewports.Add(viewportLB);
+	*/
 
 	FRect rectRB;
 	rectRB.Min = FVector2(halfWidth, halfHeight);
 	rectRB.Max = FVector2(fullWidth, fullHeight);
-	FViewport* viewportRB = FSlateApplication::Get().SNEW(rectRB);
+	SWindow* windowRB = CreateViewportWithWindow(rectRB, ECameraViewMode::Type::Bottom);
+	/*
+	FViewport* viewportRB = new FViewport(rectRB);
 	viewportRB->SetCamera(ECameraViewMode::Type::Bottom);
 	MultiFViewports.Add(viewportRB);
+
+	SWindow* windowRB = new SWindow(rectRB);
+	windowRB->SetISlateViewport(viewportRB);
+	FSlateApplication::Get().Add(windowRB);
+	FViewport* viewportRB = FSlateApplication::Get().SNEW(rectRB);
+	*/
+
+	SSplitter2x2* splitter = new SSplitter2x2();
+	FRect verticalRect(0, halfHeight, fullWidth, halfHeight + 100);
+	FRect horizontailRect(halfWidth, 0, halfWidth + 100, fullHeight);
+	splitter->verticalHandle = verticalRect;
+	splitter->horitionalHandle = horizontailRect;
+	splitter->SideLT = windowLT;
+	splitter->SideRT = windowRT;
+	splitter->SideLB = windowLB;
+	splitter->SideRB = windowRB;
+
+	FSlateApplication::Get().Add(splitter);
 
 
 	// 뷰포트 설정 적용
 	//DeviceContext->RSSetViewports(4, viewports);
+}
+
+SWindow* URenderer::CreateViewportWithWindow(const FRect& _rect, ECameraViewMode::Type cameraType)
+{
+	FViewport* viewport = new FViewport(_rect);
+	viewport->SetCamera(cameraType);
+	MultiFViewports.Add(viewport);
+
+	SWindow* window = new SWindow(_rect);
+	window->SetISlateViewport(viewport);
+	FSlateApplication::Get().Add(window);
+
+	return window;
 }
 
 const TArray<FViewport*>& URenderer::GetActiveViewport()

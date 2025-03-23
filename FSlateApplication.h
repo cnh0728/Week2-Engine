@@ -13,6 +13,7 @@ public:
 	void ShutDown();
 	FRect GetCurrentWindow();
 	FViewport* SNEW(FRect _rect);
+	void Add(SWindow* _window);
 private:
 	void ProcessMouseButtonDownEvent();
 	void ProcessKeyDownEvent();
@@ -20,5 +21,6 @@ private:
 
 	TArray<SWindow*> windows;
 	SWindow* currentWindow;
+	SWindow* clickedWindow;
 };
 

@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include "Source\Core\Math\FRect.h"
 
-class FRect;
 class ISlateViewport;
 
 class SWindow
@@ -14,8 +13,14 @@ public:
 	void SetISlateViewport(ISlateViewport* _viewport);
 	void AttachViewportCamera();
 	virtual bool isHover(FVector2 coord) const;
+	virtual void OnFocus();
+	virtual bool isClicked(FVector2 mousePos) ;
+	virtual bool OnMouseDrag(FVector2 mouseDelta) ;
+	virtual bool OnMouseUp();
+	virtual void Resize(const FRect& _rect);
 private:
-	bool bisHover;
+	bool bisHover = false;
+	bool bisClicked = false;
 	ISlateViewport* viewport;
 };
 

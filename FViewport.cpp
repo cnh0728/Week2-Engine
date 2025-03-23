@@ -44,5 +44,5 @@ void FViewport::ChangeMainCamera()
 
 void FViewport::Resize(FRect rect)
 {
-
+	Rect = rect;
 }

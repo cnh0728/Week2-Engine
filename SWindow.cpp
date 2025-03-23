@@ -30,11 +30,34 @@ bool SWindow::isHover(FVector2 coord) const
 	float y = coord.Y;
 	if (Rect.Min.X <= x && x <= Rect.Max.X && Rect.Min.Y <= y && y <= Rect.Max.Y)
 	{
-		UE_LOG("Min: (%f,%f), Max: (%f,%f) IS HOVER",
-			Rect.Min.X, Rect.Min.Y, Rect.Max.X, Rect.Max.Y);
-		//bisHover = true;
+		viewport->ChangeMainCamera();
 		return true;
 	}
-	//bisHover = false;
 	return false;
+}
+
+void SWindow::OnFocus()
+{
+}
+
+
+bool SWindow::isClicked(FVector2 mousePos) 
+{
+	return Rect.Contains(mousePos);
+}
+
+bool SWindow::OnMouseDrag(FVector2 mouseDelta)
+{
+	return false;
+}
+
+bool SWindow::OnMouseUp()
+{
+	return false;
+}
+
+void SWindow::Resize(const FRect& _rect)
+{
+	Rect = _rect;
+	viewport->Resize(_rect);
 }
