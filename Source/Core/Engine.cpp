@@ -248,7 +248,6 @@ void UEngine::InitWorld()
     
     
     ACamera* mainCamera = World->SpawnActor<ACamera>();
-    FEditorManager::Get().AddCamera(mainCamera);
     FEditorManager::Get().SetCamera(mainCamera);        //메인 카메라 설정
 
     float d = 10.0f;
@@ -260,7 +259,6 @@ void UEngine::InitWorld()
     FTransform frontTransform = frontCamera->GetActorRelativeTransform();
     frontTransform.SetPosition(FVector(d,0,0));
     frontCamera->SetActorRelatvieTransform(frontTransform);
-    FEditorManager::Get().AddCamera(frontCamera);
     FEditorManager::Get().AddOrthoCamera(ECameraViewMode::Type::Front,frontCamera);
 
     //Top
@@ -270,7 +268,6 @@ void UEngine::InitWorld()
     FTransform topTransform = topCamera->GetActorRelativeTransform();
     topTransform.SetPosition(FVector(0, 0, d));
     topCamera->SetActorRelatvieTransform(topTransform);
-    FEditorManager::Get().AddCamera(topCamera);
     FEditorManager::Get().AddOrthoCamera(ECameraViewMode::Type::Top,topCamera);
 
     //Right
@@ -280,7 +277,6 @@ void UEngine::InitWorld()
     FTransform rightTransform = rightCamera->GetActorRelativeTransform();
     rightTransform.SetPosition(FVector(0, d, 0));
     rightCamera->SetActorRelatvieTransform(rightTransform);
-    FEditorManager::Get().AddCamera(rightCamera);
     FEditorManager::Get().AddOrthoCamera(ECameraViewMode::Type::Right,rightCamera);
 
 
@@ -291,7 +287,6 @@ void UEngine::InitWorld()
     FTransform backTransform = backCamera->GetActorRelativeTransform();
     backTransform.SetPosition(FVector(-d, 0, 0));
     backCamera->SetActorRelatvieTransform(backTransform);
-    //FEditorManager::Get().AddCamera(backCamera);
     FEditorManager::Get().AddOrthoCamera(ECameraViewMode::Type::Back,backCamera);
 
     //Bottom
@@ -301,7 +296,6 @@ void UEngine::InitWorld()
     FTransform bottomTransform = bottomCamera->GetActorRelativeTransform();
     bottomTransform.SetPosition(FVector(0, 0, -d));
     bottomCamera->SetActorRelatvieTransform(bottomTransform);
-    //FEditorManager::Get().AddCamera(bottomCamera);
     FEditorManager::Get().AddOrthoCamera(ECameraViewMode::Type::Bottom,bottomCamera);
 
     //Left
@@ -311,7 +305,6 @@ void UEngine::InitWorld()
     FTransform leftTransform = leftCamera->GetActorRelativeTransform();
     leftTransform.SetPosition(FVector(0, -d, 0));
     leftCamera->SetActorRelatvieTransform(leftTransform);
-    //FEditorManager::Get().AddCamera(leftCamera);
     FEditorManager::Get().AddOrthoCamera(ECameraViewMode::Type::Left,leftCamera);
 
 

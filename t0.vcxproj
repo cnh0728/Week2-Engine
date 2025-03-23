@@ -174,6 +174,7 @@
   <ItemGroup>
     <ClCompile Include="FSlateApplication.cpp" />
     <ClCompile Include="FViewport.cpp" />
+    <ClCompile Include="ISlateViewport.cpp" />
     <ClCompile Include="Source\Core\Math\FRect.cpp" />
     <ClCompile Include="Source\Object\Class\Class.cpp" />
     <ClCompile Include="Source\Core\Math\Box.cpp" />
@@ -233,6 +234,7 @@
   <ItemGroup>
     <ClInclude Include="FSlateApplication.h" />
     <ClInclude Include="FViewport.h" />
+    <ClInclude Include="ISlateViewport.h" />
     <ClInclude Include="Source\Core\Math\FRect.h" />
     <ClInclude Include="Source\Object\Class\Class.h" />
     <ClInclude Include="Source\Core\Math\Box.h" />

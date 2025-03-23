@@ -1,24 +1,30 @@
 ﻿#pragma once
 #include "Core/HAL/PlatformType.h"
+#include "ISlateViewport.h"
+#include "Core/Math/FRect.h"
 
 class ID3D11RasterizerState;
 class SWindow;
 
 namespace ECameraViewMode { enum class Type : uint8; }
 
-class FViewport
+class FViewport : public ISlateViewport
 {
 public:
-	FViewport();
+	FViewport(FRect rect);
 	virtual ~FViewport();
 	//void SetViewport();
-	void SetSWindow(SWindow* refSWindow);
-	void SetCamera(ECameraViewMode::Type _cameraType);
 	void SetViewportRendering();
-	void UpdateSWindowSize();
+	void SetCamera(ECameraViewMode::Type _cameraType);
+
+	virtual void ChangeMainCamera() override;
+	virtual void Resize(FRect rect) override;
 private:
 	SWindow* refSWindow;
 	ECameraViewMode::Type cameraType;
+	FRect Rect;
+
+
 
 	//ID3D11RasterizerState* rasterizerState;
 };

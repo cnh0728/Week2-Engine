@@ -856,37 +856,29 @@ void URenderer::CreateMultipleViewports()
 	FRect rectLT;
 	rectLT.Min = FVector2(0, 0);
 	rectLT.Max = FVector2(halfWidth, halfHeight);
-	FViewport* viewportLT = new FViewport();
-	viewportLT->SetSWindow(FSlateApplication::Get().SNEW(rectLT));
+	FViewport* viewportLT = FSlateApplication::Get().SNEW(rectLT);
 	viewportLT->SetCamera(ECameraViewMode::Type::Front);
-	viewportLT->UpdateSWindowSize();
 	MultiFViewports.Add(viewportLT);
 
 	FRect rectRT;
 	rectRT.Min = FVector2(halfWidth, 0);
 	rectRT.Max = FVector2(fullWidth, halfHeight);
-	FViewport* viewportRT = new FViewport();
-	viewportRT->SetSWindow(FSlateApplication::Get().SNEW(rectRT));
-	viewportLT->SetCamera(ECameraViewMode::Type::Top);
-	viewportRT->UpdateSWindowSize();
+	FViewport* viewportRT = FSlateApplication::Get().SNEW(rectRT);
+	viewportRT->SetCamera(ECameraViewMode::Type::Top);
 	MultiFViewports.Add(viewportRT);
 
 	FRect rectLB;
 	rectLB.Min = FVector2(0, halfHeight);
 	rectLB.Max = FVector2(halfWidth, fullHeight);
-	FViewport* viewportLB = new FViewport();
-	viewportLB->SetSWindow(FSlateApplication::Get().SNEW(rectLB));
-	viewportLT->SetCamera(ECameraViewMode::Type::Back);
-	viewportLB->UpdateSWindowSize();
+	FViewport* viewportLB = FSlateApplication::Get().SNEW(rectLB);
+	viewportLB->SetCamera(ECameraViewMode::Type::Back);
 	MultiFViewports.Add(viewportLB);
 
 	FRect rectRB;
 	rectRB.Min = FVector2(halfWidth, halfHeight);
 	rectRB.Max = FVector2(fullWidth, fullHeight);
-	FViewport* viewportRB = new FViewport();
-	viewportRB->SetSWindow(FSlateApplication::Get().SNEW(rectRB));
-	viewportLT->SetCamera(ECameraViewMode::Type::Bottom);
-	viewportRB->UpdateSWindowSize();
+	FViewport* viewportRB = FSlateApplication::Get().SNEW(rectRB);
+	viewportRB->SetCamera(ECameraViewMode::Type::Bottom);
 	MultiFViewports.Add(viewportRB);
 
 

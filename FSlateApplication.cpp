@@ -1,6 +1,7 @@
 ﻿#include "FSlateApplication.h"
 #include "Source/Core/Rendering/URenderer.h"
 #include "Source/Static/FEditorManager.h"
+#include "../FViewport.h"
 void FSlateApplication::Initialize()
 {
 	/*
@@ -66,12 +67,14 @@ FRect FSlateApplication::GetCurrentWindow()
 	return resultRect;
 }
 
-SWindow* FSlateApplication::SNEW(FRect _rect)
+FViewport* FSlateApplication::SNEW(FRect _rect)
 {
+	FViewport* viewport = new FViewport(_rect);
 	SWindow* window = new SWindow();
+	window->SetISlateViewport(viewport);
 	window->Rect = _rect;
 	windows.Add(window);
-	return window;
+	return viewport;
 }
 
 void FSlateApplication::ProcessMouseButtonDownEvent()
@@ -94,7 +97,8 @@ void FSlateApplication::ProcessIsHover()
 		if (windows[i]->isHover(mouse))
 		{
 			currentWindow = windows[i];
-			FEditorManager::Get().SetCameraIndex(i);
+			//FEditorManager::Get().SetCameraIndex(i);
+			windows[i]->AttachViewportCamera();
 		}
 	}
 }

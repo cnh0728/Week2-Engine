@@ -170,6 +170,12 @@
     <ClCompile Include="Source\Core\Rendering\Texture\TextureRenderer.cpp" />
     <ClCompile Include="Source\Object\PrimitiveComponent\BillBoardComponent.cpp" />
     <ClCompile Include="Source\Object\Actor\Spotlight.cpp" />
+    <ClCompile Include="FSlateApplication.cpp" />
+    <ClCompile Include="FViewport.cpp" />
+    <ClCompile Include="Source\Core\Math\FRect.cpp" />
+    <ClCompile Include="SSplitter.cpp" />
+    <ClCompile Include="SWindow.cpp" />
+    <ClCompile Include="ISlateViewport.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Core\AbstractClass\Singleton.h">
@@ -377,6 +383,13 @@
     <ClInclude Include="Source\Core\Rendering\Texture\TextureRenderer.h" />
     <ClInclude Include="Source\Object\Actor\Spotlight.h" />
     <ClInclude Include="Source\Object\PrimitiveComponent\BillBoardComponent.h" />
+    <ClInclude Include="FSlateApplication.h" />
+    <ClInclude Include="FViewport.h" />
+    <ClInclude Include="Source\Core\Math\FRect.h" />
+    <ClInclude Include="SSplitter.h" />
+    <ClInclude Include="SWindow.h" />
+    <ClInclude Include="Unsupported.h" />
+    <ClInclude Include="ISlateViewport.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\ThirdParty\DirectXTex\Include\DirectXTex.inl">

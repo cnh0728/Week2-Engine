@@ -22,8 +22,6 @@ public:
     inline ACamera* GetCamera() const {return Camera;}
 
     void SetCamera(ACamera* NewCamera);
-    void SetCameraIndex(int index);
-    void AddCamera(ACamera* NewMultiCamera);
     void SetOrthoCamera(ECameraViewMode::Type type);
 
     void AddOrthoCamera(ECameraViewMode::Type type, ACamera* NewMultiCamera);
@@ -44,7 +42,6 @@ private:
     UPrimitiveComponent* SelectedComponent = nullptr;
     
     ACamera* Camera = nullptr;
-    TArray<ACamera*> MultiCamera;
     TMap<ECameraViewMode::Type,ACamera*> OrthogonalCamera;
     AGizmoHandle* GizmoHandle = nullptr;
     AWorldGrid* WorldGrid = nullptr;

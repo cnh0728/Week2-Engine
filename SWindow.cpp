@@ -1,6 +1,6 @@
 ﻿#include "SWindow.h"
 #include "Source\Debug\DebugConsole.h"
-
+#include "ISlateViewport.h"
 SWindow::SWindow()
 {
 }
@@ -12,6 +12,16 @@ SWindow::SWindow(FRect _rect)
 
 SWindow::~SWindow()
 {
+}
+
+void SWindow::SetISlateViewport(ISlateViewport* _viewport)
+{
+	viewport = _viewport;
+}
+
+void SWindow::AttachViewportCamera()
+{
+	viewport->ChangeMainCamera();
 }
 
 bool SWindow::isHover(FVector2 coord) const
