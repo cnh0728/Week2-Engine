@@ -40,6 +40,3 @@ bool MtlLoader::LoadMtlFile(const std::string& mtlPath) {
 
     return true;
 }
-
-
-}
