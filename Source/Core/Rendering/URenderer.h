@@ -227,8 +227,6 @@ public:
 
 	FVector2 GetSwapChainSize();
 
-
-	void SetMultiViewport(int index);
 	void SetViewportRendering(D3D11_VIEWPORT _viewport);
 	void ReleaseMultiViewport();
 	const TArray<FViewport*>& GetActiveViewport();
@@ -283,7 +281,6 @@ protected:
 	
     FLOAT ClearColor[4] = { 0.025f, 0.025f, 0.025f, 1.0f }; // 화면을 초기화(clear)할 때 사용할 색상 (RGBA)
     D3D11_VIEWPORT ViewportInfo = {};                       // 렌더링 영역을 정의하는 뷰포트 정보
-	TArray<D3D11_VIEWPORT> MulitViewports;
 	TArray<FViewport*> MultiFViewports;
 
     // Shader를 렌더링할 때 사용되는 변수들

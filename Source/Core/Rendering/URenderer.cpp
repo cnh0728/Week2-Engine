@@ -841,18 +841,6 @@ void URenderer::CreateMultipleViewports()
 	float halfWidth = fullWidth / 2.0f;
 	float halfHeight = fullHeight / 2.0f;
 
-	D3D11_VIEWPORT viewports[4] = {};
-
-	// 왼쪽 상단
-	viewports[0] = { 0.0f, 0.0f, halfWidth, halfHeight, 0.0f, 1.0f };
-	// 오른쪽 상단
-	viewports[1] = { halfWidth, 0.0f, halfWidth, halfHeight, 0.0f, 1.0f };
-	// 왼쪽 하단
-	viewports[2] = { 0.0f, halfHeight, halfWidth, halfHeight, 0.0f, 1.0f };
-	// 오른쪽 하단
-	viewports[3] = { halfWidth, halfHeight, halfWidth, halfHeight, 0.0f, 1.0f };
-
-
 	FRect rectLT;
 	rectLT.Min = FVector2(0, 0);
 	rectLT.Max = FVector2(halfWidth, halfHeight);
@@ -882,11 +870,6 @@ void URenderer::CreateMultipleViewports()
 	MultiFViewports.Add(viewportRB);
 
 
-	MulitViewports.Add(viewports[0]);
-	MulitViewports.Add(viewports[1]);
-	MulitViewports.Add(viewports[2]);
-	MulitViewports.Add(viewports[3]);
-
 	// 뷰포트 설정 적용
 	//DeviceContext->RSSetViewports(4, viewports);
 }
@@ -896,10 +879,7 @@ const TArray<FViewport*>& URenderer::GetActiveViewport()
 	return MultiFViewports;
 }
 
-void URenderer::SetMultiViewport(int index)
-{
-	DeviceContext->RSSetViewports(1, &MulitViewports[index]);
-}
+
 
 void URenderer::SetViewportRendering(D3D11_VIEWPORT _viewport)
 {
