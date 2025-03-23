@@ -187,7 +187,7 @@ public:
 
 #pragma region Texture
 	//텍스쳐 리소스
-    void PrepareTextureResource(ETextureResource ETR);
+    void PrepareTextureResource(std::string path);
 
 #pragma endregion
 	

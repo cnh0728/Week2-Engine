@@ -1,0 +1,6 @@
+newmtl CatMat
+Mat
+map_Kd Textures/cat.png
+
+newmtl EarthMat
+map_Kd Textures/earth.png

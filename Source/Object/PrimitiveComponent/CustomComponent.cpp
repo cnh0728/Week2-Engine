@@ -1,1 +1,25 @@
-﻿#include "CustomComponent.h"
+﻿
+#include "CustomComponent.h"
+#include "Data/ObjLoader.h"
+#include "Static/ResourceManager.h"
+
+void UCustomComponent::LoadFromObj(const std::string& path)
+{
+    // Obj 파일 로드
+    ObjLoader::Get().LoadFromFile(path);
+
+    // ResourceManager에서 데이터 가져오기
+    const TArray<FSubMeshData>* meshData = UResourceManager::Get().GetMeshData(path);
+    if (!meshData) return;
+
+    RenderUnits.Empty();
+
+    for (const auto& sub : *meshData)
+    {
+        FRenderUnit unit;
+        unit.Vertices = sub.Vertices;
+        unit.Indices = sub.Indices;
+        unit.Material = UResourceManager::Get().GetMaterial(sub.MaterialName);
+        RenderUnits.Add(unit);
+    }
+}

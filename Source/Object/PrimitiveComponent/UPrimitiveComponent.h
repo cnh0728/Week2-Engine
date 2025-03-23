@@ -59,15 +59,16 @@ public:
 	void SetColor(FVector4 Color);
 	FVector4 GetColor() const { return Color; }
 
-	void SetTextureResource(ETextureResource ER);
-	ETextureResource GetTextureResource() const { return TextureResource; }
+	void SetTextureResource(std::string ER);
+	std::string GetTextureResource() const { return TextureResource; }
 
 	EPixelType GetPixelType() const { return PixelType; }
-	
+	void SetPixelType(EPixelType type) { PixelType = type; }
+
 private:
 	FVector4 Color = FVector4::One();
 	EPixelType PixelType = EDefalutColor;
-	ETextureResource TextureResource = ECat;
+	std::string TextureResource = "Textures/cat.png";
 };
 
 class UCubeComp : public UPrimitiveComponent

@@ -22,10 +22,13 @@ bool MtlLoader::LoadMtlFile(const std::string& mtlPath) {
             if (!currentMaterial.Name.empty()) {
                 UResourceManager::Get().SetMaterial(currentMaterial.Name, currentMaterial);
             }
-            iss >> currentMaterial.Name;
+
+            std::string newName;
+            iss >> newName;
             currentMaterial = FMaterialData();
-            currentMaterial.Name = token;
+            currentMaterial.Name = newName;
         }
+
         else if (token == "Kd") {
             float r, g, b;
             iss >> r >> g >> b;

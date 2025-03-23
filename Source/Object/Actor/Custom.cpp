@@ -8,7 +8,7 @@ ACustom::ACustom()
 
     UCustomComponent* CustomComp = AddComponent<UCustomComponent>();
     CustomComp->SetupAttachment(RootComponent);
-    CustomComp->SetTextureResource(ECustom);
+    CustomComp->LoadFromObj("Models/cube.obj");
 }
 
 void ACustom::BeginPlay()

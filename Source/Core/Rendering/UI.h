@@ -27,7 +27,7 @@ class UI
 
 public:
     SpawnType CurrentPrimitiveItem = ESpawnSphere;
-	ETextureResource CurrentTextureItem = ECat;
+	std::string CurrentTextureItem = "Textures/cat.png";
 	
     int NumOfSpawn = 0;
 	bool bIsInitialized = false;
