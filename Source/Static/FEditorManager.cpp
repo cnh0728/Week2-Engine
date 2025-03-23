@@ -100,6 +100,11 @@ void FEditorManager::AddCamera(ACamera* NewMultiCamera)
 	MultiCamera.Add(NewMultiCamera);
 }
 
+void FEditorManager::SetOrthoCamera(ECameraViewMode::Type type)
+{
+	Camera = OrthogonalCamera[type];
+}
+
 void FEditorManager::AddOrthoCamera(ECameraViewMode::Type type, ACamera* NewMultiCamera)
 {
 	OrthogonalCamera.Add(type, NewMultiCamera);

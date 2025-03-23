@@ -24,6 +24,8 @@ public:
     void SetCamera(ACamera* NewCamera);
     void SetCameraIndex(int index);
     void AddCamera(ACamera* NewMultiCamera);
+    void SetOrthoCamera(ECameraViewMode::Type type);
+
     void AddOrthoCamera(ECameraViewMode::Type type, ACamera* NewMultiCamera);
 
     AGizmoHandle* GetGizmoHandle() const {return GizmoHandle;}

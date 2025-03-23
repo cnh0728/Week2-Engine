@@ -858,6 +858,7 @@ void URenderer::CreateMultipleViewports()
 	rectLT.Max = FVector2(halfWidth, halfHeight);
 	FViewport* viewportLT = new FViewport();
 	viewportLT->SetSWindow(FSlateApplication::Get().SNEW(rectLT));
+	viewportLT->SetCamera(ECameraViewMode::Type::Front);
 	viewportLT->UpdateSWindowSize();
 	MultiFViewports.Add(viewportLT);
 
@@ -866,6 +867,7 @@ void URenderer::CreateMultipleViewports()
 	rectRT.Max = FVector2(fullWidth, halfHeight);
 	FViewport* viewportRT = new FViewport();
 	viewportRT->SetSWindow(FSlateApplication::Get().SNEW(rectRT));
+	viewportLT->SetCamera(ECameraViewMode::Type::Top);
 	viewportRT->UpdateSWindowSize();
 	MultiFViewports.Add(viewportRT);
 
@@ -874,6 +876,7 @@ void URenderer::CreateMultipleViewports()
 	rectLB.Max = FVector2(halfWidth, fullHeight);
 	FViewport* viewportLB = new FViewport();
 	viewportLB->SetSWindow(FSlateApplication::Get().SNEW(rectLB));
+	viewportLT->SetCamera(ECameraViewMode::Type::Back);
 	viewportLB->UpdateSWindowSize();
 	MultiFViewports.Add(viewportLB);
 
@@ -882,6 +885,7 @@ void URenderer::CreateMultipleViewports()
 	rectRB.Max = FVector2(fullWidth, fullHeight);
 	FViewport* viewportRB = new FViewport();
 	viewportRB->SetSWindow(FSlateApplication::Get().SNEW(rectRB));
+	viewportLT->SetCamera(ECameraViewMode::Type::Bottom);
 	viewportRB->UpdateSWindowSize();
 	MultiFViewports.Add(viewportRB);
 
@@ -903,6 +907,11 @@ const TArray<FViewport*>& URenderer::GetActiveViewport()
 void URenderer::SetMultiViewport(int index)
 {
 	DeviceContext->RSSetViewports(1, &MulitViewports[index]);
+}
+
+void URenderer::SetViewportRendering(D3D11_VIEWPORT _viewport)
+{
+	DeviceContext->RSSetViewports(1, &_viewport);
 }
 
 void URenderer::ReleaseMultiViewport()

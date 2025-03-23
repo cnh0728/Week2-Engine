@@ -1,32 +1,48 @@
 ﻿#include "FViewport.h"
 #include "Source/Core/Math/FRect.h"
 #include "../SWindow.h"
-#include <d3d11.h>
+#include "Static/FEditorManager.h"
+#include "Core/Engine.h"
+#include "Object/Actor/Camera.h"
 FViewport::FViewport()
 {
-	viewport = new D3D11_VIEWPORT();
 }
 FViewport::~FViewport()
 {
-	delete viewport;
 }
 void FViewport::SetSWindow(SWindow* _refSWindow)
 {
 	refSWindow = _refSWindow;
 }
 
-void FViewport::SetCamera(ACamera* _camera)
+void FViewport::SetCamera(ECameraViewMode::Type _cameraType)
 {
-	camera = _camera;
+	cameraType = _cameraType;
 }
 
-void FViewport::UpdateSWindowSize()
+void FViewport::SetViewportRendering()
 {
-	if (refSWindow&&viewport)
+	URenderer* renderer = UEngine::Get().GetRenderer();
+	D3D11_VIEWPORT viewport;
+	if (refSWindow)
 	{
 		FRect SWindowRect = refSWindow->Rect;
 		FVector2 min = SWindowRect.Min;
 		FVector2 max = SWindowRect.Max;
-		*viewport = { min.X,min.Y,max.X - min.X,max.Y - min.Y,0.0f,1.0f };
+		viewport = { min.X,min.Y,max.X - min.X,max.Y - min.Y,0.0f,1.0f };
+		renderer->SetViewportRendering(viewport);
 	}
+
+	FEditorManager::Get().SetOrthoCamera(cameraType);
+	ACamera* cam = FEditorManager::Get().GetCamera();
+	renderer->UpdateViewMatrix(cam->GetActorRelativeTransform());
+	renderer->UpdateProjectionMatrix(cam);
+
+}
+
+void FViewport::UpdateSWindowSize()
+{
+	
+
+	
 }
