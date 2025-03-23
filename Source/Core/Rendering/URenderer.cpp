@@ -895,6 +895,11 @@ void URenderer::CreateMultipleViewports()
 	//DeviceContext->RSSetViewports(4, viewports);
 }
 
+const TArray<FViewport*>& URenderer::GetActiveViewport()
+{
+	return MultiFViewports;
+}
+
 void URenderer::SetMultiViewport(int index)
 {
 	DeviceContext->RSSetViewports(1, &MulitViewports[index]);

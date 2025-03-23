@@ -4,6 +4,7 @@
 #include "Object/Gizmo/GizmoHandle.h"
 #include "Core/Math/Vector.h"
 #include "Core/Math/Transform.h"
+#include "Object/Actor/Camera.h"
 
 void FEditorManager::SelectPrimitive(UPrimitiveComponent* NewPrimitive)
 {
@@ -99,7 +100,7 @@ void FEditorManager::AddCamera(ACamera* NewMultiCamera)
 	MultiCamera.Add(NewMultiCamera);
 }
 
-void FEditorManager::AddOrthoCamera(ACamera* NewMultiCamera)
+void FEditorManager::AddOrthoCamera(ECameraViewMode::Type type, ACamera* NewMultiCamera)
 {
-	OrthogonalCamera.Add(NewMultiCamera);
+	OrthogonalCamera.Add(type, NewMultiCamera);
 }

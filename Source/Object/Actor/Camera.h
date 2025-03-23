@@ -17,7 +17,7 @@ namespace ECameraProjectionMode
 
 namespace ECameraViewMode
 {
-    enum Type : uint8
+    enum class Type : uint8
     {
         Front,
         Back,

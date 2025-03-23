@@ -5,6 +5,8 @@
 class AGizmoHandle;
 class AWorldGrid;
 
+namespace ECameraViewMode{  enum class Type : uint8;  }
+
 class FEditorManager : public TSingleton<FEditorManager>
 {
 public:
@@ -22,7 +24,7 @@ public:
     void SetCamera(ACamera* NewCamera);
     void SetCameraIndex(int index);
     void AddCamera(ACamera* NewMultiCamera);
-    void AddOrthoCamera(ACamera* NewMultiCamera);
+    void AddOrthoCamera(ECameraViewMode::Type type, ACamera* NewMultiCamera);
 
     AGizmoHandle* GetGizmoHandle() const {return GizmoHandle;}
 
@@ -41,7 +43,7 @@ private:
     
     ACamera* Camera = nullptr;
     TArray<ACamera*> MultiCamera;
-    TArray<ACamera*> OrthogonalCamera;
+    TMap<ECameraViewMode::Type,ACamera*> OrthogonalCamera;
     AGizmoHandle* GizmoHandle = nullptr;
     AWorldGrid* WorldGrid = nullptr;
     FEngineShowFlags EngineShowFlags;

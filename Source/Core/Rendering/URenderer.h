@@ -265,6 +265,7 @@ protected:
 
 	void CreateMultipleViewports();
 
+	const TArray<FViewport*>& GetActiveViewport();
 
 protected:
     // Direct3D 11 장치(Device)와 장치 컨텍스트(Device Context) 및 스왑 체인(Swap Chain)을 관리하기 위한 포인터들

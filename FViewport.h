@@ -12,6 +12,7 @@ public:
 	//void SetViewport();
 	void SetSWindow(SWindow* refSWindow);
 	void SetCamera(ACamera* camera);
+	void SetViewportRendering();
 	void UpdateSWindowSize();
 private:
 	ACamera* camera;
