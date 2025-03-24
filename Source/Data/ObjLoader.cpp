@@ -60,9 +60,16 @@ void ObjectLoader::CheckExistAllDirectory()
 
 bool ObjectLoader::LoadFromFile(const std::string& Filename)
 {
+    namespace fs = std::filesystem;
+
+    bool bIsAbsolutePath = fs::path(Filename).is_absolute();
+    std::string ObjPath = bIsAbsolutePath ? Filename : ObjFileDir + Filename + ObjFileExt;
+
+  
+
     if (UResourceManager::Get().HasMeshData(Filename))
     {
-        return true; // 이미 파싱되어 있으면    
+        return true; // 이미 파싱된 경우
     }
 
     TArray<FSubMeshData> SubMeshes;
@@ -82,11 +89,11 @@ bool ObjectLoader::LoadFromFile(const std::string& Filename)
 
         return true;
     }
-    
-    std::ifstream file(ObjFileDir + Filename + ObjFileExt);
+
+    std::ifstream file(ObjPath);
     if (!file.is_open())
     {
-        std::cerr << "파일을 열 수 없습니다!" << std::endl;
+        std::cerr << "파일을 열 수 없습니다: " << ObjPath << std::endl;
         return false;
     }
 

@@ -1,5 +1,4 @@
 ﻿#include "Engine.h"
-
 #include <iostream>
 #include "Object/ObjectFactory.h"
 #include "Object/World/World.h"
@@ -13,8 +12,10 @@
 #include "Static/FEditorManager.h"
 #include"Data/ConfigManager.h"
 #include "Data/ObjLoader.h"
+#include "Core/HAL/PlatformType.h"
 #include"Static/ResourceManager.h"
-
+#include"Object/Actor/Custom.h"
+#include <shellapi.h>
 class AArrow;
 class APicker;
 // ImGui WndProc 정의
@@ -59,7 +60,37 @@ LRESULT UEngine::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         break;
     case WM_SIZE:
 		UEngine::Get().UpdateWindowSize(LOWORD(lParam), HIWORD(lParam));
-		break;        
+		break;   
+    case WM_DROPFILES:
+{
+    HDROP hDrop = (HDROP)wParam;
+    
+    // 몇 개의 파일이 드롭되었는지 확인
+    UINT fileCount = DragQueryFile(hDrop, 0xFFFFFFFF, NULL, 0);
+
+    for (UINT i = 0; i < fileCount; ++i)
+    {
+        wchar_t filePath[MAX_PATH];
+        DragQueryFileW(hDrop, 0, filePath, MAX_PATH);
+        UWorld* World = UEngine::Get().GetWorld();
+
+        std::wstring ws(filePath);
+        int size_needed = WideCharToMultiByte(CP_UTF8, 0, ws.c_str(), -1, nullptr, 0, nullptr, nullptr);
+        std::string path(size_needed, 0);
+        WideCharToMultiByte(CP_UTF8, 0, ws.c_str(), -1, &path[0], size_needed, nullptr, nullptr);
+
+        // 액터 스폰 및 obj 로딩
+        if (UEngine::Get().GetWorld())
+        {
+            ACustom* CustomActor = UEngine::Get().GetWorld()->SpawnActor<ACustom>();
+            CustomActor->SetObjPath(path);
+        }
+        MessageBox(hWnd, filePath, TEXT(L"드롭된 파일 경로"), MB_OK);
+    }
+
+    DragFinish(hDrop); // 메모리 해제
+    return 0;
+}
     default:
         return DefWindowProc(hWnd, uMsg, wParam, lParam);
     }
@@ -222,7 +253,7 @@ void UEngine::InitWindow(int InScreenWidth, int InScreenHeight)
         InScreenWidth, InScreenHeight,
         nullptr, nullptr, WindowInstance, nullptr
     );
-
+    DragAcceptFiles(WindowHandle, TRUE);
     // TODO: 전체화면 구현
     if (ScreenMode != EScreenMode::Windowed)
     {

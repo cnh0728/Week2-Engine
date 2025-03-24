@@ -16,7 +16,7 @@ ACustom::ACustom()
     srand(static_cast<unsigned int>(time(nullptr))); 
     const char* modelPath = (rand() % 2 == 0) ? "Models/table.obj" : "Models/pirate.obj";
     //CustomComp->LoadFromObj(modelPath);
-    CustomComp->LoadFromObj("pirate");
+    CustomComp->LoadFromObj("C:\\Users\\Jungle\\Desktop\\TechLab\\Week3\\Week3-StaticMesh\\Models\\pirate2.obj");
 }
 
 void ACustom::BeginPlay()
@@ -29,4 +29,12 @@ void ACustom::BeginPlay()
 void ACustom::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
+}
+
+void ACustom::SetObjPath(const std::string& InPath)
+{
+    if (UCustomComponent* CustomComp = GetComponentByClass<UCustomComponent>())
+    {
+        CustomComp->LoadFromObj(InPath);
+    }
 }
