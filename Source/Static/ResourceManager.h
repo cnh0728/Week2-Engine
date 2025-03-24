@@ -37,11 +37,13 @@ private:
 public:
     void SetMeshData(const std::string& path, const TArray<FSubMeshData>& meshData);
     const TArray<FSubMeshData>* GetMeshData(const std::string& path) const;
+    bool HasMeshData(const std::string& path) const;
+
 
 private:
     TMap<std::string, ID3D11ShaderResourceView*> TextureMap;
     TMap<std::string, FMaterialData> Materials;
-    TMap<std::string, TArray<FSubMeshData>> Meshes;
+    TMap<std::string, TArray<FSubMeshData>> Meshes;  //(obj 파일이름 / 오브젝트의 서브메쉬 데이터들)을 맵에 저장
 
 public:
     bool LoadMtlFile(const std::string& path); // public wrapper

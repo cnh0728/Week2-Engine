@@ -441,16 +441,21 @@ void UI::RenderPropertyWindow()
             }
         }
 
-        if (selectedComponent->IsA(UTextureComponent::StaticClass()))
+        /*if (selectedComponent->IsA(UTextureComponent::StaticClass()))
         {
             UTextureComponent* TextureComponent = dynamic_cast<UTextureComponent*>(selectedComponent);
-            const char* TextureItems[] = {"cat", "earth"};
+            const char* TextureItems[] = {"cat", "earth", "Custom"};
+            TMap<uint32_t, ETextureResource> Textures = {
+                {0, ECat},
+                {1, EEarth},
+                {2, ECustom},
+            };
             
             if (ImGui::Combo("Texture", reinterpret_cast<int*>(&CurrentTextureItem), TextureItems, ARRAYSIZE(TextureItems)))
             {
-                TextureComponent->SetTextureResource(CurrentTextureItem);
+                TextureComponent->SetTextureResource(Textures[CurrentTextureItem]);
             }
-        }
+        }*/
     }
     ImGui::End();
 }

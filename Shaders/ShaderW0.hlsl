@@ -61,7 +61,7 @@ float4 mainPS(PS_INPUT input) : SV_TARGET
     case 2: //Texture
         color = texDiffuse.Sample(samLinear, input.uv);
         float avg = (color.r + color.g + color.b) / 3.0f;
-        clip(avg < 0.01f ? -1 : 1);
+        clip(color.a < 0.01f ? -1 : 1);
         break;
     default:
         break;

@@ -92,6 +92,7 @@ void UEngine::Initialize(
     InitRenderer();
     InitWorld();
     UResourceManager::Get().Initialize(Renderer->GetDevice(),Renderer->GetDeviceContext());
+    ObjLoader = std::make_unique<ObjectLoader>();
     InitTextures();
     
     InitializedScreenWidth = ScreenWidth;

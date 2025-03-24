@@ -1,87 +1,197 @@
 ﻿#include "ObjLoader.h"
 
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
-
-#include "Core/Rendering/URenderer.h"
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <vector>
+#include "Core/Math/Vector.h"
+#include "Core/Container/Array.h"
 #include "Primitive/PrimitiveVertices.h"
 #include "Static/ResourceManager.h"
-#include <sstream>
 
-bool ObjLoader::LoadFromFile(const std::string& filename)
+struct Face
 {
-    // 1. mtllib 파싱
-    std::ifstream objFile(filename);
-    if (objFile.is_open())
-    {
-        std::string line;
-        while (std::getline(objFile, line))
-        {
-            std::istringstream iss(line);
-            std::string token;
-            iss >> token;
-            if (token == "mtllib")
-            {
-                std::string mtlFile;
-                iss >> mtlFile;
+    TArray<FVector> FaceIndices;
+    std::string MaterialFile;
+    std::string MaterialName;
+};
 
-                UResourceManager::Get().LoadMtlFile(mtlFile);
-                break; // 첫 mtllib만 처리
-            }
-        }
+bool ObjectLoader::LoadFromFile(const std::string& Filename)
+{
+    if (UResourceManager::Get().HasMeshData(Filename))
+    {
+        return true; // 이미 파싱되어 있으면    
+
+
+
+
+
     }
 
-    // 2. Assimp로 obj 로딩
-    Assimp::Importer importer;
-    const aiScene* scene = importer.ReadFile(filename,
-        aiProcess_Triangulate | aiProcess_ConvertToLeftHanded);
-
-    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
-        std::string errorMessage = importer.GetErrorString();
-        std::cout << "Assimp 오류: " << errorMessage << std::endl;
+    std::ifstream file(Filename);
+    if (!file.is_open())
+    {
+        std::cerr << "파일을 열 수 없습니다!" << std::endl;
         return false;
     }
 
+    std::string line;
+    TArray<FVector> Vertices;
+    TArray<FVector> Normals;
+    TArray<FVector2> UVs;
+
+    TMap<std::string, TArray<Face>> FaceGroup;
+    TArray<Face> Faces;
+
+    std::string CurrentObjectName = "";
+    std::string CurrentMaterialFile = "";
+    std::string CurrentMaterial = "";
+
+    while (std::getline(file, line))
+    {
+        if (line.empty() || line[0] == '#')
+            continue;
+
+        line.erase(std::unique(line.begin(), line.end(),
+            [](char a, char b) { return isspace(a) && isspace(b); }),
+            line.end());
+
+        TArray<std::string> Tokens = Split(line, ' ');
+        size_t HashToken = Hash(Tokens[0]);
+
+        if (HashToken == Hash("mtllib"))
+        {
+            CurrentMaterialFile = Tokens[1];
+            UResourceManager::Get().LoadMtlFile(CurrentMaterialFile); // 머티리얼 파일 로딩
+        }
+        else if (HashToken == Hash("usemtl"))
+        {
+            CurrentMaterial = Tokens[1];
+        }
+        else if (HashToken == Hash("v"))
+        {
+            Vertices.Add({ std::stof(Tokens[1]), std::stof(Tokens[2]), std::stof(Tokens[3]) });
+        }
+        else if (HashToken == Hash("vn"))
+        {
+            Normals.Add({ std::stof(Tokens[1]), std::stof(Tokens[2]), std::stof(Tokens[3]) });
+        }
+        else if (HashToken == Hash("vt"))
+        {
+            UVs.Add({ std::stof(Tokens[1]), -std::stof(Tokens[2]) });
+        }
+        else if (HashToken == Hash("f"))
+        {
+            TArray<FVector> NewFaceIndex;
+            for (int i = 1; i <= 3; i++)
+            {
+                TArray<std::string> FaceTokens = Split(Tokens[i], '/');
+                if (FaceTokens.Num() == 2)
+                    FaceTokens.Add("1");
+
+                FVector NewIndex = { std::stof(FaceTokens[0]) - 1, std::stof(FaceTokens[1]) - 1, std::stof(FaceTokens[2]) - 1 };
+                NewFaceIndex.Add(NewIndex);
+            }
+
+            if (Tokens.Num() == 5) // quad
+            {
+                TArray<std::string> FaceTokens = Split(Tokens[4], '/');
+                FVector NewIndex = { std::stof(FaceTokens[0]) - 1, std::stof(FaceTokens[1]) - 1, std::stof(FaceTokens[2]) - 1 };
+                NewFaceIndex.Add(NewFaceIndex[0]);
+                NewFaceIndex.Add(NewFaceIndex[2]);
+                NewFaceIndex.Add(NewIndex);
+            }
+
+            Face NewFace = { NewFaceIndex, CurrentMaterialFile, CurrentMaterial };
+            Faces.Add(NewFace);
+        }
+        else if (HashToken == Hash("o") || HashToken == Hash("g"))
+        {
+            if (Faces.Num() != 0)
+            {
+                FaceGroup[CurrentObjectName] = Faces;
+                Faces.Empty();
+            }
+
+            CurrentObjectName = Tokens[1];
+        }
+    }
+
+    if (Faces.Num() != 0)
+    {
+        FaceGroup[CurrentObjectName] = Faces;
+        Faces.Empty();
+    }
+
+   // 데이터 저장~
+    TMap<std::string, uint32> VertexMap;
     TArray<FSubMeshData> SubMeshes;
 
-    for (unsigned int i = 0; i < scene->mNumMeshes; i++) {
-        aiMesh* mesh = scene->mMeshes[i];
-        FSubMeshData subMesh;
+    for (auto& Pair : FaceGroup)
+    {
+        TArray<Face>& FacesInGroup = Pair.Value;
 
-        for (unsigned int j = 0; j < mesh->mNumVertices; j++) {
-            FVertexSimple Vertex;
-            Vertex.SetPos({ mesh->mVertices[j].x, mesh->mVertices[j].y, mesh->mVertices[j].z });
-            Vertex.SetVertexColor({ 1.f, 1.f, 1.f, 1.f });
-            Vertex.SetNormal({ mesh->mNormals[j].x, mesh->mNormals[j].y, mesh->mNormals[j].z });
+        TMap<std::string, FSubMeshData> SubMeshPerMaterial;
 
-            if (mesh->HasTextureCoords(0))
-                Vertex.SetUV({ mesh->mTextureCoords[0][j].x, mesh->mTextureCoords[0][j].y });
-            else
-                Vertex.SetUV({ 0, 0 });
+        for (const Face& CurrentFace : FacesInGroup)
+        {
+            FSubMeshData& SubMesh = SubMeshPerMaterial[CurrentFace.MaterialName];
+            SubMesh.MaterialName = CurrentFace.MaterialName;
 
-            subMesh.Vertices.Add(Vertex);
-        }
+            for (const FVector& FaceIndex : CurrentFace.FaceIndices)
+            {
+                FVertexSimple NewVertex;
+                NewVertex.SetPos(Vertices[FaceIndex.X]);
+                NewVertex.SetUV(UVs[FaceIndex.Y]);
+                NewVertex.SetNormal(Normals[FaceIndex.Z]);
+                NewVertex.SetVertexColor({ 1.f, 1.f, 1.f, 1.f });
 
-        for (unsigned int j = 0; j < mesh->mNumFaces; j++) {
-            aiFace face = mesh->mFaces[j];
-            for (unsigned int k = 0; k < face.mNumIndices; k++) {
-                subMesh.Indices.Add(face.mIndices[k]);
+                std::string VertexKey = std::to_string(FaceIndex.X) + " " + std::to_string(FaceIndex.Y) + " " + std::to_string(FaceIndex.Z);
+
+                if (VertexMap.Contains(VertexKey))
+                {
+                    SubMesh.Indices.Add(VertexMap[VertexKey]);
+                }
+                else
+                {
+                    uint32 Index = SubMesh.Vertices.Num();
+                    SubMesh.Vertices.Add(NewVertex);
+                    VertexMap[VertexKey] = Index;
+                    SubMesh.Indices.Add(Index);
+                }
             }
         }
 
-        if (scene->HasMaterials()) {
-            aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-            aiString matName;
-            material->Get(AI_MATKEY_NAME, matName);
-            subMesh.MaterialName = matName.C_Str();
+        for (auto& SubMeshPair : SubMeshPerMaterial)
+        {
+            SubMeshes.Add(SubMeshPair.Value);
         }
-
-        SubMeshes.Add(subMesh);
     }
 
-    UResourceManager::Get().SetMeshData(filename, SubMeshes);
-
+    UResourceManager::Get().SetMeshData(Filename, SubMeshes);
     return true;
 }
 
+size_t ObjectLoader::Hash(std::string Str)
+{
+    size_t Hash = 0;
+    for (size_t i = 0; i < Str.length(); i++)
+    {
+        Hash = 65599 * Hash + Str[i];
+    }
+    return Hash ^ (Hash >> 16);
+}
+
+TArray<std::string> ObjectLoader::Split(const std::string& str, char delim) {
+    std::istringstream iss(str);
+    TArray<std::string> result;
+    std::string token;
+    while (std::getline(iss, token, delim)) {
+        if (token.empty())
+            result.Add("1");
+        else
+            result.Add(token);
+    }
+    return result;
+}

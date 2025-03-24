@@ -72,6 +72,12 @@ const TArray<FSubMeshData>* UResourceManager::GetMeshData(const std::string& pat
     return Meshes.Find(path);
 }
 
+bool UResourceManager::HasMeshData(const std::string& path) const
+{
+    return Meshes.Contains(path);
+}
+
+
 bool UResourceManager::LoadMtlFile(const std::string& path)
 {
     return MaterialLoader.LoadMtlFile(path);

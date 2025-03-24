@@ -118,8 +118,6 @@ void UWorld::RenderMainTexture(URenderer& Renderer, float DeltaTime)
 	Renderer.RenderBatch();
 
 //prepare texture하고 loadtexture 하고 텍스쳐렌더 돌면서
-	
-	// Renderer.LoadTexture(TODO, "Texture.png");
 
 	Renderer.PrepareMainShader();
 	
