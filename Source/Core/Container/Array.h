@@ -69,7 +69,9 @@ public:
     void Insert(SizeType Index, std::initializer_list<T> InitList);
     template <typename InputIt>
     void Insert(typename std::vector<T, Allocator>::iterator Position, InputIt First, InputIt Last);
-    
+    void Resize(SizeType NewSize);
+    void Resize(SizeType NewSize, const T& Value);
+
     /**
      * Array에서 Item을 찾습니다.
      * @param Item 찾으려는 Item
@@ -342,4 +344,27 @@ template <typename InputIt>
 void TArray<T, Allocator>::Insert(typename std::vector<T, Allocator>::iterator Position, InputIt First, InputIt Last)
 {
     PrivateVector.insert(Position, First, Last);
+}
+
+template <typename T, typename Allocator>
+void TArray<T, Allocator>::Resize(SizeType NewSize)
+{
+    if (NewSize < 0)
+    {
+        throw std::invalid_argument("Negative size in TArray::Resize");
+    }
+    PrivateVector.resize(static_cast<typename std::vector<T, Allocator>::size_type>(NewSize));
+}
+
+template <typename T, typename Allocator>
+void TArray<T, Allocator>::Resize(SizeType NewSize, const T& Value)
+{
+    if (NewSize < 0)
+    {
+        throw std::invalid_argument("Negative size in TArray::Resize");
+    }
+    PrivateVector.resize(
+        static_cast<typename std::vector<T, Allocator>::size_type>(NewSize), 
+        Value
+    );
 }
