@@ -50,6 +50,14 @@ void FSlateApplication::Add(SWindow* _window)
 	windows.Add(_window);
 }
 
+void FSlateApplication::ResizeScreen(float resizeWidthRatio, float resizeHeightRatio)
+{
+	for (int i = 0; i < windows.Num(); i++)
+	{
+		windows[i]->ScreenResize(resizeWidthRatio, resizeHeightRatio);
+	}
+}
+
 void FSlateApplication::ProcessMouseButtonDownEvent()
 {
 	POINT pt;

@@ -10,6 +10,7 @@ public:
     virtual bool isClicked(FVector2 mousePos)  override;
     virtual bool OnMouseDrag(FVector2 mouseDelta) ;
     virtual bool OnMouseUp()  override;
+    virtual void ScreenResize(float resizeWidthRatio, float resizeHeightRatio) override;
     SWindow* SideLT;
     SWindow* SideRB;
     FRect Handle;
@@ -24,6 +25,7 @@ public:
     virtual bool isClicked(FVector2 mousePos)  override;
     virtual bool OnMouseDrag(FVector2 mouseDelta) ;
     virtual bool OnMouseUp()  override;
+    virtual void ScreenResize(float resizeWidthRatio, float resizeHeightRatio) override;
     SWindow* SideLT;
     SWindow* SideLB;
     SWindow* SideRB;

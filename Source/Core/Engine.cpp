@@ -58,6 +58,7 @@ LRESULT UEngine::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
         break;
     case WM_SIZE:
 		UEngine::Get().UpdateWindowSize(LOWORD(lParam), HIWORD(lParam));
+        //UE_LOG("%d %d", LOWORD(lParam), HIWORD(lParam));
 		break;        
     default:
         return DefWindowProc(hWnd, uMsg, wParam, lParam);
@@ -351,6 +352,10 @@ void UEngine::ShutdownWindow()
 
 void UEngine::UpdateWindowSize(UINT InScreenWidth, UINT InScreenHeight)
 {
+    float resizeWidthRatio = float(InScreenWidth) / ScreenWidth;
+    float resizeHeightRatio = float(InScreenHeight) / ScreenHeight;
+    FSlateApplication::Get().ResizeScreen(resizeWidthRatio, resizeHeightRatio);
+    UE_LOG("ResizeRatio %f %f", resizeWidthRatio, resizeHeightRatio);
 	ScreenWidth = InScreenWidth;
 	ScreenHeight = InScreenHeight;
 

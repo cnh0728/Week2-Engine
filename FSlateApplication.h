@@ -14,6 +14,7 @@ public:
 	FRect GetCurrentWindow();
 	FViewport* SNEW(FRect _rect);
 	void Add(SWindow* _window);
+	void ResizeScreen(float resizeWidthRatio, float resizeHeightRatio);
 private:
 	void ProcessMouseButtonDownEvent();
 	void ProcessKeyDownEvent();

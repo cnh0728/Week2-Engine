@@ -9,5 +9,6 @@ struct FRect
 	FVector2 Max;    
 
 	bool Contains(const FVector2& mousePos) const;
+	void ResizeRatio(float widthRatio,float heightRatio);
 };
 

@@ -18,6 +18,7 @@ public:
 	virtual bool OnMouseDrag(FVector2 mouseDelta) ;
 	virtual bool OnMouseUp();
 	virtual void Resize(const FRect& _rect);
+	virtual void ScreenResize(float resizeWidthRatio, float resizeHeightRatio);
 private:
 	bool bisHover = false;
 	bool bisClicked = false;

@@ -61,3 +61,9 @@ void SWindow::Resize(const FRect& _rect)
 	Rect = _rect;
 	viewport->Resize(_rect);
 }
+
+void SWindow::ScreenResize(float resizeWidthRatio, float resizeHeightRatio)
+{
+	Rect.ResizeRatio(resizeWidthRatio, resizeHeightRatio);
+	if(viewport) viewport->Resize(Rect);
+}

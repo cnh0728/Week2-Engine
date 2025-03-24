@@ -27,6 +27,10 @@ bool SSplitter::OnMouseUp()
     return false;
 }
 
+void SSplitter::ScreenResize(float resizeWidthRatio, float resizeHeightRatio)
+{
+}
+
 
 bool SSplitter2x2::isHover(FVector2 coord) const
 {
@@ -114,4 +118,10 @@ bool SSplitter2x2::OnMouseUp()
     bisHoriClicked = false;
     bisVertiClicked = false;
     return false;
+}
+
+void SSplitter2x2::ScreenResize(float resizeWidthRatio, float resizeHeightRatio)
+{
+    horitionalHandle.ResizeRatio(resizeWidthRatio, resizeHeightRatio);
+    verticalHandle.ResizeRatio(resizeWidthRatio, resizeHeightRatio);
 }
