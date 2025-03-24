@@ -30,15 +30,9 @@ bool SSplitter::OnMouseUp()
 
 bool SSplitter2x2::isHover(FVector2 coord) const
 {
-    bool inHorizontal = (coord.X >= horitionalHandle.Min.X && 
-        coord.X <= horitionalHandle.Max.X &&
-        coord.Y >= horitionalHandle.Min.Y && 
-        coord.Y <= horitionalHandle.Max.Y);
+    bool inHorizontal = horitionalHandle.Contains(coord);
 
-    bool inVertical = (coord.X >= verticalHandle.Min.X && 
-        coord.X <= verticalHandle.Max.X &&
-        coord.Y >= verticalHandle.Min.Y && 
-        coord.Y <= verticalHandle.Max.Y);
+    bool inVertical = verticalHandle.Contains(coord);
 
     /*
     UE_LOG("horitionalHandle (%f, %f) (%f, %f)", 
@@ -49,10 +43,6 @@ bool SSplitter2x2::isHover(FVector2 coord) const
         verticalHandle.Min.X, verticalHandle.Min.Y,
         verticalHandle.Max.X, verticalHandle.Max.Y);
     */
-   
-
-
-
     return inHorizontal || inVertical;
 }
 
@@ -94,7 +84,6 @@ bool SSplitter2x2::OnMouseDrag(FVector2 mouseDelta)
         SideRB->Rect.Min.X += mouseDelta.X;
         SideRB->Resize(SideRB->Rect);
 
-        //UE_LOG("DeltaPos2D %f %f", mouseDelta.X, mouseDelta.Y);
         //UE_LOG("Hori Splitter Clicked");
     }
     else if (bisVertiClicked)
@@ -114,8 +103,7 @@ bool SSplitter2x2::OnMouseDrag(FVector2 mouseDelta)
         SideRB->Rect.Min.Y += mouseDelta.Y;
         SideRB->Resize(SideRB->Rect);
 
-        UE_LOG("DeltaPos2D %f %f", mouseDelta.X, mouseDelta.Y);
-        UE_LOG("Verti Splitter Clicked");
+        //UE_LOG("Verti Splitter Clicked");
     }
     return false;
 }

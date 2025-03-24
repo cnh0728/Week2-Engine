@@ -195,6 +195,16 @@ void UEngine::Shutdown()
 }
 
 
+void UEngine::SetScreenWidth(float _screenWidth)
+{
+    ScreenWidth = _screenWidth;
+}
+
+void UEngine::SetScreenHeight(float _screenHeight)
+{
+    ScreenHeight = _screenHeight;
+}
+
 void UEngine::InitWindow(int InScreenWidth, int InScreenHeight)
 {
     // 윈도우 클래스 등록
@@ -248,8 +258,9 @@ void UEngine::InitWorld()
     
     
     ACamera* mainCamera = World->SpawnActor<ACamera>();
+    mainCamera->ProjectionMode = ECameraProjectionMode::Type::Perspective;
     FEditorManager::Get().SetCamera(mainCamera);        //메인 카메라 설정
-
+    FEditorManager::Get().AddOrthoCamera(ECameraViewMode::Type::Perspective, mainCamera);
     float d = 10.0f;
 
     //Front

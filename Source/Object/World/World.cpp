@@ -95,7 +95,8 @@ void UWorld::Render(float DeltaTime)
 		RenderMainTexture(*Renderer, DeltaTime);
 	}
 	*/
-
+	float initialHeight = UEngine::Get().GetScreenHeight();
+	float initialWidth = UEngine::Get().GetScreenWidth();
 	TArray<FViewport*> activeViewport = Renderer->GetActiveViewport();
 	for (int i = 0; i < activeViewport.Num(); i++)
 	{
@@ -103,6 +104,8 @@ void UWorld::Render(float DeltaTime)
 		Renderer->PrepareShader();
 		RenderMainTexture(*Renderer, DeltaTime);
 	}
+	UEngine::Get().SetScreenHeight(initialHeight);
+	UEngine::Get().SetScreenWidth(initialWidth);
 
 
 }

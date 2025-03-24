@@ -844,7 +844,7 @@ void URenderer::CreateMultipleViewports()
 	FRect rectLT;
 	rectLT.Min = FVector2(0, 0);
 	rectLT.Max = FVector2(halfWidth, halfHeight);
-	SWindow* windowLT = CreateViewportWithWindow(rectLT, ECameraViewMode::Type::Front);
+	SWindow* windowLT = CreateViewportWithWindow(rectLT, ECameraViewMode::Type::Perspective);
 	/*
 	FViewport* viewportLT = FSlateApplication::Get().SNEW(rectLT);
 	viewportLT->SetCamera(ECameraViewMode::Type::Front);
@@ -888,8 +888,9 @@ void URenderer::CreateMultipleViewports()
 	*/
 
 	SSplitter2x2* splitter = new SSplitter2x2();
-	FRect verticalRect(0, halfHeight, fullWidth, halfHeight + 100);
-	FRect horizontailRect(halfWidth, 0, halfWidth + 100, fullHeight);
+	float border = 30;
+	FRect verticalRect(0, halfHeight, fullWidth, halfHeight + border);
+	FRect horizontailRect(halfWidth, 0, halfWidth + border, fullHeight);
 	splitter->verticalHandle = verticalRect;
 	splitter->horitionalHandle = horizontailRect;
 	splitter->SideLT = windowLT;

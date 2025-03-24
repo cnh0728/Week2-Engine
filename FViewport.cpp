@@ -26,9 +26,12 @@ void FViewport::SetViewportRendering()
 	FRect SWindowRect = Rect;
 	FVector2 min = SWindowRect.Min;
 	FVector2 max = SWindowRect.Max;
-	viewport = { min.X,min.Y,max.X - min.X,max.Y - min.Y,0.0f,1.0f };
+	float viewportWidth = max.X - min.X;
+	float viewportHeight = max.Y - min.Y;
+	viewport = { min.X,min.Y,viewportWidth,viewportHeight,0.0f,1.0f };
 	renderer->SetViewportRendering(viewport);
-
+	UEngine::Get().SetScreenWidth(viewportWidth);
+	UEngine::Get().SetScreenHeight(viewportHeight);
 
 	FEditorManager::Get().SetOrthoCamera(cameraType);
 	ACamera* cam = FEditorManager::Get().GetCamera();

@@ -56,7 +56,8 @@ public:
     int GetScreenHeight() const { return ScreenHeight; }
     int GetInitializedScreenWidth() const { return InitializedScreenWidth; }
     int GetInitializedScreenHeight() const { return InitializedScreenHeight; }
-
+    void SetScreenWidth(float _screenWidth);
+    void SetScreenHeight(float _screenHeight);
 private:
     void InitWindow(int InScreenWidth, int InScreenHeight);
     void InitRenderer();

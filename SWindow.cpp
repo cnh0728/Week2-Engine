@@ -28,7 +28,7 @@ bool SWindow::isHover(FVector2 coord) const
 {
 	float x = coord.X;
 	float y = coord.Y;
-	if (Rect.Min.X <= x && x <= Rect.Max.X && Rect.Min.Y <= y && y <= Rect.Max.Y)
+	if (Rect.Contains(coord))
 	{
 		viewport->ChangeMainCamera();
 		return true;

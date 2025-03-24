@@ -52,12 +52,17 @@ void FSlateApplication::Add(SWindow* _window)
 
 void FSlateApplication::ProcessMouseButtonDownEvent()
 {
+	POINT pt;
+	GetCursorPos(&pt);
+	ScreenToClient(UEngine::Get().GetWindowHandle(), &pt);
+	FVector2 MousePos(pt.x, pt.y);
+
 	APlayerInput& Input = APlayerInput::Get();
 	FVector MousePrePos = APlayerInput::Get().GetMousePrePos();
-	FVector MousePos = APlayerInput::Get().GetMousePos();
-	FVector DeltaPos = MousePos - MousePrePos;
+	FVector MouseNextPos = APlayerInput::Get().GetMousePos();
+	FVector DeltaPos = MouseNextPos - MousePrePos;
 
-	FVector2 MousePos2D(MousePos.X, MousePos.Y);
+	FVector2 MousePos2D(MouseNextPos.X, MouseNextPos.Y);
 	FVector2 MousePrePos2D(MousePrePos.X, MousePrePos.Y);
 	FVector2 DeltaPos2D(DeltaPos.X, DeltaPos.Y);
 	//UE_LOG("MousePrePos %f %f", MousePrePos.X, MousePrePos.Y);
@@ -68,7 +73,7 @@ void FSlateApplication::ProcessMouseButtonDownEvent()
 	{
 		for (int i = 0; i < windows.Num(); i++)
 		{
-			if (windows[i]->isClicked(MousePos2D))
+			if (windows[i]->isClicked(MousePos))
 			{
 				clickedWindow = windows[i];
 			}
