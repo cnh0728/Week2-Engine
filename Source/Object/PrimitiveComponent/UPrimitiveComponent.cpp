@@ -30,18 +30,6 @@ void UPrimitiveComponent::Render()
 	{
 		return;
 	}
-	// if (GetOwner()->IsCanPick() == false)
-	// {
-	// 	if (bIsPicked)
-	// 	{
-	// 		/*bUseVertexColor = false;
-	// 		SetCustomColor(FVector4(1.0f, 0.647f, 0.0f, 1.0f));*/
-	// 	}
-	// 	else
-	// 	{
-	// 		bUseVertexColor = true;
-	// 	}
-	// }
 	Renderer->RenderPrimtive(this);
 }
 

@@ -8,11 +8,10 @@
 #include "AbstractClass/Singleton.h"
 #include "Container/Map.h"
 #include "Core/Container/Array.h"
+#include "Data/ObjLoader.h"
 
 class UObject;
 class UWorld;
-
-
 
 enum class EScreenMode : uint8
 {
@@ -53,7 +52,8 @@ public:
      */
     void Shutdown();
 
-	class URenderer* GetRenderer() const { return Renderer.get(); }
+	URenderer* GetRenderer() const { return Renderer.get(); }
+    ObjectLoader* GetObjLoader() const {return ObjLoader.get();}
 	float GetScreenRatio() const { return static_cast<float>(ScreenWidth) / ScreenHeight; }
     int GetScreenWidth() const { return ScreenWidth; }
     int GetScreenHeight() const { return ScreenHeight; }
@@ -94,11 +94,12 @@ private:
 
 private:
 	std::unique_ptr<URenderer> Renderer;
-
+    std::unique_ptr<ObjectLoader> ObjLoader;
+    
     std::vector<std::pair<ETextureResource, std::string>> TexturesToLoad = {
     {ECat, "Textures/cat.png"},
     {EEarth, "Textures/earth.png"},
-    {ECustom, "Textures/dice.png"},
+    {ECustom, "Textures/pirate.png"},
     };
 
 private:

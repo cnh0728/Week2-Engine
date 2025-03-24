@@ -92,6 +92,7 @@ void UEngine::Initialize(
     InitRenderer();
     InitWorld();
     UResourceManager::Get().Initialize(Renderer->GetDevice(),Renderer->GetDeviceContext());
+    ObjLoader = std::make_unique<ObjectLoader>();
     InitTextures();
     
     InitializedScreenWidth = ScreenWidth;
@@ -267,7 +268,8 @@ void UEngine::InitWorld()
     World->LoadWorld(*World->ReleaseDefaultSceneName);
 #endif
 
-    ObjLoader::Get().LoadFromFile("cube.obj");
+    
+    ObjLoader->LoadFromFile("pirate.obj");
     
     //// Test
     // World->SpawnActor<AArrow>();

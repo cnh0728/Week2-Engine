@@ -1,16 +1,14 @@
 ﻿#pragma once
 #include <string>
-#include <DirectXMath.h>
+#include <vector>
 
-#include "Core/AbstractClass/Singleton.h"
 #include "Core/Container/Array.h"
-#include "Core/Container/Map.h"
 
-struct FVertexSimple;
-
-class ObjLoader : public TSingleton<ObjLoader> {
+class ObjectLoader {
 public:
-    ObjLoader() = default;
-    ~ObjLoader() = default;
-    bool LoadFromFile(const std::string& filename);
+    ObjectLoader() = default;
+    ~ObjectLoader() = default;
+    bool LoadFromFile(const std::string& Filename);
+    size_t Hash(std::string Str);
+    TArray<std::string> Split(const std::string& str, char delim);
 };
