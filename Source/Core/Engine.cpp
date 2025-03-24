@@ -267,7 +267,7 @@ void UEngine::InitWorld()
 
     //Front
     ACamera* frontCamera = World->SpawnActor<ACamera>();
-    frontCamera->ProjectionMode = ECameraProjectionMode::Type::Perspective;
+    frontCamera->ProjectionMode = ECameraProjectionMode::Type::Orthographic;
     frontCamera->SetCameraViewMode(ECameraViewMode::Type::Front);
     FTransform frontTransform = frontCamera->GetActorRelativeTransform();
     frontTransform.SetPosition(FVector(d,0,0));
@@ -276,7 +276,7 @@ void UEngine::InitWorld()
 
     //Top
     ACamera* topCamera = World->SpawnActor<ACamera>();
-    topCamera->ProjectionMode = ECameraProjectionMode::Type::Perspective;
+    topCamera->ProjectionMode = ECameraProjectionMode::Type::Orthographic;
     topCamera->SetCameraViewMode(ECameraViewMode::Type::Top);
     FTransform topTransform = topCamera->GetActorRelativeTransform();
     topTransform.SetPosition(FVector(0, 0, d));
@@ -285,7 +285,7 @@ void UEngine::InitWorld()
 
     //Right
     ACamera* rightCamera = World->SpawnActor<ACamera>();
-    rightCamera->ProjectionMode = ECameraProjectionMode::Type::Perspective;
+    rightCamera->ProjectionMode = ECameraProjectionMode::Type::Orthographic;
     rightCamera->SetCameraViewMode(ECameraViewMode::Type::Right);
     FTransform rightTransform = rightCamera->GetActorRelativeTransform();
     rightTransform.SetPosition(FVector(0, d, 0));
@@ -295,7 +295,7 @@ void UEngine::InitWorld()
 
     //Back
     ACamera* backCamera = World->SpawnActor<ACamera>();
-    backCamera->ProjectionMode = ECameraProjectionMode::Type::Perspective;
+    backCamera->ProjectionMode = ECameraProjectionMode::Type::Orthographic;
     backCamera->SetCameraViewMode(ECameraViewMode::Type::Back);
     FTransform backTransform = backCamera->GetActorRelativeTransform();
     backTransform.SetPosition(FVector(-d, 0, 0));
@@ -304,7 +304,7 @@ void UEngine::InitWorld()
 
     //Bottom
     ACamera* bottomCamera = World->SpawnActor<ACamera>();
-    bottomCamera->ProjectionMode = ECameraProjectionMode::Type::Perspective;
+    bottomCamera->ProjectionMode = ECameraProjectionMode::Type::Orthographic;
     bottomCamera->SetCameraViewMode(ECameraViewMode::Type::Bottom);
     FTransform bottomTransform = bottomCamera->GetActorRelativeTransform();
     bottomTransform.SetPosition(FVector(0, 0, -d));
@@ -313,7 +313,7 @@ void UEngine::InitWorld()
 
     //Left
     ACamera* leftCamera = World->SpawnActor<ACamera>();
-    leftCamera->ProjectionMode = ECameraProjectionMode::Type::Perspective;
+    leftCamera->ProjectionMode = ECameraProjectionMode::Type::Orthographic;
     leftCamera->SetCameraViewMode(ECameraViewMode::Type::Left);
     FTransform leftTransform = leftCamera->GetActorRelativeTransform();
     leftTransform.SetPosition(FVector(0, -d, 0));

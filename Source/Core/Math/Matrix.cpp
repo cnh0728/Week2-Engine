@@ -305,13 +305,13 @@ FMatrix FMatrix::PerspectiveFovLH(float FieldOfView, float AspectRatio, float Ne
 FMatrix FMatrix::OrthoLH(float ViewWidth, float ViewHeight, float NearPlane, float FarPlane)
 {
 	FMatrix Result;
-	Result.M[0][0] = 1.0f / ViewWidth;
+	Result.M[0][0] = 200.0f / ViewWidth;
 	Result.M[0][1] = 0.0f;
 	Result.M[0][2] = 0.0f;
 	Result.M[0][3] = 0.0f;
 
 	Result.M[1][0] = 0.0f;
-	Result.M[1][1] = 1.0f / ViewHeight;
+	Result.M[1][1] = 200.0f / ViewHeight;
 	Result.M[1][2] = 0.0f;
 	Result.M[1][3] = 0.0f;
 

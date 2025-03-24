@@ -286,7 +286,10 @@ void APicker::UpdateRayInfo()
     // Projection 공간으로 변환
     RayOrigin = {PosX, PosY, 0.0f, 1.0f};
     RayEnd = {PosX, PosY, 1.0f, 1.0f};
-			 
+
+    ACamera* cam = FEditorManager::Get().GetCamera();
+    UEngine::Get().GetRenderer()->UpdateProjectionMatrix(cam);
+    UEngine::Get().GetRenderer()->UpdateViewMatrix(cam->GetActorRelativeTransform());
     // View 공간으로 변환
     FMatrix InvProjMat = UEngine::Get().GetRenderer()->GetProjectionMatrix().Inverse();
     RayOrigin = InvProjMat.TransformVector4(RayOrigin);
