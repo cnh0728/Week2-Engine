@@ -4,7 +4,7 @@
 
 #include "Core/Container/Array.h"
 
-
+struct FVertexSimple;
 
 class ObjectLoader {
 public:

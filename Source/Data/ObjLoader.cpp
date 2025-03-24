@@ -18,26 +18,25 @@ struct Face
     std::string MaterialName;
 };
 
-bool ObjectLoader::LoadFromFile(const std::string& Filename)
+struct Loader //로더로 바꿀때 사용
 {
-    if (UResourceManager::Get().HasMeshData(Filename))
-    {
-        return true; // 이미 파싱되어 있으면    
+    TMap<std::string, TMap<std::string, Face>> Object;
+    TArray<std::string> Materials;
 
     TArray<FVector> Vertices;
     TArray<FVector> Normals;
     TArray<FVector2> UVs;
 };
-
 #pragma pack(push, 1) //패딩 없음
 struct BinaryHeader
 {
-    char Magic[4] = {'O', 'B', 'J', 'B'};   //매직 넘버
+    char Magic[4] = { 'O', 'B', 'J', 'B' };   //매직 넘버
     uint32_t Vertsion = 1;                  //파일 버전
     uint32_t VertexCount;                   //총 버텍스 수
     uint32_t IndexCount;                    //총 인덱스 수
 };
 #pragma pack(pop)
+    
 
 ObjectLoader::ObjectLoader()
 {
@@ -61,6 +60,10 @@ void ObjectLoader::CheckExistAllDirectory()
 
 bool ObjectLoader::LoadFromFile(const std::string& Filename)
 {
+    if (UResourceManager::Get().HasMeshData(Filename))
+    {
+        return true; // 이미 파싱되어 있으면    
+    }
     namespace fs = std::filesystem;
     if (fs::exists(BinaryFileDir + Filename + BinaryFileExt))
     {
@@ -96,7 +99,7 @@ bool ObjectLoader::LoadFromFile(const std::string& Filename)
 
     while (std::getline(file, line))
     {
-        if (line.empty() || line[0] == '#')
+        if (line.empty() || line[0] == '#'){
             continue;
         }
         
@@ -174,6 +177,8 @@ bool ObjectLoader::LoadFromFile(const std::string& Filename)
    // 데이터 저장~
     TMap<std::string, uint32> VertexMap;
     TArray<FSubMeshData> SubMeshes;
+    TArray<FVertexSimple> FinalVertices;
+    TArray<uint32_t> FinalIndices;
 
     for (auto& Pair : FaceGroup)
     {
@@ -209,7 +214,6 @@ bool ObjectLoader::LoadFromFile(const std::string& Filename)
                 }
             }
         }
-
         for (auto& SubMeshPair : SubMeshPerMaterial)
         {
             SubMeshes.Add(SubMeshPair.Value);
@@ -218,7 +222,6 @@ bool ObjectLoader::LoadFromFile(const std::string& Filename)
 
     OriginVertices[EPT_Custom] = FinalVertices;
     OriginIndices[EPT_Custom] = FinalIndices;
-
     SaveToBinary(FinalVertices, FinalIndices, Filename);
     
     UResourceManager::Get().SetMeshData(Filename, SubMeshes);
