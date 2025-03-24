@@ -9,6 +9,7 @@
 #include "Container/Map.h"
 #include "Core/Container/Array.h"
 #include "Data/ObjLoader.h"
+#include "Object/UObjectArray.h"
 
 class UObject;
 class UWorld;
@@ -110,7 +111,6 @@ private:
 
 public:
     // TArray<std::shared_ptr<UObject>> GObjects;
-    TMap<uint32, std::shared_ptr<UObject>> GObjects;
 };
 
 template <typename ObjectType> requires std::derived_from<ObjectType, UObject>

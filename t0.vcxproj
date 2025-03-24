@@ -218,6 +218,8 @@
     <ClCompile Include="Source\Object\PrimitiveComponent\TextComponent.cpp" />
     <ClCompile Include="Source\Object\PrimitiveComponent\TextureComponent.cpp" />
     <ClCompile Include="Source\Object\PrimitiveComponent\UBoundingBox.cpp" />
+    <ClCompile Include="Source\Object\TObjectIterator.cpp" />
+    <ClCompile Include="Source\Object\UObjectArray.cpp" />
     <ClCompile Include="Source\Static\ResourceManager.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui.cpp" />
     <ClCompile Include="Source\ThirdParty\ImGui\imgui_demo.cpp" />
@@ -256,6 +258,8 @@
     <ClInclude Include="Source\Object\ObjectMacros.h" />
     <ClInclude Include="Source\Object\PrimitiveComponent\CustomComponent.h" />
     <ClInclude Include="Source\Object\PrimitiveComponent\TextureComponent.h" />
+    <ClInclude Include="Source\Object\TObjectIterator.h" />
+    <ClInclude Include="Source\Object\UObjectArray.h" />
     <ClInclude Include="Source\Static\Enum.h" />
     <ClInclude Include="Source\Static\ResourceManager.h" />
     <ClInclude Include="Unsupported.h" />

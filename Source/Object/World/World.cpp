@@ -18,6 +18,7 @@
 #include "Object/Actor/Texture.h"
 #include "Object/Cast.h"
 #include "Debug/DebugConsole.h"
+#include "Object/TObjectIterator.h"
 #include "Object/PrimitiveComponent/CustomComponent.h"
 #include "Object/PrimitiveComponent/TextureComponent.h"
 
@@ -62,7 +63,7 @@ void UWorld::LateTick(float DeltaTime)
 	for (const auto& PendingActor : PendingDestroyActors)
 	{
 		// Engine에서 제거
-		UEngine::Get().GObjects.Remove(PendingActor->GetUUID());
+		GObjects.Remove(PendingActor->GetUUID());
 	}
 	PendingDestroyActors.Empty();
 }
