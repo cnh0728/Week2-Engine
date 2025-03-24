@@ -6,8 +6,11 @@
 #include "Object/PrimitiveComponent/BillBoardComponent.h"
 #include "Object/World/World.h"
 #include "Static/FEditorManager.h"
-#include <Core/Input/PlayerInput.h>
+#include "Core/Input/PlayerInput.h"
 #include "Object/Cast.h"
+#include "Object/UObjectArray.h"
+
+TMap<uint32, std::shared_ptr<UObject>> GObjects;
 
 AGizmoHandle::AGizmoHandle()
 {
@@ -183,7 +186,7 @@ void AGizmoHandle::SetActive(bool bActive)
 		GetWorld()->RemoveRenderComponent(BoundingBox);
 		RemoveComponent(BoundingBox);
 
-		UEngine::Get().GObjects.Remove(BoundingBox->GetUUID());
+		GObjects.Remove(BoundingBox->GetUUID());
 	}
 	SelectedActorBoundingBox.Empty();
 

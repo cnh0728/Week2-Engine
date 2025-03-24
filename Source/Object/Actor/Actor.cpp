@@ -7,6 +7,9 @@
 #include "Object/PrimitiveComponent/TextComponent.h"
 #include "Object/PrimitiveComponent/BillBoardComponent.h"
 #include "Object/Cast.h"
+#include "Object/UObjectArray.h"
+
+// TMap<uint32, std::shared_ptr<UObject>> GObjects;
 
 AActor::AActor() : Depth{ 0 }
 {
@@ -85,7 +88,7 @@ void AActor::EndPlay(const EEndPlayReason::Type EndPlayReason)
 		{
 			FEditorManager::Get().SelectPrimitive(nullptr);
 		}
-		UEngine::Get().GObjects.Remove(Component->GetUUID());
+		GObjects.Remove(Component->GetUUID());
 	}
 	Components.Empty();
 }
