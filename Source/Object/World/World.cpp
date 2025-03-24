@@ -129,7 +129,11 @@ void UWorld::RenderMainTexture(URenderer& Renderer, float DeltaTime)
 		}
 		{
 			//분기해주고 로드텍스쳐까지
-			if (RenderComponent->IsA(UTextureComponent::StaticClass()) || RenderComponent->IsA(UCustomComponent::StaticClass()))
+			if (RenderComponent->IsA(UTextureComponent::StaticClass()))
+			{
+				Renderer.PrepareTextureResource(RenderComponent->GetTextureResource());
+			}
+			if (RenderComponent->IsA(UCustomComponent::StaticClass()))
 			{
 				Renderer.PrepareTextureResource(RenderComponent->GetTextureResource());
 			}

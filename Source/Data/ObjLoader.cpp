@@ -9,6 +9,8 @@
 #include "Core/Math/Vector.h"
 #include "Core/Container/Array.h"
 #include "Primitive/PrimitiveVertices.h"
+#include "Static/ResourceManager.h"
+#include <sstream>
 
 struct Face
 {
@@ -245,6 +247,7 @@ TArray<std::string> ObjectLoader::Split(const std::string& str, char delim) {
     return result;
 }
 
+
 bool ObjectLoader::SaveToBinary(const TArray<FVertexSimple>& Vertices, TArray<uint32>& Indices, const std::string& Filename)
 {
     std::ofstream File(BinaryFileDir + Filename + BinaryFileExt, std::ios::binary);
@@ -285,3 +288,4 @@ bool ObjectLoader::LoadFromBinary(TArray<FVertexSimple>& OutVertices, TArray<uin
     File.close();
     return true;
 }
+

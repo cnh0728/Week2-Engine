@@ -71,7 +71,7 @@ void UEngine::InitTextures()
 {
     for (auto& [type, path] : TexturesToLoad)
     {
-        UResourceManager::Get().LoadTexture(type, path);
+        UResourceManager::Get().LoadTexture(path);
     }
 }
 
@@ -267,13 +267,9 @@ void UEngine::InitWorld()
 #else
     World->LoadWorld(*World->ReleaseDefaultSceneName);
 #endif
-
     
     ObjLoader->LoadFromFile("pirate");
     
-    //// Test
-    // World->SpawnActor<AArrow>();
-    // World->SpawnActor<ASphere>();
     
     World->SpawnActor<AAxis>();
     World->SpawnActor<APicker>();

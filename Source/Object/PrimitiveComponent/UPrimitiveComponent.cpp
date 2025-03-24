@@ -79,7 +79,7 @@ void UPrimitiveComponent::SetColor(FVector4 Color)
 	PixelType = ECustomColor;
 }
 
-void UPrimitiveComponent::SetTextureResource(ETextureResource ER)
+void UPrimitiveComponent::SetTextureResource(std::string ER)
 {
 	this->TextureResource = ER;
 	PixelType = ETexture;

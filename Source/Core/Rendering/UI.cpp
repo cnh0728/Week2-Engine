@@ -26,6 +26,7 @@
 #include "Object/Gizmo/Axis.h"
 #include "Object/PrimitiveComponent/TextureComponent.h"
 #include "Static/Enum.h"
+#include "Core//Input/PlayerInput.h"
 
 void UI::Initialize(HWND hWnd, URenderer& Renderer, UINT ScreenWidth, UINT ScreenHeight)
 {
@@ -74,12 +75,19 @@ void UI::Update()
     windowWidth = UEngine::Get().GetScreenWidth();
     windowHeight = UEngine::Get().GetScreenHeight();
 
+    if (APlayerInput::Get().GetKeyDown(EKeyCode::Tab))
+        bShowUI = !bShowUI;
+
+    if (bShowUI)
+    {
+    
     RenderControlPanel();
     RenderPropertyWindow();
     RenderSceneManager();
     RenderComponentsByActor();
     RenderFNameResolver();
     Debug::ShowConsole(bWasWindowSizeUpdated);
+}
 
     // ImGui 렌더링
     ImGui::Render();

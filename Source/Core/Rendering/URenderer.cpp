@@ -7,6 +7,9 @@
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 #include "Static/FEditorManager.h"
 #include "directxtk/WICTextureLoader.h"
+#include "Static/ResourceManager.h"
+#include "Object/PrimitiveComponent/CustomComponent.h"
+#include "Data/MaterialData.h"
 
 void VertexBufferInfo::AddVertices(TArray<FVertexSimple> InVertices, TArray<uint32_t> InIndices)
 {
@@ -83,10 +86,10 @@ void URenderer::CreateShader()
          *   - SIZE_T GetBufferSize
          *     - 버퍼의 크기(바이트 갯수)를 돌려준다
          */
-    ID3DBlob* VertexShaderCSO;
-    ID3DBlob* PixelShaderCSO;
+    ID3DBlob* VertexShaderCSO = nullptr;
+    ID3DBlob* PixelShaderCSO = nullptr;
     
-    ID3DBlob* TexShaderCSO;
+    ID3DBlob* TexShaderCSO = nullptr;
     
 	ID3DBlob* ErrorMsg = nullptr;
     // 셰이더 컴파일 및 생성
@@ -522,17 +525,87 @@ void URenderer::ReleaseVertexBuffer(D3D11_PRIMITIVE_TOPOLOGY Topology)
 
 void URenderer::RenderPrimtive(UPrimitiveComponent* Component)
 {
-    if (VertexBuffers.Contains(Component->GetType()) == false)
+    if (Component->IsA(UCustomComponent::StaticClass()))
     {
+        UCustomComponent* Custom = static_cast<UCustomComponent*>(Component);
+
+        for (const auto& Unit : Custom->GetRenderUnits())
+        {
+            if (!Unit.Material) continue;
+
+            // 텍스처 바인딩 
+            if (!Unit.Material->DiffuseTexturePath.empty())
+            {
+                UResourceManager::Get().LoadTexture(Unit.Material->DiffuseTexturePath);
+                ID3D11ShaderResourceView* SRV = UResourceManager::Get().GetTexture(Unit.Material->DiffuseTexturePath);
+                if (SRV)
+                {
+                    DeviceContext->PSSetShaderResources(0, 1, &SRV);
+                }
+            }
+
+            // 정점 버퍼 직접 생성 (전역 저장 X)
+            TArray<FVertexSimple> Vertices = Unit.Vertices;
+            TArray<uint32_t> Indices = Unit.Indices;
+            if (Vertices.Num() == 0 || Indices.Num() == 0)
+                continue;
+
+            ID3D11Buffer* VB = nullptr;
+            ID3D11Buffer* IB = nullptr;
+
+            // Vertex Buffer 생성
+            {
+                D3D11_BUFFER_DESC vbDesc = {};
+                vbDesc.Usage = D3D11_USAGE_DEFAULT;
+                vbDesc.ByteWidth = sizeof(FVertexSimple) * Vertices.Num();
+                vbDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+                D3D11_SUBRESOURCE_DATA vbData = {};
+                vbData.pSysMem = Vertices.GetData();
+                Device->CreateBuffer(&vbDesc, &vbData, &VB);
+            }
+
+            // Index Buffer 생성
+            {
+                D3D11_BUFFER_DESC ibDesc = {};
+                ibDesc.Usage = D3D11_USAGE_DEFAULT;
+                ibDesc.ByteWidth = sizeof(uint32_t) * Indices.Num();
+                ibDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+                D3D11_SUBRESOURCE_DATA ibData = {};
+                ibData.pSysMem = Indices.GetData();
+                Device->CreateBuffer(&ibDesc, &ibData, &IB);
+            }
+
+            // 셰이더 상수 업데이트
+            UpdateConstant(Component);
+
+            // Topology 설정
+            if (CurrentTopology != D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST)
+            {
+                DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+                CurrentTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+            }
+
+            // 버퍼 바인딩
+            UINT Offset = 0;
+            DeviceContext->IASetVertexBuffers(0, 1, &VB, &Stride, &Offset);
+            DeviceContext->IASetIndexBuffer(IB, DXGI_FORMAT_R32_UINT, 0);
+
+            // 렌더링
+            DeviceContext->DrawIndexed(Indices.Num(), 0, 0);
+
+            // 해제
+            if (VB) VB->Release();
+            if (IB) IB->Release();
+        }
+
         return;
     }
+
+    // 기본 컴포넌트 처리
+    if (!VertexBuffers.Contains(Component->GetType())) return;
 
     VertexBufferInfo Info = VertexBuffers[Component->GetType()];
-
-    if (Info.GetVertexBuffer() == nullptr)
-    {
-        return;
-    }
+    if (!Info.GetVertexBuffer()) return;
 
     if (CurrentTopology != Info.GetTopology())
     {
@@ -541,16 +614,13 @@ void URenderer::RenderPrimtive(UPrimitiveComponent* Component)
     }
 
     UpdateConstant(Component);
-
-    ID3D11Buffer* VertexBuffer = Info.GetVertexBuffer();
-    ID3D11Buffer* IndexBuffer = Info.GetIndexBuffer();
-    uint32_t IndexCount = Info.GetIndexCount();
-    
+    ID3D11Buffer* VB = Info.GetVertexBuffer();
+    ID3D11Buffer* IB = Info.GetIndexBuffer();
     UINT Offset = 0;
-    DeviceContext->IASetVertexBuffers(0, 1, &VertexBuffer, &Stride, &Offset);
-    DeviceContext->IASetIndexBuffer(IndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-        
-    DeviceContext->DrawIndexed(IndexCount, 0, 0);
+
+    DeviceContext->IASetVertexBuffers(0, 1, &VB, &Stride, &Offset);
+    DeviceContext->IASetIndexBuffer(IB, DXGI_FORMAT_R32_UINT, 0);
+    DeviceContext->DrawIndexed(Info.GetIndexCount(), 0, 0);
 }
 
 void URenderer::ReleaseAllVertexBuffer()
@@ -853,9 +923,9 @@ void URenderer::InitMatrix()
 
 
 
-void URenderer::PrepareTextureResource(ETextureResource ETR)
+void URenderer::PrepareTextureResource(std::string path)
 {
-    ID3D11ShaderResourceView* SRV = UResourceManager::Get().GetTexture(ETR);
+    ID3D11ShaderResourceView* SRV = UResourceManager::Get().GetTexture(path);
     if (SRV)
     {
         DeviceContext->PSSetShaderResources(0, 1, &SRV);

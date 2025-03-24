@@ -4,7 +4,7 @@
 
 #include "Core/Container/Array.h"
 
-struct FVertexSimple;
+
 
 class ObjectLoader {
 public:
@@ -22,4 +22,5 @@ private:
     std::string BinaryFileExt = ".binary";
     std::string ObjFileDir = "Objects/";
     std::string ObjFileExt = ".obj";
+
 };

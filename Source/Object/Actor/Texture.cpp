@@ -8,7 +8,7 @@ ATexture::ATexture()
     
     UTextureComponent* TextureComp = AddComponent<UTextureComponent>();
     TextureComp->SetupAttachment(RootComponent);
-    TextureComp->SetTextureResource(ECat);
+    TextureComp->SetTextureResource("Textures/cat.png");
 }
 
 void ATexture::BeginPlay()

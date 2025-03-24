@@ -51,7 +51,8 @@ float4 mainPS(PS_INPUT input) : SV_TARGET
     float4 color;
 
     color = input.color;
-        
+    
+    
     switch (PixelType)
     {
     case 1: //CustomColor

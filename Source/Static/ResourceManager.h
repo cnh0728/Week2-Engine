@@ -5,26 +5,50 @@
 #include "Static/Enum.h"
 #include "Core/Container/Map.h"
 #include "Core/AbstractClass/Singleton.h"
+#include "Data/MaterialData.h"
+#include "Primitive/PrimitiveVertices.h"
+#include "Data/MtlLoader.h"
 
 
 
 class UResourceManager : public TSingleton<UResourceManager>
 {
 public:
+    UResourceManager() = default;
+    ~UResourceManager() = default;
+
     void Initialize(ID3D11Device* InDevice, ID3D11DeviceContext* InContext);
     void Shutdown();
 
-    void LoadTexture(ETextureResource Type, std::string Path);
-    ID3D11ShaderResourceView* GetTexture(ETextureResource Type) const;
-
+    void LoadTexture(const std::string& Path);
+    ID3D11ShaderResourceView* GetTexture(const std::string& Path) const;
     void ReleaseAllTextures();
-    UResourceManager() = default;
-    ~UResourceManager() = default;
+
+    const FMaterialData* GetMaterial(const std::string& name) const;
+    void SetMaterial(const std::string& name, const FMaterialData& materialData);
+
+
 
 private:
     ID3D11Device* Device = nullptr;
     ID3D11DeviceContext* DeviceContext = nullptr;
-    TMap<ETextureResource, ID3D11ShaderResourceView*> TextureResources;
+   
+
+public:
+    void SetMeshData(const std::string& path, const TArray<FSubMeshData>& meshData);
+    const TArray<FSubMeshData>* GetMeshData(const std::string& path) const;
+
+private:
+    TMap<std::string, ID3D11ShaderResourceView*> TextureMap;
+    TMap<std::string, FMaterialData> Materials;
+    TMap<std::string, TArray<FSubMeshData>> Meshes;
+
+public:
+    bool LoadMtlFile(const std::string& path); // public wrapper
+
+private:
+    MtlLoader MaterialLoader;
+
 };
 
 
