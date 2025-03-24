@@ -19,6 +19,16 @@ struct Face
 
 bool ObjectLoader::LoadFromFile(const std::string& Filename)
 {
+    if (UResourceManager::Get().HasMeshData(Filename))
+    {
+        return true; // 이미 파싱되어 있으면    
+
+
+
+
+
+    }
+
     std::ifstream file(Filename);
     if (!file.is_open())
     {
