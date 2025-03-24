@@ -61,7 +61,7 @@ LRESULT UEngine::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     case WM_SIZE:
 		UEngine::Get().UpdateWindowSize(LOWORD(lParam), HIWORD(lParam));
 		break;   
-        case WM_DROPFILES:
+    case WM_DROPFILES:
 {
     HDROP hDrop = (HDROP)wParam;
     
