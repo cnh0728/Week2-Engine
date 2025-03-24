@@ -99,3 +99,60 @@ void FEditorManager::AddOrthoCamera(ECameraViewMode::Type type, ACamera* NewMult
 {
 	OrthogonalCamera.Add(type, NewMultiCamera);
 }
+
+void FEditorManager::MoveAllOrthoCameras(ECameraViewMode::Type cameraType, FVector MouseDeltaPos)
+{
+	if (cameraType == ECameraViewMode::Type::Perspective)
+	{
+		return;
+	}
+	FVector deltaMove(0,0,0);
+	float x = MouseDeltaPos.X*0.01f;
+	float y = MouseDeltaPos.Y*0.01f;
+	switch (cameraType)
+	{
+	case ECameraViewMode::Type::Front:
+		deltaMove.Z += y;
+		deltaMove.Y += -x;
+		break;
+	case ECameraViewMode::Type::Back:
+		deltaMove.Z += y;
+		deltaMove.Y += x;
+		break;
+	case ECameraViewMode::Type::Top:
+		deltaMove.X += y;
+		deltaMove.Y += x;
+		break;
+	case ECameraViewMode::Type::Bottom:
+		deltaMove.X += -y;
+		deltaMove.Y += x;
+		break;
+	case ECameraViewMode::Type::Left:
+		deltaMove.Z += y;
+		deltaMove.X += -x;
+		break;
+	case ECameraViewMode::Type::Right:
+		deltaMove.Z += y;
+		deltaMove.X += x;
+		break;
+	default:
+		break;
+	}
+
+	for (int i = static_cast<int>(ECameraViewMode::Type::Front); 
+		i < static_cast<int>(ECameraViewMode::Type::Perspective); ++i)
+	{
+		ECameraViewMode::Type mode = static_cast<ECameraViewMode::Type>(i);
+		MoveOrthoCamera(mode, deltaMove);
+	}
+
+}
+
+void FEditorManager::MoveOrthoCamera(ECameraViewMode::Type cameraType, FVector deltaMove)
+{
+	ACamera* camera = OrthogonalCamera[cameraType];
+	FTransform cameraTransform = camera->GetActorRelativeTransform();
+	cameraTransform.Translate(deltaMove);
+	camera->SetActorRelatvieTransform(cameraTransform);
+
+}

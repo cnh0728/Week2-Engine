@@ -260,6 +260,7 @@ void UEngine::InitWorld()
     
     ACamera* mainCamera = World->SpawnActor<ACamera>();
     mainCamera->ProjectionMode = ECameraProjectionMode::Type::Perspective;
+    mainCamera->SetCameraViewMode(ECameraViewMode::Type::Perspective);
     FEditorManager::Get().SetCamera(mainCamera);        //메인 카메라 설정
     FEditorManager::Get().AddOrthoCamera(ECameraViewMode::Type::Perspective, mainCamera);
     float d = 10.0f;

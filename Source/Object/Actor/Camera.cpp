@@ -40,6 +40,7 @@ void ACamera::SetCameraSensitivity(float sensitivity)
 
 void ACamera::SetCameraViewMode(ECameraViewMode::Type cameraViewMode)
 {
+    ViewMode = cameraViewMode;
     FVector Position = GetActorRelativeTransform().GetPosition();
     FQuat Rotation;
     switch (cameraViewMode)
@@ -61,6 +62,8 @@ void ACamera::SetCameraViewMode(ECameraViewMode::Type cameraViewMode)
         break;
     case ECameraViewMode::Type::Right:
         Rotation = FQuat::AxisAngleToQuaternion(FVector(0, 0, 1), -90);
+        break;
+    case ECameraViewMode::Type::Perspective:
         break;
     default:
         break;

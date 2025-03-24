@@ -21,10 +21,16 @@ void APlayerController::HandleCameraMovement(float DeltaTime) {
     }
 
     ACamera* Camera = FEditorManager::Get().GetCamera();
-
+    ECameraViewMode::Type cameraType = Camera->ViewMode;
     FVector MousePrePos = APlayerInput::Get().GetMousePrePos();
     FVector MousePos = APlayerInput::Get().GetMousePos();
     FVector DeltaPos = MousePos - MousePrePos;
+
+    if (Camera->ViewMode != ECameraViewMode::Type::Perspective)
+    {
+        FEditorManager::Get().MoveAllOrthoCameras(cameraType, DeltaPos);
+        return;
+    }
 
     FTransform CameraTransform = Camera->GetActorRelativeTransform();
 

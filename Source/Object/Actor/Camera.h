@@ -51,6 +51,7 @@ public:
     
     // 투영 타입 - Perspective, Orthographic
     ECameraProjectionMode::Type ProjectionMode;
+    ECameraViewMode::Type ViewMode;
     // float AspectRatio;	// 카메라 비율 (이번 프로젝트에서는 사용 안할듯) 
 
     void SetFieldOfView(float Fov);

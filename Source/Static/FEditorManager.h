@@ -37,6 +37,8 @@ public:
     void ToggleShowFlag(EEngineShowFlags Flag) { EngineShowFlags.Toggle(Flag); }
     void PrintShowFlags() const { EngineShowFlags.Print(); }
     
+    void MoveAllOrthoCameras(ECameraViewMode::Type cameraType, FVector MouseDeltaPos);
+    void MoveOrthoCamera(ECameraViewMode::Type cameraType, FVector deltaMove);
 private:
     AActor* SelectedActor = nullptr;
     UPrimitiveComponent* SelectedComponent = nullptr;
