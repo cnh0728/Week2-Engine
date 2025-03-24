@@ -49,3 +49,9 @@ void FViewport::Resize(FRect rect)
 {
 	Rect = rect;
 }
+
+void FViewport::SetActiveFullViewport()
+{
+	URenderer* renderer = UEngine::Get().GetRenderer();
+	renderer->activeFullViewport = this;
+}

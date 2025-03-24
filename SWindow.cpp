@@ -38,11 +38,14 @@ bool SWindow::isHover(FVector2 coord) const
 
 void SWindow::OnFocus()
 {
+
+	//viewport->ChangeMainCamera();
 }
 
 
 bool SWindow::isClicked(FVector2 mousePos) 
 {
+	viewport->ChangeMainCamera();
 	return Rect.Contains(mousePos);
 }
 
@@ -58,12 +61,32 @@ bool SWindow::OnMouseUp()
 
 void SWindow::Resize(const FRect& _rect)
 {
+	prevRect = Rect;
 	Rect = _rect;
 	viewport->Resize(_rect);
 }
 
 void SWindow::ScreenResize(float resizeWidthRatio, float resizeHeightRatio)
 {
+	prevRect = Rect;
 	Rect.ResizeRatio(resizeWidthRatio, resizeHeightRatio);
 	if(viewport) viewport->Resize(Rect);
+}
+
+void SWindow::SetActiveFullViewport()
+{
+	if(viewport) viewport->SetActiveFullViewport();
+}
+
+void SWindow::RestorePrevSize()
+{
+	viewport->Resize(prevRect);
+	FRect tmp = Rect;
+	Rect = prevRect;
+	prevRect = tmp;
+}
+
+void SWindow::ChangeMainCamera()
+{
+	//if(viewport!=nullptr) viewport->ChangeMainCamera();
 }

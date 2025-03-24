@@ -23,5 +23,6 @@ private:
 	TArray<SWindow*> windows;
 	SWindow* currentWindow;
 	SWindow* clickedWindow;
+	SWindow* fullWindow;
 };
 

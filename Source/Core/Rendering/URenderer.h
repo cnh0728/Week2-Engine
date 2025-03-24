@@ -240,6 +240,7 @@ public:
 	void ReleaseMultiViewport();
 	const TMap<EViewport::Position, FViewport*>& GetActiveViewport();
 	void ChangeViewportCameraType(EViewport::Position viewportPos, ECameraViewMode::Type cameraType);
+	FViewport* activeFullViewport = nullptr;
 protected:
     /** Direct3D Device 및 SwapChain을 생성합니다. */
     void CreateDeviceAndSwapChain(HWND hWindow);

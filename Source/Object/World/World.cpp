@@ -106,11 +106,21 @@ void UWorld::Render(float DeltaTime)
 		RenderMainTexture(*Renderer, DeltaTime);
 	}
 	*/
-	for (auto& pair : activeViewport)
+	if (Renderer->activeFullViewport)
 	{
-		pair.Value->SetViewportRendering();
+		Renderer->activeFullViewport->SetViewportRendering();
 		Renderer->PrepareShader();
 		RenderMainTexture(*Renderer, DeltaTime);
+	}
+	else
+	{
+		for (auto& pair : activeViewport)
+		{
+			pair.Value->SetViewportRendering();
+			Renderer->PrepareShader();
+			RenderMainTexture(*Renderer, DeltaTime);
+		}
+
 	}
 	UEngine::Get().SetScreenHeight(initialHeight);
 	UEngine::Get().SetScreenWidth(initialWidth);

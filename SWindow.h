@@ -19,9 +19,13 @@ public:
 	virtual bool OnMouseUp();
 	virtual void Resize(const FRect& _rect);
 	virtual void ScreenResize(float resizeWidthRatio, float resizeHeightRatio);
+	void SetActiveFullViewport();
+	void RestorePrevSize();
+	void ChangeMainCamera();
 private:
 	bool bisHover = false;
 	bool bisClicked = false;
 	ISlateViewport* viewport;
+	FRect prevRect;
 };
 

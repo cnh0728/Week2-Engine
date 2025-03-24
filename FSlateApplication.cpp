@@ -109,7 +109,30 @@ void FSlateApplication::ProcessMouseButtonDownEvent()
 
 void FSlateApplication::ProcessKeyDownEvent()
 {
+	APlayerInput& Input = APlayerInput::Get();
+	URenderer* renderer = UEngine::Get().GetRenderer();
+	
+	if (Input.GetKeyDown(EKeyCode::Enter)&&renderer->activeFullViewport==nullptr)
+	{
+		if (currentWindow == nullptr) return;
+		currentWindow->SetActiveFullViewport();
 
+		FRect fullrect;
+		FVector2 fullScreen = renderer->GetSwapChainSize();
+		fullrect.Min.X = 0;
+		fullrect.Min.Y = 0;
+		fullrect.Max.X = fullScreen.X;
+		fullrect.Max.Y = fullScreen.Y;
+		currentWindow->Resize(fullrect);
+		fullWindow = currentWindow;
+	}
+	else if (Input.GetKeyDown(EKeyCode::Enter) && renderer->activeFullViewport)
+	{
+		if (fullWindow==nullptr) return;
+		renderer->activeFullViewport = nullptr;
+		fullWindow->RestorePrevSize();
+		fullWindow = nullptr;
+	}
 }
 
 void FSlateApplication::ProcessIsHover()
@@ -118,16 +141,22 @@ void FSlateApplication::ProcessIsHover()
 	GetCursorPos(&pt);
 	ScreenToClient(UEngine::Get().GetWindowHandle(), &pt);
 	FVector2 mouse(pt.x, pt.y);
+	if (fullWindow)
+	{
+		fullWindow->isHover(mouse);
+		return;
+	}
 	for (int i = 0; i < windows.Num(); i++)
 	{
 		if (windows[i]->isHover(mouse))
 		{
 			SWindow* prevWindow = currentWindow;
 			currentWindow = windows[i];
-
 			if (currentWindow != prevWindow)
 			{
 				currentWindow->OnFocus();
+
+				//windows[i]->ChangeMainCamera();
 			}
 			//FEditorManager::Get().SetCameraIndex(i);
 		}
