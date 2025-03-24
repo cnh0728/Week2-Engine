@@ -124,6 +124,27 @@ FBox::FBox(const TArray<FVector>& Vertices, const FTransform& Transform)
 	//UpdateValid();
 }
 
+FBox::FBox(const TArray<FRenderUnit>& RenderUnits, const FMatrix& TransformMatrix)
+{
+	Max = FVector(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+	Min = FVector(FLT_MAX, FLT_MAX, FLT_MAX);
+	for (const FRenderUnit& RenderUnit : RenderUnits)
+	{
+		for (const FVertexSimple& Vertex : RenderUnit.Vertices)
+		{
+			FVector4 Vertex4 = FVector4(Vertex.X, Vertex.Y, Vertex.Z, 1.f);
+			Vertex4 = Vertex4 * TransformMatrix;
+			// Affine transform에서는 w가 변하지 않음 -> w 나누기 생략
+			Min.X = min(Min.X, Vertex4.X);
+			Min.Y = min(Min.Y, Vertex4.Y);
+			Min.Z = min(Min.Z, Vertex4.Z);
+			Max.X = max(Max.X, Vertex4.X);
+			Max.Y = max(Max.Y, Vertex4.Y);
+			Max.Z = max(Max.Z, Vertex4.Z);
+		}
+	}
+}
+
 FBox::FBox(const FVector InMin, const FVector InMax)
 {
 	Min = InMin;

@@ -4,6 +4,7 @@
 #include "Primitive/PrimitiveVertices.h"
 #include "Core/Container/Array.h"
 #include "Transform.h"
+#include "Object/PrimitiveComponent/CustomComponent.h"
 
 class FBox
 {
@@ -20,7 +21,7 @@ public:
 	FBox(const TArray<FVector> &Vertices);
 	FBox(const TArray<FVector> &Vertices, const FMatrix& TransformMatrix);
 	FBox(const TArray<FVector> &Vertices, const FTransform& Transform);
-
+	FBox(const TArray<FRenderUnit> &RenderUnits, const FMatrix& TransformMatrix);
 	FBox(const FVector InMin, const FVector InMax);
 
 	static FBox BuildAABB(const FVector Origin, const FVector Extent);

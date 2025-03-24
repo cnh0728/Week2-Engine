@@ -13,10 +13,10 @@ ACustom::ACustom()
 
     UCustomComponent* CustomComp = AddComponent<UCustomComponent>();
     CustomComp->SetupAttachment(RootComponent);
-    srand(static_cast<unsigned int>(time(nullptr))); 
-    const char* modelPath = (rand() % 2 == 0) ? "Models/table.obj" : "Models/pirate.obj";
+    //srand(static_cast<unsigned int>(time(nullptr))); 
+    // char* modelPath = (rand() % 2 == 0) ? "Models/table.obj" : "Models/pirate.obj";
     //CustomComp->LoadFromObj(modelPath);
-    CustomComp->LoadFromObj("C:\\Users\\Jungle\\Desktop\\TechLab\\Week3\\Week3-StaticMesh\\Models\\pirate2.obj");
+    CustomComp->LoadFromObj("12140_Skull_v3");
 }
 
 void ACustom::BeginPlay()
