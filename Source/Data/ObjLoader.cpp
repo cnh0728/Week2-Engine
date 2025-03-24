@@ -60,16 +60,24 @@ void ObjectLoader::CheckExistAllDirectory()
 
 bool ObjectLoader::LoadFromFile(const std::string& Filename)
 {
+    namespace fs = std::filesystem;
+
+    bool bIsAbsolutePath = fs::path(Filename).is_absolute();
+    std::string ObjPath = bIsAbsolutePath ? Filename : ObjFileDir + Filename + ObjFileExt;
+
+  
+
     if (UResourceManager::Get().HasMeshData(Filename))
     {
-        return true; // 이미 파싱되어 있으면    
+        return true; // 이미 파싱된 경우
     }
-    namespace fs = std::filesystem;
-    if (fs::exists(BinaryFileDir + Filename + BinaryFileExt))
+
+    // 바이너리는 상대경로
+    if (!bIsAbsolutePath && fs::exists(BinaryFileDir + Filename + BinaryFileExt))
     {
         TArray<FVertexSimple> FinalVertices;
         TArray<uint32_t> FinalIndices;
-        
+
         LoadFromBinary(FinalVertices, FinalIndices, Filename);
 
         OriginVertices[EPT_Custom] = FinalVertices;
@@ -77,11 +85,11 @@ bool ObjectLoader::LoadFromFile(const std::string& Filename)
 
         return true;
     }
-    
-    std::ifstream file(ObjFileDir + Filename + ObjFileExt);
+
+    std::ifstream file(ObjPath);
     if (!file.is_open())
     {
-        std::cerr << "파일을 열 수 없습니다!" << std::endl;
+        std::cerr << "파일을 열 수 없습니다: " << ObjPath << std::endl;
         return false;
     }
 
@@ -177,8 +185,8 @@ bool ObjectLoader::LoadFromFile(const std::string& Filename)
    // 데이터 저장~
     TMap<std::string, uint32> VertexMap;
     TArray<FSubMeshData> SubMeshes;
-    TArray<FVertexSimple> FinalVertices;
-    TArray<uint32_t> FinalIndices;
+    //TArray<FVertexSimple> FinalVertices;
+    //TArray<uint32_t> FinalIndices;
 
     for (auto& Pair : FaceGroup)
     {
@@ -220,9 +228,9 @@ bool ObjectLoader::LoadFromFile(const std::string& Filename)
         }
     }
 
-    OriginVertices[EPT_Custom] = FinalVertices;
-    OriginIndices[EPT_Custom] = FinalIndices;
-    SaveToBinary(FinalVertices, FinalIndices, Filename);
+    //OriginVertices[EPT_Custom] = FinalVertices;
+    //OriginIndices[EPT_Custom] = FinalIndices;
+    //SaveToBinary(FinalVertices, FinalIndices, Filename);
     
     UResourceManager::Get().SetMeshData(Filename, SubMeshes);
     return true;
