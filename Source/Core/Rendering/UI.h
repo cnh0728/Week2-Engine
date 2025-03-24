@@ -5,10 +5,11 @@
 #include "Core/Container/Set.h"
 #include "Core/Container/Name.h"
 
+namespace EViewport{ enum class Position : uint8 ;}
+
 class FName;
 class AActor;
 class URenderer;
-
 class UI
 {
 public:
@@ -34,6 +35,7 @@ public:// UIWindows
 	void RenderSceneManager();
     void RenderComponentsByActor();
     void RenderFNameResolver();
+    void RenderViewOption();
 
 private:
 	bool bWasWindowSizeUpdated = true;
@@ -43,7 +45,8 @@ private:
     float windowWidth;
 	float windowHeight;
 	
-    
     void SetWindowLayout(float widthRatio, float heightRatio, float posXRatio, float posYRatio);
     TArray<FName> Unselectables;
+    void SetViewOption(const char* name, int &current_item,
+        EViewport::Position viewportPos);
 };

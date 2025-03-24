@@ -76,6 +76,7 @@ void UI::Update()
     RenderSceneManager();
     RenderComponentsByActor();
     RenderFNameResolver();
+    RenderViewOption();
     Debug::ShowConsole(bWasWindowSizeUpdated);
 
     // ImGui 렌더링
@@ -540,6 +541,26 @@ void UI::RenderFNameResolver()
     ImGui::End();
 }
 
+void UI::RenderViewOption()
+{
+
+    static int current_itemLT = 0;
+    SetWindowLayout(0.1f, 0.03f, 0.44f, 0.0f);
+    SetViewOption("LT", current_itemLT, EViewport::Position::LT);
+
+    static int current_itemRT = 0;
+    SetWindowLayout(0.1f, 0.03f, 0.56f, 0.0f);
+    SetViewOption("RT", current_itemRT, EViewport::Position::RT);
+
+    static int current_itemLB = 0;
+    SetWindowLayout(0.1f, 0.03f, 0.44f, 0.515f);
+    SetViewOption("LB", current_itemLB, EViewport::Position::LB);
+
+    static int current_itemRB = 0;
+    SetWindowLayout(0.1f, 0.03f, 0.56f, 0.515f);
+    SetViewOption("RB", current_itemRB, EViewport::Position::RB);
+}
+
 
 void UI::SetWindowLayout(float widthRatio, float heightRatio, float posXRatio, float posYRatio)
 {
@@ -550,5 +571,23 @@ void UI::SetWindowLayout(float widthRatio, float heightRatio, float posXRatio, f
 
     ImGui::SetNextWindowPos(ImVec2(controllWindowPosX, controllWindowPosY));
     ImGui::SetNextWindowSize(ImVec2(controllWindowWidth, controllWindowHeight), ImGuiCond_Once);
+}
+
+void UI::SetViewOption(const char* name, int& current_item, EViewport::Position viewportPos)
+{
+    ImGui::Begin(name, nullptr, ImGuiWindowFlags_NoTitleBar);
+
+    const char* items[] = { "Front", "Back", "Top",
+        "Bottom","Left","Right","Perspective" };
+
+    if (ImGui::Combo(name, &current_item, items, IM_ARRAYSIZE(items))) {
+        ECameraViewMode::Type newViewMode = 
+            static_cast<ECameraViewMode::Type>(current_item);
+        UEngine::Get().GetRenderer()->ChangeViewportCameraType(
+            viewportPos, newViewMode
+        );
+        
+    }
+    ImGui::End();
 }
 
