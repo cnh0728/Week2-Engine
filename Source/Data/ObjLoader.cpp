@@ -1,10 +1,11 @@
 ﻿#include "ObjLoader.h"
 
+#include <filesystem>
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <string>
-#include <vector>
+
 #include "Core/Math/Vector.h"
 #include "Core/Container/Array.h"
 #include "Primitive/PrimitiveVertices.h"
@@ -23,13 +24,58 @@ bool ObjectLoader::LoadFromFile(const std::string& Filename)
     {
         return true; // 이미 파싱되어 있으면    
 
+    TArray<FVector> Vertices;
+    TArray<FVector> Normals;
+    TArray<FVector2> UVs;
+};
 
+#pragma pack(push, 1) //패딩 없음
+struct BinaryHeader
+{
+    char Magic[4] = {'O', 'B', 'J', 'B'};   //매직 넘버
+    uint32_t Vertsion = 1;                  //파일 버전
+    uint32_t VertexCount;                   //총 버텍스 수
+    uint32_t IndexCount;                    //총 인덱스 수
+};
+#pragma pack(pop)
 
+ObjectLoader::ObjectLoader()
+{
+    CheckExistAllDirectory();
+}
 
-
+void ObjectLoader::CheckExistAllDirectory()
+{
+    namespace fs = std::filesystem;
+    
+    if (!fs::exists(BinaryFileDir))
+    {
+        fs::create_directories(BinaryFileDir);    
     }
 
-    std::ifstream file(Filename);
+    if (!fs::exists(ObjFileDir))
+    {
+        fs::create_directories(ObjFileDir);
+    }
+}
+
+bool ObjectLoader::LoadFromFile(const std::string& Filename)
+{
+    namespace fs = std::filesystem;
+    if (fs::exists(BinaryFileDir + Filename + BinaryFileExt))
+    {
+        TArray<FVertexSimple> FinalVertices;
+        TArray<uint32_t> FinalIndices;
+        
+        LoadFromBinary(FinalVertices, FinalIndices, Filename);
+
+        OriginVertices[EPT_Custom] = FinalVertices;
+        OriginIndices[EPT_Custom] = FinalIndices;
+
+        return true;
+    }
+    
+    std::ifstream file(ObjFileDir + Filename + ObjFileExt);
     if (!file.is_open())
     {
         std::cerr << "파일을 열 수 없습니다!" << std::endl;
@@ -52,15 +98,16 @@ bool ObjectLoader::LoadFromFile(const std::string& Filename)
     {
         if (line.empty() || line[0] == '#')
             continue;
-
-        line.erase(std::unique(line.begin(), line.end(),
-            [](char a, char b) { return isspace(a) && isspace(b); }),
-            line.end());
-
+        }
+        
+        line.erase(std::unique(line.begin(), line.end(), 
+          [](char a, char b) { return isspace(a) && isspace(b); }),
+          line.end()); // 공백 2개이상 1개로 줄이는거
+        
         TArray<std::string> Tokens = Split(line, ' ');
         size_t HashToken = Hash(Tokens[0]);
 
-        if (HashToken == Hash("mtllib"))
+        if (HashToken == Hash("mtllib")) //일단 o, g생략
         {
             CurrentMaterialFile = Tokens[1];
             UResourceManager::Get().LoadMtlFile(CurrentMaterialFile); // 머티리얼 파일 로딩
@@ -118,7 +165,7 @@ bool ObjectLoader::LoadFromFile(const std::string& Filename)
         }
     }
 
-    if (Faces.Num() != 0)
+    if (Faces.Num() != 0) //마무리 저장
     {
         FaceGroup[CurrentObjectName] = Faces;
         Faces.Empty();
@@ -169,6 +216,11 @@ bool ObjectLoader::LoadFromFile(const std::string& Filename)
         }
     }
 
+    OriginVertices[EPT_Custom] = FinalVertices;
+    OriginIndices[EPT_Custom] = FinalIndices;
+
+    SaveToBinary(FinalVertices, FinalIndices, Filename);
+    
     UResourceManager::Get().SetMeshData(Filename, SubMeshes);
     return true;
 }
@@ -195,3 +247,46 @@ TArray<std::string> ObjectLoader::Split(const std::string& str, char delim) {
     }
     return result;
 }
+
+
+bool ObjectLoader::SaveToBinary(const TArray<FVertexSimple>& Vertices, TArray<uint32>& Indices, const std::string& Filename)
+{
+    std::ofstream File(BinaryFileDir + Filename + BinaryFileExt, std::ios::binary);
+    if (!File.is_open()) return false;
+
+    //헤더 작성
+    BinaryHeader Header;
+    Header.VertexCount = Vertices.Num();
+    Header.IndexCount = Indices.Num();
+    File.write(reinterpret_cast<const char*>(&Header), sizeof(Header));
+    
+    for (const auto& Vertex : Vertices)
+    {
+        File.write(reinterpret_cast<const char*>(&Vertex), sizeof(FVertexSimple));
+    }
+
+    File.write(reinterpret_cast<const char*>(Indices.GetData()), Indices.Num() * sizeof(uint32));
+
+    File.close();
+    return true;
+}
+
+bool ObjectLoader::LoadFromBinary(TArray<FVertexSimple>& OutVertices, TArray<uint32_t>& OutIndices, const std::string& Filename)
+{
+    std::ifstream File(BinaryFileDir + Filename + BinaryFileExt, std::ios::binary);
+    if (!File.is_open()) return false;
+
+    BinaryHeader Header;
+    File.read(reinterpret_cast<char*>(&Header), sizeof(Header));
+
+    //버텍스 데이터 읽기
+    OutVertices.Resize(Header.VertexCount);
+    File.read(reinterpret_cast<char*>(OutVertices.GetData()), Header.VertexCount * sizeof(FVertexSimple));
+
+    OutIndices.Resize(Header.IndexCount);
+    File.read(reinterpret_cast<char*>(OutIndices.GetData()), Header.IndexCount * sizeof(uint32_t));
+
+    File.close();
+    return true;
+}
+

@@ -87,13 +87,13 @@ void UEngine::Initialize(
     ScreenMode = InScreenMode;
     ScreenWidth = InScreenWidth;
     ScreenHeight = InScreenHeight;
+    ObjLoader = std::make_unique<ObjectLoader>();
 
     InitWindow(InScreenWidth, InScreenWidth);
     InitRenderer();
     InitWorld();
-    UResourceManager::Get().Initialize(Renderer->GetDevice(),Renderer->GetDeviceContext());
-    ObjLoader = std::make_unique<ObjectLoader>();
     InitTextures();
+    UResourceManager::Get().Initialize(Renderer->GetDevice(),Renderer->GetDeviceContext());
     
     InitializedScreenWidth = ScreenWidth;
     InitializedScreenHeight = ScreenHeight;
@@ -268,9 +268,6 @@ void UEngine::InitWorld()
     World->LoadWorld(*World->ReleaseDefaultSceneName);
 #endif
     
-    //// Test
-    // World->SpawnActor<AArrow>();
-    // World->SpawnActor<ASphere>();
     
     World->SpawnActor<AAxis>();
     World->SpawnActor<APicker>();
