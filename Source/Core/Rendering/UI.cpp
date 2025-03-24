@@ -441,7 +441,7 @@ void UI::RenderPropertyWindow()
             }
         }
 
-        if (selectedComponent->IsA(UTextureComponent::StaticClass()))
+        /*if (selectedComponent->IsA(UTextureComponent::StaticClass()))
         {
             UTextureComponent* TextureComponent = dynamic_cast<UTextureComponent*>(selectedComponent);
             const char* TextureItems[] = {"cat", "earth", "Custom"};
@@ -455,7 +455,7 @@ void UI::RenderPropertyWindow()
             {
                 TextureComponent->SetTextureResource(Textures[CurrentTextureItem]);
             }
-        }
+        }*/
     }
     ImGui::End();
 }
