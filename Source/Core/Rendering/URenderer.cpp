@@ -348,11 +348,9 @@ void URenderer::CreateVertexBuffer(uint32_t VertexType, VertexBufferInfo BufferI
     D3D11_SUBRESOURCE_DATA VertexBufferSRD = {};
     VertexBufferSRD.pSysMem = RawVertices;
 
-    //UUID받으면 설정이 빈 버퍼 만들어주기
     ID3D11Buffer* VertexBuffer;
     Device->CreateBuffer(&VertexBufferDesc, &VertexBufferSRD, &VertexBuffer);
-
-
+    
     TArray<uint32_t> Indices = BufferInfo.GetIndices();
     uint32_t* RawIndices = Indices.GetData();
 

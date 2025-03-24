@@ -1,15 +1,26 @@
 ﻿#pragma once
 #include <string>
-#include <DirectXMath.h>
-#include "Core/AbstractClass/Singleton.h"
+#include <vector>
+
 #include "Core/Container/Array.h"
-#include "Core/Container/Map.h"
-#include "Primitive/PrimitiveVertices.h"
 
 
-class ObjLoader : public TSingleton<ObjLoader> {
+
+class ObjectLoader {
 public:
-    ObjLoader() = default;
-    ~ObjLoader() = default;
-    bool LoadFromFile(const std::string& filename);
+    ObjectLoader();
+    ~ObjectLoader() = default;
+    void CheckExistAllDirectory();
+    bool LoadFromFile(const std::string& Filename);
+    size_t Hash(std::string Str);
+    TArray<std::string> Split(const std::string& str, char delim);
+    bool SaveToBinary(const TArray<FVertexSimple>& Vertices, TArray<uint32>& Indices, const std::string& Filename);
+    bool LoadFromBinary(TArray<FVertexSimple>& OutVertices, TArray<uint32_t>& OutIndices, const std::string& Filename);
+
+private:
+    std::string BinaryFileDir = "ObjectBinaries/";
+    std::string BinaryFileExt = ".binary";
+    std::string ObjFileDir = "Objects/";
+    std::string ObjFileExt = ".obj";
+
 };
