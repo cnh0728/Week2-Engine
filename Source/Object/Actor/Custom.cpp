@@ -30,3 +30,11 @@ void ACustom::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 }
+
+void ACustom::SetObjPath(const std::string& InPath)
+{
+    if (UCustomComponent* CustomComp = GetComponentByClass<UCustomComponent>())
+    {
+        CustomComp->LoadFromObj(InPath);
+    }
+}

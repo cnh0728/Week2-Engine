@@ -8,6 +8,7 @@
 #include "Object/USceneComponent.h"
 #include "Object/PrimitiveComponent/TextComponent.h"
 #include "Object/ObjectMacros.h"
+#include "object/Cast.h"
 
 class UWorld;
 
@@ -115,6 +116,22 @@ public:
 	void SetRootComponent(USceneComponent* InRootComponent) { RootComponent = InRootComponent; }
 	void SetupAttachment(AActor* InParent);
 	AActor* GetParent() const { return Parent; }
+
+	template<typename T>
+		requires std::derived_from<T, UActorComponent>
+	T* GetComponentByClass() const
+	{
+		for (UActorComponent* Comp : Components)
+		{
+			if (T* Casted = Cast<T>(Comp)) 
+			{
+				return Casted;
+			}
+		}
+		return nullptr;
+	}
+
+
 	
 //public:
 //	void SetColor(FVector4 InColor);
