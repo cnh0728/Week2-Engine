@@ -932,6 +932,11 @@ void URenderer::ChangeViewportCameraType(EViewport::Position viewportPos, ECamer
 	MultiFViewports[viewportPos]->SetCamera(cameraType);
 }
 
+FViewport* URenderer::GetMultiViewport(EViewport::Position viewportPos)
+{
+	return MultiFViewports[viewportPos];
+}
+
 
 
 void URenderer::SetViewportRendering(D3D11_VIEWPORT _viewport)

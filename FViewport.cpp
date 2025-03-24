@@ -17,6 +17,11 @@ void FViewport::SetCamera(ECameraViewMode::Type _cameraType)
 	cameraType = _cameraType;
 }
 
+ECameraViewMode::Type FViewport::GetCameraType()
+{
+	return cameraType;
+}
+
 void FViewport::SetViewportRendering()
 {
 	URenderer* renderer = UEngine::Get().GetRenderer();

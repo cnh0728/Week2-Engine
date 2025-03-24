@@ -16,7 +16,7 @@ public:
 	//void SetViewport();
 	void SetViewportRendering();
 	void SetCamera(ECameraViewMode::Type _cameraType);
-
+	ECameraViewMode::Type GetCameraType();
 	virtual void ChangeMainCamera() override;
 	virtual void Resize(FRect rect) override;
 	virtual void SetActiveFullViewport() override;

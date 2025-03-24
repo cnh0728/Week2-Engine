@@ -115,6 +115,7 @@ void FSlateApplication::ProcessKeyDownEvent()
 	if (Input.GetKeyDown(EKeyCode::Enter)&&renderer->activeFullViewport==nullptr)
 	{
 		if (currentWindow == nullptr) return;
+		if (dynamic_cast<SSplitter2x2*>(currentWindow)) return;
 		currentWindow->SetActiveFullViewport();
 
 		FRect fullrect;

@@ -543,20 +543,30 @@ void UI::RenderFNameResolver()
 
 void UI::RenderViewOption()
 {
-
-    static int current_itemLT = 0;
+    URenderer* renderer = UEngine::Get().GetRenderer();
+    if (renderer->activeFullViewport) return;
+    
+    ECameraViewMode::Type cameraType = 
+        renderer->GetMultiViewport(EViewport::Position::LT)->GetCameraType();
+    static int current_itemLT = static_cast<int>(cameraType);
     SetWindowLayout(0.1f, 0.03f, 0.44f, 0.0f);
     SetViewOption("LT", current_itemLT, EViewport::Position::LT);
 
-    static int current_itemRT = 0;
+    cameraType =
+        renderer->GetMultiViewport(EViewport::Position::RT)->GetCameraType();
+    static int current_itemRT = static_cast<int>(cameraType);
     SetWindowLayout(0.1f, 0.03f, 0.56f, 0.0f);
     SetViewOption("RT", current_itemRT, EViewport::Position::RT);
-
-    static int current_itemLB = 0;
+    
+    cameraType =
+        renderer->GetMultiViewport(EViewport::Position::LB)->GetCameraType();
+    static int current_itemLB = static_cast<int>(cameraType);
     SetWindowLayout(0.1f, 0.03f, 0.44f, 0.515f);
     SetViewOption("LB", current_itemLB, EViewport::Position::LB);
 
-    static int current_itemRB = 0;
+    cameraType =
+        renderer->GetMultiViewport(EViewport::Position::RB)->GetCameraType();
+    static int current_itemRB = static_cast<int>(cameraType);
     SetWindowLayout(0.1f, 0.03f, 0.56f, 0.515f);
     SetViewOption("RB", current_itemRB, EViewport::Position::RB);
 }
