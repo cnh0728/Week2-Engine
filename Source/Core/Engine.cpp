@@ -71,7 +71,7 @@ void UEngine::InitTextures()
 {
     for (auto& [type, path] : TexturesToLoad)
     {
-        UResourceManager::Get().LoadTexture(type, path);
+        UResourceManager::Get().LoadTexture(path);
     }
 }
 
@@ -266,8 +266,6 @@ void UEngine::InitWorld()
 #else
     World->LoadWorld(*World->ReleaseDefaultSceneName);
 #endif
-
-    ObjLoader::Get().LoadFromFile("cube.obj");
     
     //// Test
     // World->SpawnActor<AArrow>();

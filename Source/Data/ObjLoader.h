@@ -1,12 +1,11 @@
 ﻿#pragma once
 #include <string>
 #include <DirectXMath.h>
-
 #include "Core/AbstractClass/Singleton.h"
 #include "Core/Container/Array.h"
 #include "Core/Container/Map.h"
+#include "Primitive/PrimitiveVertices.h"
 
-struct FVertexSimple;
 
 class ObjLoader : public TSingleton<ObjLoader> {
 public:

@@ -1,6 +1,11 @@
 ﻿#include "Custom.h"
 
 #include "Object/PrimitiveComponent/CustomComponent.h"
+#include <cstdlib>
+#include <ctime>    
+
+
+
 
 ACustom::ACustom()
 {
@@ -8,7 +13,10 @@ ACustom::ACustom()
 
     UCustomComponent* CustomComp = AddComponent<UCustomComponent>();
     CustomComp->SetupAttachment(RootComponent);
-    CustomComp->SetTextureResource(ECustom);
+    srand(static_cast<unsigned int>(time(nullptr))); 
+    const char* modelPath = (rand() % 2 == 0) ? "Models/table.obj" : "Models/pirate.obj";
+    //CustomComp->LoadFromObj(modelPath);
+    CustomComp->LoadFromObj("Models/pirate2.obj");
 }
 
 void ACustom::BeginPlay()
