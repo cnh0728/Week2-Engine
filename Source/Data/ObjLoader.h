@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 
+#include "MaterialData.h"
 #include "Core/Container/Array.h"
 
 struct FVertexSimple;
@@ -14,8 +15,8 @@ public:
     bool LoadFromFile(const std::string& Filename);
     size_t Hash(std::string Str);
     TArray<std::string> Split(const std::string& str, char delim);
-    bool SaveToBinary(const TArray<FVertexSimple>& Vertices, TArray<uint32>& Indices, const std::string& Filename);
-    bool LoadFromBinary(TArray<FVertexSimple>& OutVertices, TArray<uint32_t>& OutIndices, const std::string& Filename);
+    bool SaveToBinary(TArray<FSubMeshData>& SubMeshes, TArray<std::string>& Materials, const std::string& Filename);
+    bool LoadFromBinary(TArray<FSubMeshData>& OutSubMeshes, TArray<std::string>& OutMaterials, const std::string& Filename);
 
 private:
     std::string BinaryFileDir = "ObjectBinaries/";

@@ -75,7 +75,7 @@ void UI::Update()
     windowWidth = UEngine::Get().GetScreenWidth();
     windowHeight = UEngine::Get().GetScreenHeight();
 
-    if (APlayerInput::Get().GetKeyDown(EKeyCode::Tab))
+    if (APlayerInput::Get().GetKeyDown(EKeyCode::F1))
         bShowUI = !bShowUI;
 
     if (bShowUI)

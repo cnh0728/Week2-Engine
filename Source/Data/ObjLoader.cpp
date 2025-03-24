@@ -32,8 +32,8 @@ struct BinaryHeader
 {
     char Magic[4] = { 'O', 'B', 'J', 'B' };   //매직 넘버
     uint32_t Vertsion = 1;                  //파일 버전
-    uint32_t VertexCount;                   //총 버텍스 수
-    uint32_t IndexCount;                    //총 인덱스 수
+    uint32_t SubMeshCount;                   //총 버텍스 수
+    uint32_t MaterialCount;
 };
 #pragma pack(pop)
     
@@ -64,16 +64,21 @@ bool ObjectLoader::LoadFromFile(const std::string& Filename)
     {
         return true; // 이미 파싱되어 있으면    
     }
+
+    TArray<FSubMeshData> SubMeshes;
+
     namespace fs = std::filesystem;
     if (fs::exists(BinaryFileDir + Filename + BinaryFileExt))
     {
-        TArray<FVertexSimple> FinalVertices;
-        TArray<uint32_t> FinalIndices;
-        
-        LoadFromBinary(FinalVertices, FinalIndices, Filename);
+        TArray<std::string> MT;
+        LoadFromBinary(SubMeshes, MT, Filename);
 
-        OriginVertices[EPT_Custom] = FinalVertices;
-        OriginIndices[EPT_Custom] = FinalIndices;
+        for (auto& MaterialName : MT)
+        {
+            UResourceManager::Get().LoadMtlFile(MaterialName); // 머티리얼 파일 로딩
+        }
+        
+        UResourceManager::Get().SetMeshData(Filename, SubMeshes);
 
         return true;
     }
@@ -93,6 +98,7 @@ bool ObjectLoader::LoadFromFile(const std::string& Filename)
     TMap<std::string, TArray<Face>> FaceGroup;
     TArray<Face> Faces;
 
+    TArray<std::string> MaterialNames;
     std::string CurrentObjectName = "";
     std::string CurrentMaterialFile = "";
     std::string CurrentMaterial = "";
@@ -113,6 +119,7 @@ bool ObjectLoader::LoadFromFile(const std::string& Filename)
         if (HashToken == Hash("mtllib")) //일단 o, g생략
         {
             CurrentMaterialFile = Tokens[1];
+            MaterialNames.Add(CurrentMaterialFile);
             UResourceManager::Get().LoadMtlFile(CurrentMaterialFile); // 머티리얼 파일 로딩
         }
         else if (HashToken == Hash("usemtl"))
@@ -176,9 +183,6 @@ bool ObjectLoader::LoadFromFile(const std::string& Filename)
 
    // 데이터 저장~
     TMap<std::string, uint32> VertexMap;
-    TArray<FSubMeshData> SubMeshes;
-    TArray<FVertexSimple> FinalVertices;
-    TArray<uint32_t> FinalIndices;
 
     for (auto& Pair : FaceGroup)
     {
@@ -219,11 +223,8 @@ bool ObjectLoader::LoadFromFile(const std::string& Filename)
             SubMeshes.Add(SubMeshPair.Value);
         }
     }
-
-    OriginVertices[EPT_Custom] = FinalVertices;
-    OriginIndices[EPT_Custom] = FinalIndices;
-    SaveToBinary(FinalVertices, FinalIndices, Filename);
     
+    SaveToBinary(SubMeshes, MaterialNames, Filename);
     UResourceManager::Get().SetMeshData(Filename, SubMeshes);
     return true;
 }
@@ -251,30 +252,49 @@ TArray<std::string> ObjectLoader::Split(const std::string& str, char delim) {
     return result;
 }
 
-
-bool ObjectLoader::SaveToBinary(const TArray<FVertexSimple>& Vertices, TArray<uint32>& Indices, const std::string& Filename)
+bool ObjectLoader::SaveToBinary(TArray<FSubMeshData>& SubMeshes, TArray<std::string>& Materials, const std::string& Filename)
 {
     std::ofstream File(BinaryFileDir + Filename + BinaryFileExt, std::ios::binary);
     if (!File.is_open()) return false;
 
-    //헤더 작성
+    // 헤더 작성
     BinaryHeader Header;
-    Header.VertexCount = Vertices.Num();
-    Header.IndexCount = Indices.Num();
+    Header.SubMeshCount = SubMeshes.Num();
+    Header.MaterialCount = Materials.Num();
     File.write(reinterpret_cast<const char*>(&Header), sizeof(Header));
     
-    for (const auto& Vertex : Vertices)
+    // SubMesh 데이터 쓰기
+    for (auto& SubMesh : SubMeshes)
     {
-        File.write(reinterpret_cast<const char*>(&Vertex), sizeof(FVertexSimple));
+        // Vertices 저장
+        uint32_t vertexCount = SubMesh.Vertices.Num();
+        File.write(reinterpret_cast<const char*>(&vertexCount), sizeof(uint32_t));
+        File.write(reinterpret_cast<const char*>(SubMesh.Vertices.GetData()), vertexCount * sizeof(FVertexSimple));
+
+        // Indices 저장
+        uint32_t indexCount = SubMesh.Indices.Num();
+        File.write(reinterpret_cast<const char*>(&indexCount), sizeof(uint32_t));
+        File.write(reinterpret_cast<const char*>(SubMesh.Indices.GetData()), indexCount * sizeof(uint32_t));
+
+        // MaterialName 저장
+        uint32_t nameLength = SubMesh.MaterialName.length();
+        File.write(reinterpret_cast<const char*>(&nameLength), sizeof(uint32_t));
+        File.write(SubMesh.MaterialName.c_str(), nameLength);
     }
-
-    File.write(reinterpret_cast<const char*>(Indices.GetData()), Indices.Num() * sizeof(uint32));
-
+ 
+    // Materials 저장
+    for (const auto& Material : Materials)
+    {
+        uint32_t strLength = Material.length();
+        File.write(reinterpret_cast<const char*>(&strLength), sizeof(uint32_t));
+        File.write(Material.c_str(), strLength);
+    }
+    
     File.close();
     return true;
 }
 
-bool ObjectLoader::LoadFromBinary(TArray<FVertexSimple>& OutVertices, TArray<uint32_t>& OutIndices, const std::string& Filename)
+bool ObjectLoader::LoadFromBinary(TArray<FSubMeshData>& OutSubMeshes, TArray<std::string>& OutMaterials, const std::string& Filename)
 {
     std::ifstream File(BinaryFileDir + Filename + BinaryFileExt, std::ios::binary);
     if (!File.is_open()) return false;
@@ -282,13 +302,39 @@ bool ObjectLoader::LoadFromBinary(TArray<FVertexSimple>& OutVertices, TArray<uin
     BinaryHeader Header;
     File.read(reinterpret_cast<char*>(&Header), sizeof(Header));
 
-    //버텍스 데이터 읽기
-    OutVertices.Resize(Header.VertexCount);
-    File.read(reinterpret_cast<char*>(OutVertices.GetData()), Header.VertexCount * sizeof(FVertexSimple));
+    // SubMesh 데이터 읽기
+    OutSubMeshes.Resize(Header.SubMeshCount);
+    for (auto& SubMesh : OutSubMeshes)
+    {
+        // Vertices 읽기
+        uint32_t vertexCount;
+        File.read(reinterpret_cast<char*>(&vertexCount), sizeof(uint32_t));
+        SubMesh.Vertices.Resize(vertexCount);
+        File.read(reinterpret_cast<char*>(SubMesh.Vertices.GetData()), vertexCount * sizeof(FVertexSimple));
 
-    OutIndices.Resize(Header.IndexCount);
-    File.read(reinterpret_cast<char*>(OutIndices.GetData()), Header.IndexCount * sizeof(uint32_t));
+        // Indices 읽기
+        uint32_t indexCount;
+        File.read(reinterpret_cast<char*>(&indexCount), sizeof(uint32_t));
+        SubMesh.Indices.Resize(indexCount);
+        File.read(reinterpret_cast<char*>(SubMesh.Indices.GetData()), indexCount * sizeof(uint32_t));
 
+        // MaterialName 읽기
+        uint32_t nameLength;
+        File.read(reinterpret_cast<char*>(&nameLength), sizeof(uint32_t));
+        SubMesh.MaterialName.resize(nameLength);
+        File.read(&SubMesh.MaterialName[0], nameLength);
+    }
+
+    // Materials 읽기
+    OutMaterials.Resize(Header.MaterialCount);
+    for (auto& Material : OutMaterials)
+    {
+        uint32_t strLength;
+        File.read(reinterpret_cast<char*>(&strLength), sizeof(uint32_t));
+        Material.resize(strLength);
+        File.read(&Material[0], strLength);
+    }
+    
     File.close();
     return true;
 }

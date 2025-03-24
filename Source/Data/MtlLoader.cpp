@@ -5,7 +5,7 @@
 #include "Data//MaterialData.h"
 
 bool MtlLoader::LoadMtlFile(const std::string& mtlPath) {
-    std::ifstream file(mtlPath);
+    std::ifstream file(MtlDir + mtlPath);
     if (!file.is_open()) {
         std::cerr << "Failed to open MTL file: " << mtlPath << std::endl;
         return false;

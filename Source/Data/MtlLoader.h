@@ -10,4 +10,7 @@
 class MtlLoader  {
 public:
     bool LoadMtlFile(const std::string& mtlPath);
+
+private:
+    std::string MtlDir = "Materials/";
 };

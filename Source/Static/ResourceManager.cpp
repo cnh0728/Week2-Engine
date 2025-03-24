@@ -65,6 +65,11 @@ void UResourceManager::SetMaterial(const std::string& name, const FMaterialData&
 void UResourceManager::SetMeshData(const std::string& path, const TArray<FSubMeshData>& meshData)
 {
     Meshes[path] = meshData;
+    // for (auto& md : meshData)
+    // {
+    //     Meshes[path].Add(md);
+    // }
+    // Meshes["pirate"] = meshData;
 }
 
 const TArray<FSubMeshData>* UResourceManager::GetMeshData(const std::string& path) const

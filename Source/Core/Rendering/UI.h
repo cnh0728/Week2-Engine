@@ -26,10 +26,10 @@ class UI
     bool bShowUI = true; 
 
 public:
-    SpawnType CurrentPrimitiveItem = ESpawnSphere;
+    SpawnType CurrentPrimitiveItem = ESpawnCustom;
 	std::string CurrentTextureItem = "Textures/cat.png";
 	
-    int NumOfSpawn = 0;
+    int NumOfSpawn = 1;
 	bool bIsInitialized = false;
     
     void Initialize(HWND hWnd, URenderer& Renderer, UINT ScreenWidth, UINT ScreenHeight);

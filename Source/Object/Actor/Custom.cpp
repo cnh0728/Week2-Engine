@@ -16,7 +16,7 @@ ACustom::ACustom()
     srand(static_cast<unsigned int>(time(nullptr))); 
     const char* modelPath = (rand() % 2 == 0) ? "Models/table.obj" : "Models/pirate.obj";
     //CustomComp->LoadFromObj(modelPath);
-    CustomComp->LoadFromObj("pirate2");
+    CustomComp->LoadFromObj("pirate");
 }
 
 void ACustom::BeginPlay()

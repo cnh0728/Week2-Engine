@@ -15,7 +15,7 @@ public:
     using SizeType = typename MapType::size_type;
 
 private:
-    MapType PrivateMap;
+    MapType ContainerPrivate;
 
     class Iterator
     {
@@ -43,31 +43,31 @@ private:
 
 public:
     // TPair를 반환하는 커스텀 반복자
-    Iterator begin() noexcept { return Iterator(PrivateMap.begin()); }
-    Iterator end() noexcept { return Iterator(PrivateMap.end()); }
-    ConstIterator begin() const noexcept { return ConstIterator(PrivateMap.begin()); }
-    ConstIterator end() const noexcept { return ConstIterator(PrivateMap.end()); }
+    Iterator begin() noexcept { return Iterator(ContainerPrivate.begin()); }
+    Iterator end() noexcept { return Iterator(ContainerPrivate.end()); }
+    ConstIterator begin() const noexcept { return ConstIterator(ContainerPrivate.begin()); }
+    ConstIterator end() const noexcept { return ConstIterator(ContainerPrivate.end()); }
 
     // 생성자 및 소멸자
     TMap() = default;
     ~TMap() = default;
 
     // 복사 생성자
-    TMap(const TMap& Other) : PrivateMap(Other.PrivateMap) {}
+    TMap(const TMap& Other) : ContainerPrivate(Other.ContainerPrivate) {}
 
     // 이동 생성자
-    TMap(TMap&& Other) noexcept : PrivateMap(std::move(Other.PrivateMap)) {}
+    TMap(TMap&& Other) noexcept : ContainerPrivate(std::move(Other.ContainerPrivate)) {}
 
     // 초기화 생성자
     TMap(std::initializer_list<std::pair<const KeyType, ValueType>> InitList)
-    : PrivateMap(InitList) {}
+    : ContainerPrivate(InitList) {}
     
     // 복사 할당 연산자
     TMap& operator=(const TMap& Other)
     {
         if (this != &Other)
         {
-            PrivateMap = Other.PrivateMap;
+            ContainerPrivate = Other.ContainerPrivate;
         }
         return *this;
     }
@@ -77,7 +77,7 @@ public:
     {
         if (this != &Other)
         {
-            PrivateMap = std::move(Other.PrivateMap);
+            ContainerPrivate = std::move(Other.ContainerPrivate);
         }
         return *this;
     }
@@ -85,66 +85,76 @@ public:
     // 요소 접근 및 수정
     ValueType& operator[](const KeyType& Key)
     {
-        return PrivateMap[Key];
+        return ContainerPrivate[Key];
     }
 
     const ValueType& operator[](const KeyType& Key) const
     {
-        return PrivateMap.at(Key);
+        return ContainerPrivate.at(Key);
     }
 
     void Add(const KeyType& Key, const ValueType& Value)
     {
-        PrivateMap.insert_or_assign(Key, Value);
+        ContainerPrivate.insert_or_assign(Key, Value);
     }
 
-    void Emplace(KeyType&& Key, ValueType&& Value)
+    template <typename InitKeyType = KeyType, typename InitValueType = ValueType>
+    ValueType& Emplace(InitKeyType&& InKey, InitValueType&& InValue)
     {
-        PrivateMap.emplace(std::move(Key), std::move(Value));
+        auto result = ContainerPrivate.emplace(std::forward<InitKeyType>(InKey), std::forward<InitValueType>(InValue));
+        return result.first->second;
+    }
+
+    // Key만 넣고, Value는 기본값으로 삽입
+    template <typename InitKeyType = KeyType>
+    ValueType& Emplace(InitKeyType&& InKey)
+    {
+        auto result = ContainerPrivate.emplace(std::forward<InitKeyType>(InKey), ValueType{});
+        return result.first->second;
     }
 
     void Remove(const KeyType& Key)
     {
-        PrivateMap.erase(Key);
+        ContainerPrivate.erase(Key);
     }
 
     void Empty()
     {
-        PrivateMap.clear();
+        ContainerPrivate.clear();
     }
 
     // 검색 및 조회
     bool Contains(const KeyType& Key) const
     {
-        return PrivateMap.find(Key) != PrivateMap.end();
+        return ContainerPrivate.find(Key) != ContainerPrivate.end();
     }
 
     const ValueType* Find(const KeyType& Key) const
     {
-        auto it = PrivateMap.find(Key);
-        return it != PrivateMap.end() ? &(it->second) : nullptr;
+        auto it = ContainerPrivate.find(Key);
+        return it != ContainerPrivate.end() ? &(it->second) : nullptr;
     }
 
     ValueType* Find(const KeyType& Key)
     {
-        auto it = PrivateMap.find(Key);
-        return it != PrivateMap.end() ? &(it->second) : nullptr;
+        auto it = ContainerPrivate.find(Key);
+        return it != ContainerPrivate.end() ? &(it->second) : nullptr;
     }
 
     // 크기 관련
     SizeType Num() const
     {
-        return PrivateMap.size();
+        return ContainerPrivate.size();
     }
 
     bool IsEmpty() const
     {
-        return PrivateMap.empty();
+        return ContainerPrivate.empty();
     }
 
     // 용량 관련
     void Reserve(SizeType Number)
     {
-        PrivateMap.reserve(Number);
+        ContainerPrivate.reserve(Number);
     }
 };
