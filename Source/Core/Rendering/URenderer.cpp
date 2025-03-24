@@ -875,7 +875,7 @@ void URenderer::CreateMultipleViewports()
 	FRect rectRB;
 	rectRB.Min = FVector2(halfWidth, halfHeight);
 	rectRB.Max = FVector2(fullWidth, fullHeight);
-	SWindow* windowRB = CreateViewportWithWindow(rectRB, ECameraViewMode::Type::Bottom);
+	SWindow* windowRB = CreateViewportWithWindow(rectRB, ECameraViewMode::Type::Right);
 	/*
 	FViewport* viewportRB = new FViewport(rectRB);
 	viewportRB->SetCamera(ECameraViewMode::Type::Bottom);
@@ -1141,8 +1141,8 @@ void URenderer::UpdateProjectionMatrix(ACamera* Camera)
 	}
 	else if (Camera->ProjectionMode == ECameraProjectionMode::Orthographic)
 	{
-		ProjectionMatrix = FMatrix::OrthoLH(UEngine::Get().GetScreenWidth(),
-			UEngine::Get().GetScreenHeight(), Near, Far);
+		ProjectionMatrix = FMatrix::OrthoLH(UEngine::Get().GetScreenWidth()/100,
+			UEngine::Get().GetScreenHeight()/100, Near, Far);
 
 		// TODO: 추가 필요.
 		// ProjectionMatrix = FMatrix::OrthoForLH(FOV, AspectRatio, Near, Far);
