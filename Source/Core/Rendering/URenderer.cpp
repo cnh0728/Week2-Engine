@@ -527,7 +527,6 @@ void URenderer::ReleaseVertexBuffer(D3D11_PRIMITIVE_TOPOLOGY Topology)
 
 void URenderer::RenderPrimtive(UPrimitiveComponent* Component)
 {
-    // 커스텀 컴포넌트 처리
     if (Component->IsA(UCustomComponent::StaticClass()))
     {
         UCustomComponent* Custom = static_cast<UCustomComponent*>(Component);

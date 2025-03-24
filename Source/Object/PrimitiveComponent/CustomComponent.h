@@ -6,6 +6,7 @@
 #include "Primitive/PrimitiveVertices.h"
 #include "Static/ResourceManager.h"
 #include "Data/ObjLoader.h"
+#include "Object/ObjectMacros.h"
 
 struct FRenderUnit {
     TArray<FVertexSimple> Vertices;
