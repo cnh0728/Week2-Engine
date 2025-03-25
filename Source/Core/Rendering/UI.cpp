@@ -34,8 +34,13 @@ void UI::Initialize(HWND hWnd, URenderer& Renderer, UINT ScreenWidth, UINT Scree
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
+
+
+
 
     // 기본 폰트 크기 설정
     io.FontGlobalScale = 1.0f;
@@ -92,6 +97,12 @@ void UI::Update()
     // ImGui 렌더링
     ImGui::Render();
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+    if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+    {
+        ImGui::UpdatePlatformWindows();
+        ImGui::RenderPlatformWindowsDefault();
+    }
+
 
     bWasWindowSizeUpdated = false;
 }
@@ -463,41 +474,55 @@ void UI::RenderPropertyWindow()
 void UI::RenderSceneManager()
 {
     static int selectedBefore = -1;
+    static int selected = -1; 
     const TArray<AActor*>& ActorArray = UEngine::Get().GetWorld()->GetActors();
     uint32 NumActors = ActorArray.Num();
 
-    SetWindowLayout(0.3f, 0.3f, 1.f, 0.f);
-    if (NumActors > 0) {
-        static int selected = -1;
-        ImGui::Begin("Scene Manager");
-        if (ImGui::TreeNode("Primtives"))
-        {
-            for (int n = 0; n < NumActors; n++)
-            {
-                char buf[32];
+    if (NumActors == 0)
+        return;
 
-                sprintf_s(buf, "%s", *ActorArray[n]->Name.GetString());
+    // Scene Manager 창을 독립된 OS 창으로 만들기 위한 설정
+    ImGuiWindowFlags flags = ImGuiWindowFlags_NoCollapse;
+    flags |= ImGuiWindowFlags_NoSavedSettings;   
+    flags |= ImGuiWindowFlags_MenuBar;           
 
-                if (Unselectables.Find((ActorArray[n]->Name))>-1)
-                    continue;
-                if (ImGui::Selectable(buf, (selected == n) && (selectedBefore != selected) ))
-                    selected = n;
-            }
-            ImGui::TreePop();
-        }
-        if (selected > -1) {
-            if (NumActors > 0)
-            {
-                if (selectedBefore != selected)
-                {
-                    FEditorManager::Get().SelectActor(ActorArray[selected]);
-                }
-            }
-        }
-        selectedBefore = selected;
-        ImGui::End();
+    // 최초 위치/크기 지정 (윈도우 밖으로)
+    if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+    {
+        ImGui::SetNextWindowPos(ImVec2(1500, 100), ImGuiCond_FirstUseEver);
+        ImGui::SetNextWindowSize(ImVec2(300, 600), ImGuiCond_FirstUseEver);
     }
+
+    ImGui::Begin("Scene Manager", nullptr, flags);
+
+    if (ImGui::TreeNode("Primitives"))
+    {
+        for (int n = 0; n < NumActors; n++)
+        {
+            char buf[64];
+            sprintf_s(buf, "%s", *ActorArray[n]->Name.GetString());
+
+            if (Unselectables.Find(ActorArray[n]->Name) > -1)
+                continue;
+
+            if (ImGui::Selectable(buf, selected == n && selectedBefore != selected))
+                selected = n;
+        }
+        ImGui::TreePop();
+    }
+
+    if (selected > -1 && selectedBefore != selected)
+    {
+        if (selected < NumActors)
+        {
+            FEditorManager::Get().SelectActor(ActorArray[selected]);
+        }
+    }
+    selectedBefore = selected;
+
+    ImGui::End();
 }
+
 
 void ShowComponentsRecursive(USceneComponent* Component, uint32 uniqueID)
 {
@@ -577,7 +602,7 @@ void UI::SetWindowLayout(float widthRatio, float heightRatio, float posXRatio, f
     float controllWindowPosX = (static_cast<float>(windowWidth) - controllWindowWidth) * posXRatio;
     float controllWindowPosY = (static_cast<float>(windowHeight) - controllWindowHeight) * posYRatio;
 
-    ImGui::SetNextWindowPos(ImVec2(controllWindowPosX, controllWindowPosY));
+    //ImGui::SetNextWindowPos(ImVec2(controllWindowPosX, controllWindowPosY));
     ImGui::SetNextWindowSize(ImVec2(controllWindowWidth, controllWindowHeight), ImGuiCond_Once);
 }
 
