@@ -31,10 +31,6 @@ void APlayerController::HandleCameraMovement(float DeltaTime) {
         FEditorManager::Get().MoveAllOrthoCameras(cameraType, DeltaPos);
         return;
     }
-    else
-    {
-        
-    }
 
     FTransform CameraTransform = Camera->GetActorRelativeTransform();
 

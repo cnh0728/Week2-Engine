@@ -153,11 +153,10 @@ void FSlateApplication::ProcessIsHover()
 		{
 			SWindow* prevWindow = currentWindow;
 			currentWindow = windows[i];
+			windows[i]->ChangeMainCamera();
 			if (currentWindow != prevWindow)
 			{
 				currentWindow->OnFocus();
-
-				//windows[i]->ChangeMainCamera();
 			}
 			//FEditorManager::Get().SetCameraIndex(i);
 		}

@@ -30,7 +30,7 @@ bool SWindow::isHover(FVector2 coord) const
 	float y = coord.Y;
 	if (Rect.Contains(coord))
 	{
-		viewport->ChangeMainCamera();
+		//viewport->ChangeMainCamera();
 		return true;
 	}
 	return false;
@@ -88,5 +88,5 @@ void SWindow::RestorePrevSize()
 
 void SWindow::ChangeMainCamera()
 {
-	//if(viewport!=nullptr) viewport->ChangeMainCamera();
+	if(viewport!=nullptr) viewport->ChangeMainCamera();
 }

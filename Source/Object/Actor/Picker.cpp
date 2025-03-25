@@ -292,7 +292,7 @@ void APicker::UpdateRayInfo()
         UEngine::Get().GetRenderer()->UpdateProjectionMatrix(cam);
         UEngine::Get().GetRenderer()->UpdateViewMatrix(cam->GetActorRelativeTransform());
     }
-   
+    UE_LOG("Camera Type : %d", cam->ViewMode);
     
     // View 공간으로 변환
     FMatrix InvProjMat = UEngine::Get().GetRenderer()->GetProjectionMatrix().Inverse();
