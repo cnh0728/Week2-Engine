@@ -546,28 +546,45 @@ void UI::RenderViewOption()
     URenderer* renderer = UEngine::Get().GetRenderer();
     if (renderer->activeFullViewport) return;
     
-    ECameraViewMode::Type cameraType = 
-        renderer->GetMultiViewport(EViewport::Position::LT)->GetCameraType();
+    float width = 100;
+    float height = 35;
+
+    FViewport* viewportLT = renderer->GetMultiViewport(EViewport::Position::LT);
+    ECameraViewMode::Type cameraType = viewportLT->GetCameraType();
     static int current_itemLT = static_cast<int>(cameraType);
-    SetWindowLayout(0.1f, 0.03f, 0.44f, 0.0f);
+    const FRect& rectLT = viewportLT->GetRect();
+    ImGui::SetNextWindowPos(ImVec2(rectLT.Max.X-width, rectLT.Min.Y));
+    ImGui::SetNextWindowSize(ImVec2(width, height), ImGuiCond_Always);
+    //SetWindowLayout(0.1f, 0.03f, 0.44f, 0.0f);
     SetViewOption("LT", current_itemLT, EViewport::Position::LT);
 
-    cameraType =
-        renderer->GetMultiViewport(EViewport::Position::RT)->GetCameraType();
+    FViewport* viewportRT = renderer->GetMultiViewport(EViewport::Position::RT);
+    cameraType = viewportRT->GetCameraType();
     static int current_itemRT = static_cast<int>(cameraType);
-    SetWindowLayout(0.1f, 0.03f, 0.56f, 0.0f);
+    const FRect& rectRT = viewportRT->GetRect();
+    ImGui::SetNextWindowPos(ImVec2(rectRT.Min.X, rectRT.Min.Y));
+    ImGui::SetNextWindowSize(ImVec2(width, height), ImGuiCond_Always);
+    //SetWindowLayout(0.1f, 0.03f, 0.56f, 0.0f);
     SetViewOption("RT", current_itemRT, EViewport::Position::RT);
     
-    cameraType =
-        renderer->GetMultiViewport(EViewport::Position::LB)->GetCameraType();
+
+    FViewport* viewportLB = renderer->GetMultiViewport(EViewport::Position::LB);
+    cameraType = viewportLB->GetCameraType();
     static int current_itemLB = static_cast<int>(cameraType);
-    SetWindowLayout(0.1f, 0.03f, 0.44f, 0.515f);
+    const FRect& rectLB = viewportLT->GetRect();
+    ImGui::SetNextWindowPos(ImVec2(rectLB.Max.X - width, rectLB.Max.Y));
+    ImGui::SetNextWindowSize(ImVec2(width, height), ImGuiCond_Always);
+    //SetWindowLayout(0.1f, 0.03f, 0.44f, 0.515f);
     SetViewOption("LB", current_itemLB, EViewport::Position::LB);
 
-    cameraType =
-        renderer->GetMultiViewport(EViewport::Position::RB)->GetCameraType();
+
+    FViewport* viewportRB = renderer->GetMultiViewport(EViewport::Position::RB);
+    cameraType = viewportRB->GetCameraType();
     static int current_itemRB = static_cast<int>(cameraType);
-    SetWindowLayout(0.1f, 0.03f, 0.56f, 0.515f);
+    const FRect& rectRB = viewportLT->GetRect();
+    ImGui::SetNextWindowPos(ImVec2(rectRB.Max.X, rectRB.Max.Y));
+    ImGui::SetNextWindowSize(ImVec2(width, height), ImGuiCond_Always);
+    //SetWindowLayout(0.1f, 0.03f, 0.56f, 0.515f);
     SetViewOption("RB", current_itemRB, EViewport::Position::RB);
 }
 

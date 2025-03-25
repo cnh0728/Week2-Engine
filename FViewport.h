@@ -20,6 +20,7 @@ public:
 	virtual void ChangeMainCamera() override;
 	virtual void Resize(FRect rect) override;
 	virtual void SetActiveFullViewport() override;
+	const FRect& GetRect();
 private:
 	SWindow* refSWindow;
 	ECameraViewMode::Type cameraType;

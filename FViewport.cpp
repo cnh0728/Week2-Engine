@@ -60,3 +60,8 @@ void FViewport::SetActiveFullViewport()
 	URenderer* renderer = UEngine::Get().GetRenderer();
 	renderer->activeFullViewport = this;
 }
+
+const FRect& FViewport::GetRect()
+{
+	return Rect;
+}
