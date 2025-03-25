@@ -1,6 +1,6 @@
 ﻿#include "UBoundingBox.h"
 #include "BillBoardComponent.h"
-#include "Object/PrimitiveComponent/CustomComponent.h"
+#include "Object/PrimitiveComponent/StaticMeshComponent.h"
 #include "Object/Cast.h"
 
 void UBoundingBoxComponent::Tick(float DeltaTime)
@@ -34,11 +34,11 @@ void UBoundingBoxComponent::UpdateMinMax()
 		BBox = FBox();
 		return;
 	}
-	if (TargetPrimitive->IsA(UCustomComponent::StaticClass()))
+	if (TargetPrimitive->IsA(UStaticMeshComponent::StaticClass()))
 	{
 		FMatrix TargetTransformMatrix = TargetPrimitive->GetComponentTransformMatrix();
 		
-		BBox = FBox(Cast<UCustomComponent>(TargetPrimitive)->GetRenderUnits(), TargetTransformMatrix);
+		BBox = FBox(Cast<UStaticMeshComponent>(TargetPrimitive)->GetRenderUnits(), TargetTransformMatrix);
 		if (BBox.IsValid())
 		{
 			this->OverrideBoxTransform = FTransform(BBox.GetCenter(), FQuat(), BBox.GetExtent());

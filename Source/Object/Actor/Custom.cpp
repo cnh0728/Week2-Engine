@@ -1,6 +1,6 @@
 ﻿#include "Custom.h"
 
-#include "Object/PrimitiveComponent/CustomComponent.h"
+#include "Object/PrimitiveComponent/StaticMeshComponent.h"
 #include <cstdlib>
 #include <ctime>    
 
@@ -11,7 +11,7 @@ ACustom::ACustom()
 {
     bCanEverTick = true;
 
-    UCustomComponent* CustomComp = AddComponent<UCustomComponent>();
+    UStaticMeshComponent* CustomComp = AddComponent<UStaticMeshComponent>();
     CustomComp->SetupAttachment(RootComponent);
     //srand(static_cast<unsigned int>(time(nullptr))); 
     // char* modelPath = (rand() % 2 == 0) ? "Models/table.obj" : "Models/pirate.obj";
@@ -33,7 +33,7 @@ void ACustom::Tick(float DeltaTime)
 
 void ACustom::SetObjPath(const std::string& InPath)
 {
-    if (UCustomComponent* CustomComp = GetComponentByClass<UCustomComponent>())
+    if (UStaticMeshComponent* CustomComp = GetComponentByClass<UStaticMeshComponent>())
     {
         CustomComp->LoadFromObj(InPath);
     }

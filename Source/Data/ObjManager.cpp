@@ -1,4 +1,4 @@
-﻿#include "ObjLoader.h"
+﻿#include "ObjManager.h"
 
 #include <filesystem>
 #include <iostream>
@@ -38,12 +38,12 @@ struct BinaryHeader
 #pragma pack(pop)
     
 
-ObjectLoader::ObjectLoader()
+FObjManager::FObjManager()
 {
     CheckExistAllDirectory();
 }
 
-void ObjectLoader::CheckExistAllDirectory()
+void FObjManager::CheckExistAllDirectory()
 {
     namespace fs = std::filesystem;
     
@@ -58,7 +58,7 @@ void ObjectLoader::CheckExistAllDirectory()
     }
 }
 
-bool ObjectLoader::LoadFromFile(const std::string& Filename)
+bool FObjManager::LoadFromFile(const std::string& Filename)
 {
     namespace fs = std::filesystem;
 
@@ -204,7 +204,7 @@ bool ObjectLoader::LoadFromFile(const std::string& Filename)
 
             for (const FVector& FaceIndex : CurrentFace.FaceIndices)
             {
-                FVertexSimple NewVertex;
+                FVertexPNCT NewVertex;
                 NewVertex.SetPos(Vertices[FaceIndex.X]);
                 NewVertex.SetUV(UVs[FaceIndex.Y]);
                 NewVertex.SetNormal(Normals[FaceIndex.Z]);
@@ -236,7 +236,7 @@ bool ObjectLoader::LoadFromFile(const std::string& Filename)
     return true;
 }
 
-size_t ObjectLoader::Hash(std::string Str)
+size_t FObjManager::Hash(std::string Str)
 {
     size_t Hash = 0;
     for (size_t i = 0; i < Str.length(); i++)
@@ -246,7 +246,7 @@ size_t ObjectLoader::Hash(std::string Str)
     return Hash ^ (Hash >> 16);
 }
 
-TArray<std::string> ObjectLoader::Split(const std::string& str, char delim) {
+TArray<std::string> FObjManager::Split(const std::string& str, char delim) {
     std::istringstream iss(str);
     TArray<std::string> result;
     std::string token;
@@ -259,7 +259,7 @@ TArray<std::string> ObjectLoader::Split(const std::string& str, char delim) {
     return result;
 }
 
-bool ObjectLoader::SaveToBinary(TArray<FSubMeshData>& SubMeshes, TArray<std::string>& Materials, const std::string& Filename)
+bool FObjManager::SaveToBinary(TArray<FSubMeshData>& SubMeshes, TArray<std::string>& Materials, const std::string& Filename)
 {
     std::ofstream File(BinaryFileDir + Filename + BinaryFileExt, std::ios::binary);
     if (!File.is_open()) return false;
@@ -276,7 +276,7 @@ bool ObjectLoader::SaveToBinary(TArray<FSubMeshData>& SubMeshes, TArray<std::str
         // Vertices 저장
         uint32_t vertexCount = SubMesh.Vertices.Num();
         File.write(reinterpret_cast<const char*>(&vertexCount), sizeof(uint32_t));
-        File.write(reinterpret_cast<const char*>(SubMesh.Vertices.GetData()), vertexCount * sizeof(FVertexSimple));
+        File.write(reinterpret_cast<const char*>(SubMesh.Vertices.GetData()), vertexCount * sizeof(FVertexPNCT));
 
         // Indices 저장
         uint32_t indexCount = SubMesh.Indices.Num();
@@ -301,7 +301,7 @@ bool ObjectLoader::SaveToBinary(TArray<FSubMeshData>& SubMeshes, TArray<std::str
     return true;
 }
 
-bool ObjectLoader::LoadFromBinary(TArray<FSubMeshData>& OutSubMeshes, TArray<std::string>& OutMaterials, const std::string& Filename)
+bool FObjManager::LoadFromBinary(TArray<FSubMeshData>& OutSubMeshes, TArray<std::string>& OutMaterials, const std::string& Filename)
 {
     std::ifstream File(BinaryFileDir + Filename + BinaryFileExt, std::ios::binary);
     if (!File.is_open()) return false;
@@ -317,7 +317,7 @@ bool ObjectLoader::LoadFromBinary(TArray<FSubMeshData>& OutSubMeshes, TArray<std
         uint32_t vertexCount;
         File.read(reinterpret_cast<char*>(&vertexCount), sizeof(uint32_t));
         SubMesh.Vertices.Resize(vertexCount);
-        File.read(reinterpret_cast<char*>(SubMesh.Vertices.GetData()), vertexCount * sizeof(FVertexSimple));
+        File.read(reinterpret_cast<char*>(SubMesh.Vertices.GetData()), vertexCount * sizeof(FVertexPNCT));
 
         // Indices 읽기
         uint32_t indexCount;

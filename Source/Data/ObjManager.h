@@ -5,12 +5,12 @@
 #include "MaterialData.h"
 #include "Core/Container/Array.h"
 
-struct FVertexSimple;
+struct FVertexPNCT;
 
-class ObjectLoader {
+class FObjManager {
 public:
-    ObjectLoader();
-    ~ObjectLoader() = default;
+    FObjManager();
+    ~FObjManager() = default;
     void CheckExistAllDirectory();
     bool LoadFromFile(const std::string& Filename);
     size_t Hash(std::string Str);

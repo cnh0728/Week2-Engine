@@ -3,7 +3,7 @@
 #include "Core/Engine.h"
 #include "Object/PrimitiveComponent/UPrimitiveComponent.h"
 
-TMap<EPrimitiveType, TArray<FVertexSimple>> OriginVertices = {
+TMap<EPrimitiveType, TArray<FVertexPNCT>> OriginVertices = {
 	{
 		EPrimitiveType::EPT_Line,{
 				{ -1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f , -1.0, 0.0f, 0.0f, 0.0f, 0.0f},
@@ -17,7 +17,7 @@ TMap<EPrimitiveType, TArray<uint32_t>> OriginIndices = {
 	},
 };
 
-void FVertexSimple::CreateOriginVertices()
+void FVertexPNCT::CreateOriginVertices()
 {
 	CreateCubeVertices();
 	CreateCylinderVertices();
@@ -30,9 +30,9 @@ void FVertexSimple::CreateOriginVertices()
 	CreateSpotlightVertices();
 }
 
-void FVertexSimple::CreateCubeVertices()
+void FVertexPNCT::CreateCubeVertices()
 {
-	TArray<FVertexSimple> Vertices;
+	TArray<FVertexPNCT> Vertices;
 	TArray<uint32_t> Indices;
 	
 	// Z- 앞면
@@ -89,9 +89,9 @@ void FVertexSimple::CreateCubeVertices()
 	// //Renderer->CreateVertexBuffer(Type, BufferInfo);
 }
 
-void FVertexSimple::CreateCylinderVertices()
+void FVertexPNCT::CreateCylinderVertices()
 {
-	TArray<FVertexSimple> Vertices;
+	TArray<FVertexPNCT> Vertices;
 	TArray<uint32_t> Indices;
 	TArray<uint32_t> TempIndices;
 	int segments = 36;
@@ -164,9 +164,9 @@ void FVertexSimple::CreateCylinderVertices()
 
 }
 
-void FVertexSimple::CreateTriangleVertices()
+void FVertexPNCT::CreateTriangleVertices()
 {
-	TArray<FVertexSimple> Vertices;
+	TArray<FVertexPNCT> Vertices;
 	TArray<uint32_t> Indices;
 	TArray<uint32_t> TempIndices;
 
@@ -218,9 +218,9 @@ void FVertexSimple::CreateTriangleVertices()
 
 }
 
-void FVertexSimple::CreateRingVertices()
+void FVertexPNCT::CreateRingVertices()
 {
-	TArray<FVertexSimple> Vertices;
+	TArray<FVertexPNCT> Vertices;
 	TArray<uint32_t> Indices;
 	TArray<uint32_t> TempIndices;
 
@@ -313,9 +313,9 @@ void FVertexSimple::CreateRingVertices()
 
 }
 
-void FVertexSimple::CreateConeVertices()
+void FVertexPNCT::CreateConeVertices()
 {
-	TArray<FVertexSimple> Vertices;
+	TArray<FVertexPNCT> Vertices;
 	TArray<uint32_t> Indices;
 
 	int segments = 36;
@@ -407,9 +407,9 @@ void FVertexSimple::CreateConeVertices()
 
 }
 
-void FVertexSimple::CreateSphereVertices()
+void FVertexPNCT::CreateSphereVertices()
 {
-	TArray<FVertexSimple> Vertices;
+	TArray<FVertexPNCT> Vertices;
 	TArray<uint32_t> Indices;
 	TArray<uint32_t> TempIndices;
 
@@ -494,9 +494,9 @@ void FVertexSimple::CreateSphereVertices()
 	//Renderer->CreateVertexBuffer(Type, BufferInfo);
 }
 
-void FVertexSimple::CreateTextureBoardVertices()
+void FVertexPNCT::CreateTextureBoardVertices()
 {
-	TArray<FVertexSimple> Vertices;
+	TArray<FVertexPNCT> Vertices;
 	TArray<uint32> Indices;
 
 	Vertices.Add({ 0.5f, -0.5f, -0.5f,  1.0f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f,0.0f, 1.0f });  // Bottom-left (orange)
@@ -518,9 +518,9 @@ void FVertexSimple::CreateTextureBoardVertices()
 	//Renderer->CreateVertexBuffer(Type, BufferInfo);
 }
 
-void FVertexSimple::CreateBoundingBoxVertices()
+void FVertexPNCT::CreateBoundingBoxVertices()
 {
-	TArray<FVertexSimple> Vertices;
+	TArray<FVertexPNCT> Vertices;
 	TArray<uint32> Indices;
 	// 모두 하얀색의 선을 그리는 정육면체
 	// Z-Up 왼손 좌표계(언리얼 엔진) 기준 큐브 정점
@@ -551,9 +551,9 @@ void FVertexSimple::CreateBoundingBoxVertices()
 	Renderer->CreateVertexBuffer(Type, BufferInfo);
 }
 
-void FVertexSimple::CreateSpotlightVertices()
+void FVertexPNCT::CreateSpotlightVertices()
 {
-	TArray<FVertexSimple> Vertices;
+	TArray<FVertexPNCT> Vertices;
 	TArray<uint32_t> Indices;
 
 	int segments = 128;

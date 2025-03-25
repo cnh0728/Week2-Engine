@@ -19,7 +19,7 @@
 #include "Object/Cast.h"
 #include "Debug/DebugConsole.h"
 #include "Object/TObjectIterator.h"
-#include "Object/PrimitiveComponent/CustomComponent.h"
+#include "Object/PrimitiveComponent/StaticMeshComponent.h"
 #include "Object/PrimitiveComponent/TextureComponent.h"
 
 void UWorld::BeginPlay()
@@ -134,7 +134,7 @@ void UWorld::RenderMainTexture(URenderer& Renderer, float DeltaTime)
 			{
 				Renderer.PrepareTextureResource(RenderComponent->GetTextureResource());
 			}
-			if (RenderComponent->IsA(UCustomComponent::StaticClass()))
+			if (RenderComponent->IsA(UStaticMeshComponent::StaticClass()))
 			{
 				Renderer.PrepareTextureResource(RenderComponent->GetTextureResource());
 			}

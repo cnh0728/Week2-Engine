@@ -174,7 +174,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Source\Data\MtlLoader.cpp" />
-    <ClCompile Include="Source\Data\ObjLoader.cpp" />
+    <ClCompile Include="Source\Data\ObjManager.cpp" />
     <ClCompile Include="Source\Object\Actor\Custom.cpp" />
     <ClCompile Include="Source\Object\Actor\Texture.cpp" />
     <ClCompile Include="Source\Object\Class\Class.cpp" />
@@ -214,7 +214,7 @@
     <ClCompile Include="Source\Core\Math\Vector.cpp" />
     <ClCompile Include="Source\Object\ObjectFactory.cpp" />
     <ClCompile Include="Source\Object\PrimitiveComponent\BillBoardComponent.cpp" />
-    <ClCompile Include="Source\Object\PrimitiveComponent\CustomComponent.cpp" />
+    <ClCompile Include="Source\Object\PrimitiveComponent\StaticMeshComponent.cpp" />
     <ClCompile Include="Source\Object\PrimitiveComponent\TextComponent.cpp" />
     <ClCompile Include="Source\Object\PrimitiveComponent\TextureComponent.cpp" />
     <ClCompile Include="Source\Object\PrimitiveComponent\UBoundingBox.cpp" />
@@ -240,7 +240,7 @@
   <ItemGroup>
     <ClInclude Include="Source\Data\MaterialData.h" />
     <ClInclude Include="Source\Data\MtlLoader.h" />
-    <ClInclude Include="Source\Data\ObjLoader.h" />
+    <ClInclude Include="Source\Data\ObjManager.h" />
     <ClInclude Include="Source\Object\Actor\Custom.h" />
     <ClInclude Include="Source\Object\Actor\Texture.h" />
     <ClInclude Include="Source\Object\Cast.h" />
@@ -256,7 +256,7 @@
     <ClInclude Include="Source\Core\Rendering\Text\Text.h" />
     <ClInclude Include="Source\Object\Actor\Spotlight.h" />
     <ClInclude Include="Source\Object\ObjectMacros.h" />
-    <ClInclude Include="Source\Object\PrimitiveComponent\CustomComponent.h" />
+    <ClInclude Include="Source\Object\PrimitiveComponent\StaticMeshComponent.h" />
     <ClInclude Include="Source\Object\PrimitiveComponent\TextureComponent.h" />
     <ClInclude Include="Source\Object\TObjectIterator.h" />
     <ClInclude Include="Source\Object\UObjectArray.h" />

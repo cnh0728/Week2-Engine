@@ -6,11 +6,11 @@ FBox::FBox()
 	Min = Max = FVector(0, 0, 0);
 }
 
-FBox::FBox(const TArray<FVertexSimple>& Vertices)
+FBox::FBox(const TArray<FVertexPNCT>& Vertices)
 {
 	Max = FVector(-FLT_MAX, -FLT_MAX, -FLT_MAX);
 	Min = FVector(FLT_MAX, FLT_MAX, FLT_MAX);
-	for (const FVertexSimple& Vertex : Vertices)
+	for (const FVertexPNCT& Vertex : Vertices)
 	{
 		// Affine transform에서는 w가 변하지 않음 -> w 나누기 생략
 		Min.X = min(Min.X, Vertex.X);
@@ -23,12 +23,12 @@ FBox::FBox(const TArray<FVertexSimple>& Vertices)
 	//UpdateValid();
 }
 
-FBox::FBox(const TArray<FVertexSimple>& Vertices, const FMatrix& TransformMatrix)
+FBox::FBox(const TArray<FVertexPNCT>& Vertices, const FMatrix& TransformMatrix)
 {
 
 	Max = FVector(-FLT_MAX, -FLT_MAX, -FLT_MAX);
 	Min = FVector(FLT_MAX, FLT_MAX, FLT_MAX);
-	for (const FVertexSimple& Vertex : Vertices)
+	for (const FVertexPNCT& Vertex : Vertices)
 	{
 		FVector4 Vertex4 = FVector4(Vertex.X, Vertex.Y, Vertex.Z, 1.f);
 		Vertex4 = Vertex4 * TransformMatrix;
@@ -44,12 +44,12 @@ FBox::FBox(const TArray<FVertexSimple>& Vertices, const FMatrix& TransformMatrix
 	//UpdateValid();
 }
 
-FBox::FBox(const TArray<FVertexSimple>& Vertices, const FTransform& Transform)
+FBox::FBox(const TArray<FVertexPNCT>& Vertices, const FTransform& Transform)
 {
 	FMatrix TransformMatrix = Transform.GetMatrix();
 	Max = FVector(-FLT_MAX, -FLT_MAX, -FLT_MAX);
 	Min = FVector(FLT_MAX, FLT_MAX, FLT_MAX);
-	for (const FVertexSimple& Vertex : Vertices)
+	for (const FVertexPNCT& Vertex : Vertices)
 	{
 		FVector4 Vertex4 = FVector4(Vertex.X, Vertex.Y, Vertex.Z, 1.f);
 		Vertex4 = Vertex4 * TransformMatrix;
@@ -124,13 +124,13 @@ FBox::FBox(const TArray<FVector>& Vertices, const FTransform& Transform)
 	//UpdateValid();
 }
 
-FBox::FBox(const TArray<FRenderUnit>& RenderUnits, const FMatrix& TransformMatrix)
+FBox::FBox(const TArray<FStaticMesh>& RenderUnits, const FMatrix& TransformMatrix)
 {
 	Max = FVector(-FLT_MAX, -FLT_MAX, -FLT_MAX);
 	Min = FVector(FLT_MAX, FLT_MAX, FLT_MAX);
-	for (const FRenderUnit& RenderUnit : RenderUnits)
+	for (const FStaticMesh& RenderUnit : RenderUnits)
 	{
-		for (const FVertexSimple& Vertex : RenderUnit.Vertices)
+		for (const FVertexPNCT& Vertex : RenderUnit.Vertices)
 		{
 			FVector4 Vertex4 = FVector4(Vertex.X, Vertex.Y, Vertex.Z, 1.f);
 			Vertex4 = Vertex4 * TransformMatrix;

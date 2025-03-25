@@ -5,28 +5,28 @@
 #include "Data/MaterialData.h"
 #include "Primitive/PrimitiveVertices.h"
 #include "Static/ResourceManager.h"
-#include "Data/ObjLoader.h"
+#include "Data/ObjManager.h"
 #include "Object/ObjectMacros.h"
 
-struct FRenderUnit {
-    TArray<FVertexSimple> Vertices;
+struct FStaticMesh {
+    TArray<FVertexPNCT> Vertices;
     TArray<uint32_t> Indices;
     const FMaterialData* Material;
 };
 
-class UCustomComponent : public UPrimitiveComponent
+class UStaticMeshComponent : public UPrimitiveComponent
 {
 public:
     using Super = UPrimitiveComponent;
-    DECLARE_CLASS(UCustomComponent, UPrimitiveComponent)
+    DECLARE_CLASS(UStaticMeshComponent, UPrimitiveComponent)
 
-    UCustomComponent() {
+    UStaticMeshComponent() {
         bIsDefaultRendered = true;
         bCanPick = true;
         SetPixelType(EPixelType::ETexture);
     }
 
-    virtual ~UCustomComponent() = default;
+    virtual ~UStaticMeshComponent() = default;
 
     EPrimitiveType GetType() override {
         return EPrimitiveType::EPT_Custom;
@@ -34,8 +34,8 @@ public:
 
     void LoadFromObj(const std::string& path);
   
-    const TArray<FRenderUnit>& GetRenderUnits() const { return RenderUnits; }
+    const TArray<FStaticMesh>& GetRenderUnits() const { return RenderUnits; }
 
 private:
-    TArray<FRenderUnit> RenderUnits;
+    TArray<FStaticMesh> RenderUnits;
 };

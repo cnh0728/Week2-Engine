@@ -23,7 +23,7 @@ public:
 
 private:
 	ID3D11ShaderResourceView* Texture = nullptr;
-	TArray<FVertexSimple> Vertices;
+	TArray<FVertexPNCT> Vertices;
 	TArray<uint32> Indices;
 	ID3D11Buffer* VertexBuffer, * IndexBuffer;
 };

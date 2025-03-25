@@ -5,7 +5,7 @@
 #include "Primitive/PrimitiveVertices.h"
 
 struct FSubMeshData {
-    TArray<FVertexSimple> Vertices;
+    TArray<FVertexPNCT> Vertices;
     TArray<uint32_t> Indices;
     std::string MaterialName;
 };

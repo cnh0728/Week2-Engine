@@ -103,7 +103,7 @@ void LegacyTexture::Render(ID3D11Device* Device, ID3D11DeviceContext* DeviceCont
 {
 
 	D3D11_MAPPED_SUBRESOURCE MappedResource;
-	FVertexSimple* VerticesPtr;
+	FVertexPNCT* VerticesPtr;
 	D3D11_BUFFER_DESC VertexBufferDesc, IndexBufferDesc;
 	D3D11_SUBRESOURCE_DATA VertexData, IndexData;
 
@@ -111,7 +111,7 @@ void LegacyTexture::Render(ID3D11Device* Device, ID3D11DeviceContext* DeviceCont
 	Indices = OriginIndices[EPrimitiveType::EPT_Texture];
 
 	VertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	VertexBufferDesc.ByteWidth = sizeof(FVertexSimple) * Vertices.Num();
+	VertexBufferDesc.ByteWidth = sizeof(FVertexPNCT) * Vertices.Num();
 	VertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	VertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	VertexBufferDesc.MiscFlags = 0;
@@ -133,16 +133,16 @@ void LegacyTexture::Render(ID3D11Device* Device, ID3D11DeviceContext* DeviceCont
 
 	Device->CreateBuffer(&IndexBufferDesc, &IndexData, &IndexBuffer);
 
-	uint32 Stride = sizeof(FVertexSimple);;
+	uint32 Stride = sizeof(FVertexPNCT);;
 	uint32 Offset = 0;
 
 	DeviceContext->IASetVertexBuffers(0, 1, &VertexBuffer, &Stride, &Offset);
 	DeviceContext->IASetIndexBuffer(IndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
 	DeviceContext->Map(VertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedResource);
-	VerticesPtr = (FVertexSimple*)MappedResource.pData;
+	VerticesPtr = (FVertexPNCT*)MappedResource.pData;
 
-	memcpy(VerticesPtr, Vertices.GetData(), Vertices.Num() * (sizeof(FVertexSimple)));
+	memcpy(VerticesPtr, Vertices.GetData(), Vertices.Num() * (sizeof(FVertexPNCT)));
 
 	DeviceContext->Unmap(VertexBuffer, 0);
 }

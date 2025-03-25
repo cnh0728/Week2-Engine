@@ -8,7 +8,7 @@
 #include "AbstractClass/Singleton.h"
 #include "Container/Map.h"
 #include "Core/Container/Array.h"
-#include "Data/ObjLoader.h"
+#include "Data/ObjManager.h"
 #include "Object/UObjectArray.h"
 
 class UObject;
@@ -54,7 +54,7 @@ public:
     void Shutdown();
 
 	URenderer* GetRenderer() const { return Renderer.get(); }
-    ObjectLoader* GetObjLoader() const {return ObjLoader.get();}
+    FObjManager* GetObjLoader() const {return ObjLoader.get();}
 	float GetScreenRatio() const { return static_cast<float>(ScreenWidth) / ScreenHeight; }
     int GetScreenWidth() const { return ScreenWidth; }
     int GetScreenHeight() const { return ScreenHeight; }
@@ -95,7 +95,7 @@ private:
 
 private:
 	std::unique_ptr<URenderer> Renderer;
-    std::unique_ptr<ObjectLoader> ObjLoader;
+    std::unique_ptr<FObjManager> ObjLoader;
     
     std::vector<std::pair<ETextureResource, std::string>> TexturesToLoad = {
     {ECat, "Textures/cat.png"},

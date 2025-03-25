@@ -5,11 +5,11 @@
 #include "Core/Math/Vector.h"
 #include "Core/Math/Matrix.h"
 
-struct FVertexSimple
+struct FVertexPNCT
 {
 	float X, Y, Z;    // Position
-	float R, G, B, A; // Color
 	float NX, NY, NZ;
+	float R, G, B, A; // Color
 	float U, V;
 	
 	void SetPos(const FMatrix& WorldMatrix)
@@ -80,5 +80,5 @@ enum EPrimitiveType : uint8
 	EPT_Custom = 100,
 };
 
-extern TMap<EPrimitiveType, TArray<FVertexSimple>> OriginVertices;
+extern TMap<EPrimitiveType, TArray<FVertexPNCT>> OriginVertices;
 extern TMap<EPrimitiveType, TArray<uint32_t>> OriginIndices;

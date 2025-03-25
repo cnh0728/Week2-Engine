@@ -1,9 +1,9 @@
 ﻿
-#include "CustomComponent.h"
+#include "StaticMeshComponent.h"
 #include "core/Engine.h"
 #include "Static/ResourceManager.h"
 
-void UCustomComponent::LoadFromObj(const std::string& path)
+void UStaticMeshComponent::LoadFromObj(const std::string& path)
 {
     // Obj 파일 로드
     UEngine::Get().GetObjLoader()->LoadFromFile(path);
@@ -15,7 +15,7 @@ void UCustomComponent::LoadFromObj(const std::string& path)
 
     for (const auto& sub : *meshData)
     {
-        FRenderUnit unit;
+        FStaticMesh unit;
         unit.Vertices = sub.Vertices;
         unit.Indices = sub.Indices;
         unit.Material = UResourceManager::Get().GetMaterial(sub.MaterialName);

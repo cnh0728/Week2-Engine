@@ -4,7 +4,7 @@
 #include "Primitive/PrimitiveVertices.h"
 #include "Core/Container/Array.h"
 #include "Transform.h"
-#include "Object/PrimitiveComponent/CustomComponent.h"
+#include "Object/PrimitiveComponent/StaticMeshComponent.h"
 
 class FBox
 {
@@ -15,13 +15,13 @@ private:
 
 public:
 	FBox();
-	FBox(const TArray<FVertexSimple> &Vertices);
-	FBox(const TArray<FVertexSimple> &Vertices, const FMatrix& TransformMatrix);
-	FBox(const TArray<FVertexSimple> &Vertices, const FTransform& Transform);
+	FBox(const TArray<FVertexPNCT> &Vertices);
+	FBox(const TArray<FVertexPNCT> &Vertices, const FMatrix& TransformMatrix);
+	FBox(const TArray<FVertexPNCT> &Vertices, const FTransform& Transform);
 	FBox(const TArray<FVector> &Vertices);
 	FBox(const TArray<FVector> &Vertices, const FMatrix& TransformMatrix);
 	FBox(const TArray<FVector> &Vertices, const FTransform& Transform);
-	FBox(const TArray<FRenderUnit> &RenderUnits, const FMatrix& TransformMatrix);
+	FBox(const TArray<FStaticMesh> &RenderUnits, const FMatrix& TransformMatrix);
 	FBox(const FVector InMin, const FVector InMax);
 
 	static FBox BuildAABB(const FVector Origin, const FVector Extent);

@@ -11,7 +11,7 @@
 #include "Object/Actor/WorldGrid.h"
 #include "Static/FEditorManager.h"
 #include"Data/ConfigManager.h"
-#include "Data/ObjLoader.h"
+#include "Data/ObjManager.h"
 #include "Core/HAL/PlatformType.h"
 #include"Static/ResourceManager.h"
 #include"Object/Actor/Custom.h"
@@ -118,7 +118,7 @@ void UEngine::Initialize(
     ScreenMode = InScreenMode;
     ScreenWidth = InScreenWidth;
     ScreenHeight = InScreenHeight;
-    ObjLoader = std::make_unique<ObjectLoader>();
+    ObjLoader = std::make_unique<FObjManager>();
 
     InitWindow(InScreenWidth, InScreenWidth);
     InitRenderer();

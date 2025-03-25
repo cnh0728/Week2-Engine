@@ -52,7 +52,7 @@ void UPrimitiveComponent::RegisterComponentWithWorld(UWorld* World)
 
 	EPrimitiveType ComponentType = GetType();
 
-	TArray<FVertexSimple> Vertices = OriginVertices[ComponentType];
+	TArray<FVertexPNCT> Vertices = OriginVertices[ComponentType];
 
 	TArray<uint32_t> Indices = OriginIndices[ComponentType];
 	

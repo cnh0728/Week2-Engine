@@ -19,7 +19,7 @@
 #include "Texture/TextureRenderer.h"
 #include "Static/Enum.h"
 
-struct FVertexSimple;
+struct FVertexPNCT;
 struct FVector4;
 class UPrimitiveComponent;
 class ACamera;
@@ -47,7 +47,7 @@ struct VertexBufferInfo
 {
 public:
 	VertexBufferInfo() = default;
-	VertexBufferInfo(ID3D11Buffer* InVertexBuffer, ID3D11Buffer* InIndexBuffer, D3D_PRIMITIVE_TOPOLOGY InTopology, TArray<FVertexSimple>& InVertices, TArray<uint32_t>& InIndices)
+	VertexBufferInfo(ID3D11Buffer* InVertexBuffer, ID3D11Buffer* InIndexBuffer, D3D_PRIMITIVE_TOPOLOGY InTopology, TArray<FVertexPNCT>& InVertices, TArray<uint32_t>& InIndices)
 	{
 		VertexBuffer = InVertexBuffer;
 		IndexBuffer = InIndexBuffer;
@@ -63,7 +63,7 @@ public:
 		PreVertexCount = VertexCount;
 	}
 
-	VertexBufferInfo(D3D_PRIMITIVE_TOPOLOGY InTopology, TArray<FVertexSimple>& InVertices, TArray<uint32_t>& InIndices)
+	VertexBufferInfo(D3D_PRIMITIVE_TOPOLOGY InTopology, TArray<FVertexPNCT>& InVertices, TArray<uint32_t>& InIndices)
 	{
 		// InstanceBuffer = InInstanceBuffer;
 		VertexCount = InVertices.Num();
@@ -85,16 +85,16 @@ public:
 	uint32_t GetIndexCount() const{return IndexCount;}
 	
 	D3D_PRIMITIVE_TOPOLOGY GetTopology() const { return Topology; }
-	TArray<FVertexSimple> GetVertices() const { return Vertices; }
+	TArray<FVertexPNCT> GetVertices() const { return Vertices; }
 	TArray<uint32_t> GetIndices() const { return Indices; }
 	uint32_t GetVertexPreCount() const { return PreVertexCount; }
 
-	void AddVertices(TArray<FVertexSimple> InVertices, TArray<uint32_t> InIndices);
+	void AddVertices(TArray<FVertexPNCT> InVertices, TArray<uint32_t> InIndices);
 	void ClearVertices();
 	
 private:
 	ID3D11Buffer* VertexBuffer;
-	TArray<FVertexSimple> Vertices;
+	TArray<FVertexPNCT> Vertices;
 	uint32_t VertexCount;
 	uint32_t PreVertexCount;
 

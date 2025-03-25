@@ -8,10 +8,10 @@
 #include "Static/FEditorManager.h"
 #include "directxtk/WICTextureLoader.h"
 #include "Static/ResourceManager.h"
-#include "Object/PrimitiveComponent/CustomComponent.h"
+#include "Object/PrimitiveComponent/StaticMeshComponent.h"
 #include "Data/MaterialData.h"
 
-void VertexBufferInfo::AddVertices(TArray<FVertexSimple> InVertices, TArray<uint32_t> InIndices)
+void VertexBufferInfo::AddVertices(TArray<FVertexPNCT> InVertices, TArray<uint32_t> InIndices)
 {
     Vertices.Insert(Vertices.end(), InVertices.begin(), InVertices.end());
     VertexCount = Vertices.Num();
@@ -46,7 +46,7 @@ void URenderer::Create(HWND hWindow)
     
     CreatePickingTexture(hWindow);
     
-    FVertexSimple::CreateOriginVertices();
+    FVertexPNCT::CreateOriginVertices();
     
     CreateText(hWindow);
 	CreateAlphaBlendingState();
@@ -109,8 +109,8 @@ void URenderer::CreateShader()
     D3D11_INPUT_ELEMENT_DESC Layout[] =
     {
         { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	    {"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 	    {"UV", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 
 	    // 인스턴스 데이터 (Per-Instance)
@@ -126,7 +126,7 @@ void URenderer::CreateShader()
     PixelShaderCSO->Release();
     
     // 정점 하나의 크기를 설정 (바이트 단위)
-    Stride = sizeof(FVertexSimple);
+    Stride = sizeof(FVertexPNCT);
 }
 
 void URenderer::CreateSampleState()
@@ -328,11 +328,11 @@ void URenderer::CreateVertexBuffer(uint32_t VertexType, VertexBufferInfo BufferI
         return;
     }
     
-    TArray<FVertexSimple> Vertices = BufferInfo.GetVertices();
-    FVertexSimple* RawVertices = Vertices.GetData();
+    TArray<FVertexPNCT> Vertices = BufferInfo.GetVertices();
+    FVertexPNCT* RawVertices = Vertices.GetData();
     // D3D11_PRIMITIVE_TOPOLOGY Topology = BufferInfo.GetTopology();
     D3D11_PRIMITIVE_TOPOLOGY Topology = UPrimitiveComponent::GetTopology(static_cast<EPrimitiveType>(VertexType));
-    uint32_t VertexByteWidth = BufferInfo.GetVertexCount() * sizeof(FVertexSimple);
+    uint32_t VertexByteWidth = BufferInfo.GetVertexCount() * sizeof(FVertexPNCT);
 
     if (VertexByteWidth == 0)
     {
@@ -381,11 +381,11 @@ void URenderer::CreateVertexBuffer(uint32_t VertexType, VertexBufferInfo BufferI
 
 void URenderer::CreateBatchVertexBuffer(D3D11_PRIMITIVE_TOPOLOGY Topology, VertexBufferInfo BufferInfo)
 {
-    TArray<FVertexSimple> Vertices = BufferInfo.GetVertices();
-    FVertexSimple* RawVertices = Vertices.GetData();
+    TArray<FVertexPNCT> Vertices = BufferInfo.GetVertices();
+    FVertexPNCT* RawVertices = Vertices.GetData();
     // D3D11_PRIMITIVE_TOPOLOGY Topology = BufferInfo.GetTopology();
 
-    uint32_t VertexByteWidth = BufferInfo.GetVertexCount() * sizeof(FVertexSimple);
+    uint32_t VertexByteWidth = BufferInfo.GetVertexCount() * sizeof(FVertexPNCT);
 
     if (VertexByteWidth == 0)
     {
@@ -456,12 +456,12 @@ void URenderer::AddBatchVertices(UPrimitiveComponent* Component)
     D3D11_PRIMITIVE_TOPOLOGY Topology = Component->GetTopology(Component->GetType());
     
     // uint32_t UUID = Component->GetOwner()->GetUUID();
-    TArray<FVertexSimple> Vertices = OriginVertices[Component->GetType()];
+    TArray<FVertexPNCT> Vertices = OriginVertices[Component->GetType()];
     TArray<uint32_t> Indices = OriginIndices[Component->GetType()];
 
     FMatrix ComponentWorldMatrix = Component->GetComponentTransformMatrix();
     
-    for (FVertexSimple& Vertex : Vertices)
+    for (FVertexPNCT& Vertex : Vertices)
     {
         Vertex.SetPos(ComponentWorldMatrix);
         if (Component->GetPixelType())
@@ -525,9 +525,9 @@ void URenderer::ReleaseVertexBuffer(D3D11_PRIMITIVE_TOPOLOGY Topology)
 
 void URenderer::RenderPrimtive(UPrimitiveComponent* Component)
 {
-    if (Component->IsA(UCustomComponent::StaticClass()))
+    if (Component->IsA(UStaticMeshComponent::StaticClass()))
     {
-        UCustomComponent* Custom = static_cast<UCustomComponent*>(Component);
+        UStaticMeshComponent* Custom = static_cast<UStaticMeshComponent*>(Component);
 
         for (const auto& Unit : Custom->GetRenderUnits())
         {
@@ -545,7 +545,7 @@ void URenderer::RenderPrimtive(UPrimitiveComponent* Component)
             }
 
             // 정점 버퍼 직접 생성 (전역 저장 X)
-            TArray<FVertexSimple> Vertices = Unit.Vertices;
+            TArray<FVertexPNCT> Vertices = Unit.Vertices;
             TArray<uint32_t> Indices = Unit.Indices;
             if (Vertices.Num() == 0 || Indices.Num() == 0)
                 continue;
@@ -557,7 +557,7 @@ void URenderer::RenderPrimtive(UPrimitiveComponent* Component)
             {
                 D3D11_BUFFER_DESC vbDesc = {};
                 vbDesc.Usage = D3D11_USAGE_DEFAULT;
-                vbDesc.ByteWidth = sizeof(FVertexSimple) * Vertices.Num();
+                vbDesc.ByteWidth = sizeof(FVertexPNCT) * Vertices.Num();
                 vbDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
                 D3D11_SUBRESOURCE_DATA vbData = {};
                 vbData.pSysMem = Vertices.GetData();
