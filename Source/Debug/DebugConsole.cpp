@@ -24,7 +24,7 @@ void Debug::ShowConsole(bool bWasWindowSizeUpdated)
     float consoleWindowHeight = static_cast<float>(windowHeight) * 0.2f;
     float consoleWindowPosX = (static_cast<float>(windowWidth) - consoleWindowWidth) * 0.5f;
     float consoleWindowPosY = (static_cast<float>(windowHeight) - consoleWindowHeight) * 1.f;
-    ImGui::SetNextWindowPos(ImVec2(consoleWindowPosX, consoleWindowPosY), ImGuiCond_Always);
+    //ImGui::SetNextWindowPos(ImVec2(consoleWindowPosX, consoleWindowPosY), ImGuiCond_Always);
     ImGui::SetNextWindowSize(ImVec2(consoleWindowWidth, consoleWindowHeight), ImGuiCond_Always);
 
     ImGui::Begin("Console");
