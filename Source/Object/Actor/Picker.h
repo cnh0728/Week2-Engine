@@ -36,4 +36,5 @@ protected:
     FVector4 RayOrigin;
     FVector4 RayEnd;
     FVector RayDir;
+
 };

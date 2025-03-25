@@ -42,12 +42,15 @@ void APicker::Tick(float DeltaTime)
     APlayerInput& Input = APlayerInput::Get();
 
     UPrimitiveComponent* PickedComponent = nullptr;
+
+    PickState CurrentPickState = FEditorManager::Get().GetPickState();
     
     UpdateRayInfo();
 
-    if(Input.GetMouseDown(false))
+    if(Input.GetMouseDown(false)) 
     {
-        TMap<UPrimitiveComponent*, float> PickedPrimitives = PickActorByRay(); //PriorityQueue 구현
+        //PickedComponent 선택로직
+        TMap<UPrimitiveComponent*, float> PickedPrimitives = PickActorByRay();
         
         float MinDistance = FLT_MAX;
         bool IsFindGizmo = false;
@@ -61,20 +64,19 @@ void APicker::Tick(float DeltaTime)
             
             AActor* ValueActor = Primitive->GetOwner();
             
-            if (ValueActor->IsGizmoActor())
+            if (ValueActor->IsGizmoActor()) //기즈모일때
             {
                 if (IsFindGizmo == false)
                 {
-                    MinDistance = Distance;
-                    IsFindGizmo = true;
+                    MinDistance = Distance; //첫번째 발견이면 무조건 강제지정해주고
                     PickedComponent = Primitive;
-                }else
+                    IsFindGizmo = true;
+                }
+                
+                if (MinDistance > Distance)
                 {
-                    if (MinDistance > Distance)
-                    {
-                        MinDistance = Distance;
-                        PickedComponent = Primitive;
-                    }
+                    MinDistance = Distance; //기즈모끼리도 비교해줘야하니까
+                    PickedComponent = Primitive;
                 }
             }
 
@@ -94,25 +96,17 @@ void APicker::Tick(float DeltaTime)
         //여기서부턴 선택된 프리미티브 취소 로직
         if (PickedComponent == nullptr) 
         {
-            // FEditorManager::Get().SelectActor(nullptr);   //피킹된 애가 없으면 선택없애기
+            // FEditorManager::Get().SelectPrimitive(nullptr);   //피킹된 애가 없으면 선택없애기
             return;
         }
         
         //pickedActor가 클릭돼있을때 클릭하면 nullptr, 픽한애 없어도 nullptr
         
-        if (IsFindGizmo == false) //기즈모가 아니면서
+        if (IsFindGizmo == false) //기즈모가 아니면 선택한애로 결정
         {
-            if (PickedComponent->GetOwner() == FEditorManager::Get().GetSelectedActor()) //이미 선택헀던 애면 선택 없애기
-            {
-                PickedComponent = nullptr;
-                FEditorManager::Get().SelectPrimitive(nullptr);
-                return;
-            }
-            //아니면 최종 선택된애로 선정
-            FEditorManager::Get().SelectPrimitive(PickedComponent);   
-        }else //기즈모면
+            FEditorManager::Get().SelectComponent(PickedComponent);   
+        }else //기즈모면 어떤 기즈모 선택했는지 결정
         {
-            //AGizmoHandle* Gizmo = dynamic_cast<AGizmoHandle*>(PickedComponent->GetOwner());
             AGizmoHandle* Gizmo = Cast<AGizmoHandle>(PickedComponent->GetOwner());
 
             if (Gizmo == nullptr)
@@ -121,8 +115,8 @@ void APicker::Tick(float DeltaTime)
             }
                 
             //UPrimitiveComponent* CylinderComp = dynamic_cast<UPrimitiveComponent*>(PickedComponent);
-            UPrimitiveComponent* CylinderComp = Cast<UPrimitiveComponent>(PickedComponent);
-			FVector4 CompColor = CylinderComp->GetColor();
+            UPrimitiveComponent* GizmoComp = Cast<UPrimitiveComponent>(PickedComponent);
+			FVector4 CompColor = GizmoComp->GetColor();
             if (1.0f - FMath::Abs(CompColor.X) < KINDA_SMALL_NUMBER) // Red - X축
             {
                 Gizmo->SetSelectedAxis(ESelectedAxis::X);
@@ -143,7 +137,7 @@ void APicker::Tick(float DeltaTime)
         }
     }
 
-    if (Input.IsPressedMouse(false))
+    if (Input.IsPressedMouse(false)) //기즈모 움직이는 로직인데 좀바꿔야함 액터기준으로만 돼있음
     {
         AGizmoHandle* Gizmo = FEditorManager::Get().GetGizmoHandle();
         AActor* Actor = FEditorManager::Get().GetSelectedActor();
@@ -152,41 +146,9 @@ void APicker::Tick(float DeltaTime)
         {
             return;
         }
-        POINT pt;
-        GetCursorPos(&pt);
-        ScreenToClient(UEngine::Get().GetWindowHandle(), &pt);
-
-        RECT Rect;
-        GetClientRect(UEngine::Get().GetWindowHandle(), &Rect);
-        int ScreenWidth = Rect.right - Rect.left;
-        int ScreenHeight = Rect.bottom - Rect.top;
-
-        // 커서 위치를 NDC로 변경
-        float PosX = 2.0f * pt.x / ScreenWidth - 1.0f;
-        float PosY = -2.0f * pt.y / ScreenHeight + 1.0f;
-
-        // Projection 공간으로 변환
-        FVector4 RayOrigin{ PosX, PosY, 0.0f, 1.0f };
-        FVector4 RayEnd{ PosX, PosY, 1.0f, 1.0f };
-
-        // View 공간으로 변환
-        FMatrix InvProjMat = UEngine::Get().GetRenderer()->GetProjectionMatrix().Inverse();
-        RayOrigin = InvProjMat.TransformVector4(RayOrigin);
-        RayOrigin.W = 1;
-        RayEnd = InvProjMat.TransformVector4(RayEnd);
-        RayEnd *= 1000.0f;  // 프러스텀의 Far 값이 적용이 안돼서 수동으로 곱함
-        RayEnd.W = 1;
-
-        // 마우스 포인터의 월드 위치와 방향
-        FMatrix InvViewMat = FEditorManager::Get().GetCamera()->GetViewMatrix().Inverse();
-        RayOrigin = InvViewMat.TransformVector4(RayOrigin);
-        RayOrigin /= RayOrigin.W = 1;
-        RayEnd = InvViewMat.TransformVector4(RayEnd);
-        RayEnd /= RayEnd.W = 1;
-        FVector RayDir = (RayEnd - RayOrigin).GetSafeNormal();
-
+        
         float Distance = FVector::Distance(RayOrigin, Actor->GetActorRelativeTransform().GetPosition());
-			
+        
         // Ray 방향으로 Distance만큼 재계산
         FVector Result = RayOrigin + RayDir * Distance;
 	

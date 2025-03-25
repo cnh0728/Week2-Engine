@@ -16,6 +16,8 @@ AGizmoHandle::AGizmoHandle()
 {
 	DontDestroy();
 	bIsGizmo = true;
+	SetDepth(1);
+	
 	const float GizmoSize = 0.1f;
 	const float GizmoSizeMultiplier = 1 / GizmoSize;
 	// gizmo 중심을 잡기 위한 가상의 component

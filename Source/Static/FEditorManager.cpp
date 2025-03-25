@@ -5,83 +5,111 @@
 #include "Core/Math/Vector.h"
 #include "Core/Math/Transform.h"
 
-void FEditorManager::SelectPrimitive(UPrimitiveComponent* NewPrimitive)
+void FEditorManager::SelectComponent(UPrimitiveComponent* NewComponent)
 {
-    if (GizmoHandle == nullptr)
+    if (GizmoHandle == nullptr) //기즈모 띄우는거면 생성
     {
 		GizmoHandle = UEngine::Get().GetWorld()->SpawnActor<AGizmoHandle>();
-    	GizmoHandle->SetDepth(1);
         GizmoHandle->SetActive(false);
     }
 
-	//NewPritmivie가 null이면 null로 다 바꿔줘야하고
-	//null이 아니면 정상로직
-	
-	if (NewPrimitive == nullptr)
+	if (NewComponent == nullptr || NewComponent == SelectedComponent) //이미 선택헀던 애면 선택 없애기
 	{
-		SelectedActor->UnPick();
-        
-		GizmoHandle->SetActive(false);
-
-		SelectedActor = nullptr;
-		SelectedComponent = nullptr;
+		ReleasePick();
 		return;
 	}
-	
-	AActor* NewActor = NewPrimitive->GetOwner();
-	
-	if (SelectedActor == NewActor) //같은애 선택하면 선택 취소
-		return;
-	
-    if (SelectedActor != nullptr && SelectedActor != NewActor) //액터가 있는데, 뉴액터랑 다른애면 선택취소 맞지 ㅇㅇ
-    {
-        SelectedActor->UnPick();
-        
-        GizmoHandle->SetActive(false);
-    }
 
-	SelectedActor = NewActor;
-	SelectedComponent = NewPrimitive;
+	AActor* NewActor = NewComponent->GetOwner();
+
+	switch (CurrentPickState)
+	{
+		case PickState::None:
+			SetPickState(PickState::Actor);
+			break;
+		case PickState::Actor:
+			GizmoHandle->SetActive(true);
+			if (SelectedActor == NewActor)
+			{
+				SetPickState(PickState::Component);
+			}
+			break;
+		case PickState::Component:
+			if (SelectedComponent == NewComponent)
+			{
+				SetPickState(PickState::None);
+			}
+			else if (SelectedActor != NewActor)
+			{
+				SetPickState(PickState::Actor);
+			}
+			break;
+		default:
+			break;
+	}
+
+	switch (CurrentPickState)
+	{
+		case PickState::None:
+			ReleasePick();
+			return;
+		case PickState::Actor:
+			GizmoHandle->SetActive(true);
+			SelectedActor = NewActor;
+			NewActor->Pick();
+
+			if (SelectedComponent)
+			{
+				SelectedComponent->Pick(false);
+				SelectedComponent = nullptr;
+			}
+			break;
+		case PickState::Component:
+			GizmoHandle->SetActive(true);
+			SelectedComponent = NewComponent;
+			NewComponent->Pick(true);
+			break;
+	default:
+		break;
+	}
+}
+
+void FEditorManager::ReleasePick()
+{
+	SetPickState(PickState::None);
 	
-    if (SelectedActor != nullptr)
-    {
-        SelectedActor->Pick();
-        GizmoHandle->SetActive(true);
+	if (SelectedActor)
+	{
+		SelectedActor->UnPick();
+		SelectedActor = nullptr;
+	}
+	if (SelectedComponent)
+	{
+		SelectedComponent->Pick(false);
+		SelectedComponent = nullptr;
+	}
+	if (GizmoHandle)
+	{
+		GizmoHandle->SetActive(false);
 	}
 }
 
 void FEditorManager::SelectActor(AActor* NewActor)
 {
-	if (GizmoHandle == nullptr)
+	if (GizmoHandle == nullptr) //기즈모 띄우는거면 생성
 	{
 		GizmoHandle = UEngine::Get().GetWorld()->SpawnActor<AGizmoHandle>();
-		GizmoHandle->SetDepth(1);
 		GizmoHandle->SetActive(false);
 	}
 
-	if (SelectedActor == NewActor)
+	if (NewActor == nullptr || NewActor == SelectedActor) //이미 선택헀던 애면 선택 없애기
+	{
+		ReleasePick();
 		return;
-	
-	if (SelectedActor != nullptr && SelectedActor != NewActor)
-	{
-		SelectedActor->UnPick();
-        
-		GizmoHandle->SetActive(false);
 	}
-
+	
+	GizmoHandle->SetActive(true);
 	SelectedActor = NewActor;
-	SelectedComponent = nullptr;
-	
-	if (SelectedActor != nullptr)
-	{
-		SelectedActor->Pick();
-		GizmoHandle->SetActive(true);
-		//FVector Pos = SelectedActor->GetActorTransform().GetPosition();
-		//FTransform GizmoTransform = GizmoHandle->GetActorTransform();
-		//GizmoTransform.SetPosition(Pos);
-		//GizmoHandle->SetActorTransform(GizmoTransform);
-		//GizmoHandle
-	}
+	SelectedActor->Pick();
 }
 
 void FEditorManager::SetCamera(ACamera* NewCamera)

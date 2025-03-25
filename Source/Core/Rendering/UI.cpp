@@ -376,7 +376,7 @@ void UI::RenderShowFlag() {
     {
         FEditorManager::Get().SetShowFlag(EEngineShowFlags::SF_Primitives, bShowPrimitives);
         if (!bShowPrimitives)
-            FEditorManager::Get().SelectActor(nullptr);
+            FEditorManager::Get().SelectComponent(nullptr);
     }
 
     bool bShowTextBillboard = FEditorManager::Get().IsShowFlagSet(EEngineShowFlags::SF_BillboardText);
